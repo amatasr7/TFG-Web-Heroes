@@ -1,0 +1,64 @@
+{% extends "backoffice/base.html" %}
+
+{% block content %}
+  {% if error %}
+    <div class="notice error">
+      <strong>No se pudo guardar el registro.</strong>
+      <span>{{ error }}</span>
+    </div>
+  {% endif %}
+
+  <section class="panel">
+    <div class="toolbar">
+      <div>
+        <h2>{% if item %}Editar{% else %}Nuevo{% endif %}: {{ config.label }}</h2>
+        <p class="muted">Completa los campos de la tabla {{ table_name }}.</p>
+      </div>
+      <a class="button" href="/admin/{{ table_name }}">Volver</a>
+    </div>
+
+    <form class="form-grid" method="post">
+      {% for field, meta in config.fields.items() %}
+        {% set current_value = item|attr(field) if item else "" %}
+        <label class="field {% if meta.type == 'boolean' %}checkbox-field{% endif %}">
+          <span>{{ field }}</span>
+
+          {% if meta.type == "boolean" %}
+            <input type="checkbox" name="{{ field }}" {% if current_value %}checked{% endif %}>
+          {% elif meta.type == "select" %}
+            <select name="{{ field }}" {% if meta.required %}required{% endif %}>
+              {% for option in select_options[field] %}
+                <option value="{{ option.value }}" {% if option.value == current_value %}selected{% endif %}>
+                  {{ option.label }}
+                </option>
+              {% endfor %}
+            </select>
+          {% elif meta.type == "image" %}
+            <input
+              type="url"
+              name="{{ field }}"
+              value="{{ stringify(current_value) }}"
+              placeholder="https://..."
+              {% if meta.required %}required{% endif %}
+            >
+            {% if current_value %}
+              <img class="thumb-preview" src="{{ current_value }}" alt="Thumbnail actual">
+            {% endif %}
+          {% else %}
+            <input
+              type="{% if meta.type == 'int' %}number{% else %}text{% endif %}"
+              name="{{ field }}"
+              value="{{ stringify(current_value) }}"
+              {% if meta.required %}required{% endif %}
+            >
+          {% endif %}
+        </label>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button class="button primary" type="submit">{% if item %}Actualizar{% else %}Crear{% endif %}</button>
+        <a class="button" href="/admin/{{ table_name }}">Cancelar</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

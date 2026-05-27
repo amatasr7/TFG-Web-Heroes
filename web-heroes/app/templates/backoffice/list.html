@@ -1,0 +1,51 @@
+{% extends "backoffice/base.html" %}
+
+{% block content %}
+  <section class="panel">
+    <div class="toolbar">
+      <div>
+        <h2>{{ config.label }}</h2>
+        <p class="muted">{{ rows|length }} registros</p>
+      </div>
+      <a class="button primary" href="/admin/{{ table_name }}/new">Nuevo</a>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            {% for field in fields %}
+              <th>{{ field }}</th>
+            {% endfor %}
+            <th class="actions-col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              {% for field in fields %}
+                <td>
+                  {% if field == "thumbnail_url" and row|attr(field) %}
+                    <img class="thumb" src="{{ row|attr(field) }}" alt="{{ stringify(row.name) }}">
+                  {% else %}
+                    {{ stringify(row|attr(field)) }}
+                  {% endif %}
+                </td>
+              {% endfor %}
+              <td class="actions">
+                <a class="button small" href="/admin/{{ table_name }}/{{ row.id }}/edit">Editar</a>
+                <form method="post" action="/admin/{{ table_name }}/{{ row.id }}/delete">
+                  <button class="button small danger" type="submit">Borrar</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td class="empty" colspan="{{ fields|length + 1 }}">No hay registros todavia.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

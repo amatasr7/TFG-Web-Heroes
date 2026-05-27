@@ -1,0 +1,129 @@
+.battle-container {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #e8d7c3;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.battle-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 0; /* Permite que hijos con overflow se recorten correctamente */
+}
+
+/* --- FILA SUPERIOR --- */
+.battle-top-section {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.5fr) minmax(220px, 280px) minmax(
+      240px,
+      1fr
+    );
+  gap: 15px;
+  flex: 1;
+  min-height: 0; /* Vital para que el contenido no desborde */
+  align-items: stretch;
+}
+
+.map-wrapper {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+}
+
+.items-wrapper {
+  min-width: 240px;
+  max-width: 280px;
+  display: flex;
+  min-height: 0;
+}
+
+.log-wrapper {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Forzamos a que los componentes dentro de los wrappers midan 100% */
+.map-wrapper > *,
+.items-wrapper > *,
+.log-wrapper > * {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- FILA INFERIOR --- */
+.battle-bottom-section {
+  display: grid;
+  grid-template-columns: 1.1fr 1.3fr 0.8fr; /* Proporciones: Acciones | Stats | Huir */
+  gap: 15px;
+  min-height: 220px;
+  padding: 10px;
+  align-items: stretch;
+}
+
+@media (max-width: 1200px) {
+  .battle-top-section {
+    grid-template-columns: minmax(260px, 1.4fr) minmax(220px, 280px) minmax(
+        220px,
+        1fr
+      );
+  }
+}
+
+@media (max-width: 980px) {
+  .battle-top-section {
+    grid-template-columns: 1fr;
+  }
+
+  .items-wrapper,
+  .log-wrapper,
+  .map-wrapper {
+    min-width: 0;
+  }
+
+  .battle-bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+.actions-wrapper,
+.stats-wrapper,
+.flee-wrapper {
+  min-height: 0;
+}
+
+.actions-wrapper > *,
+.stats-wrapper > *,
+.flee-wrapper > * {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- ESTILO DEL BOTÓN HUIR --- */
+.flee-btn {
+  width: 100%;
+  height: 100%;
+  background-color: #e3342f;
+  color: black;
+  border: 4px solid black;
+  border-radius: 12px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

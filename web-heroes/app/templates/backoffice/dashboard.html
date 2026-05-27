@@ -1,0 +1,13 @@
+{% extends "backoffice/base.html" %}
+
+{% block content %}
+  <section class="cards">
+    {% for card in cards %}
+      <a class="card metric-card" href="/admin/{{ card.name }}">
+        <span class="metric-label">{{ card.label }}</span>
+        <strong class="metric-value">{{ card.count }}</strong>
+        <span class="metric-link">Gestionar tabla</span>
+      </a>
+    {% endfor %}
+  </section>
+{% endblock %}

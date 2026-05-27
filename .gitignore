@@ -1,0 +1,43 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.zed/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Node / frontend
+node_modules/
+frontend-web-heroes/node_modules/
+frontend-web-heroes/dist/
+
+# Python / backend
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+web-heroes/.venv/
+web-heroes/venv/
+
+# Local databases
+*.sqlite
+*.sqlite3
+*.db
+web-heroes/data/
+
+# Docker / local runtime
+docker-compose.override.yml

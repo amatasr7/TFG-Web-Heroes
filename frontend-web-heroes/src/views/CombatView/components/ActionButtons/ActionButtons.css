@@ -1,0 +1,59 @@
+/* Action Buttons Component Styles */
+.action-buttons {
+  display: grid;
+  /* Creamos exactamente 2 columnas y 2 filas */
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr; 
+  gap: 12px;
+  flex: 1;
+  background: #3b82f6; /* El azul más vibrante de tu captura */
+  border: 4px solid white; /* Borde blanco grueso del diseño */
+  border-radius: 12px;
+  padding: 15px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* IMPORTANTE: Si en tu JSX tienes <div className="buttons-left">, 
+   tienes que quitar esos contenedores o ponerles 'display: contents' 
+   para que no interfieran con el grid principal.
+*/
+.buttons-left,
+.buttons-right {
+  display: contents; 
+}
+
+.action-btn {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 3px solid #1d4ed8;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem; /* Un poco más grande para que sea legible */
+  color: #1d4ed8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 0px rgba(0, 0, 0, 0.1); /* Efecto de botón sólido */
+}
+
+.action-btn:hover {
+  background: #eff6ff;
+  transform: scale(1.02);
+}
+
+.action-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+/* Ajuste para que en móviles se apilen si es necesario */
+@media (max-width: 600px) {
+  .action-buttons {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+}

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} - Web Heroes</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/backoffice.css') }}">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/admin">
+      <span class="brand-mark">WH</span>
+      <span>
+        <strong>Web Heroes</strong>
+        <small>Backoffice</small>
+      </span>
+    </a>
+
+    <nav class="nav">
+      <a class="nav-link {% if not active_table %}active{% endif %}" href="/admin">Resumen</a>
+      {% for table_name, table in tables.items() %}
+        <a class="nav-link {% if active_table == table_name %}active{% endif %}" href="/admin/{{ table_name }}">
+          {{ table.label }}
+        </a>
+      {% endfor %}
+    </nav>
+  </aside>
+
+  <div class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Backoffice</p>
+        <h1>{{ title }}</h1>
+      </div>
+      <a class="button" href="/docs">API Docs</a>
+    </header>
+
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+.turn-order {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.88);
+  border: 3px solid #8b6f47;
+  border-radius: 15px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.turn-order h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.turn-order-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.turn-order-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f9f9f9;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  min-width: 120px;
+}
+
+.turn-order-card.hero {
+  background: linear-gradient(135deg, #d9f7ff 0%, #9ad7ff 100%);
+}
+
+.turn-order-card.enemy {
+  background: linear-gradient(135deg, #ffe1e1 0%, #ffb3b3 100%);
+}
+
+.turn-order-index {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+  color: #333;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.turn-order-name {
+  font-weight: 700;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 900px) {
+  .turn-order-list {
+    justify-content: center;
+  }
+}

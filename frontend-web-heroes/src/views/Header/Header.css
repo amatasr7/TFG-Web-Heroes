@@ -1,0 +1,63 @@
+/* Header Component Styles */
+.header {
+  background: linear-gradient(90deg, #d4a574 0%, #c9955a 100%);
+  padding: 12px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-bottom: 3px solid #8b6f47;
+  flex-shrink: 0;
+}
+
+.header-nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.header-btn {
+  background: white;
+  border: 2px solid #8b6f47;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.header-btn:hover {
+  background: #f0f0f0;
+  transform: scale(1.05);
+}
+
+.header-btn.logout {
+  margin-left: auto;
+  background: #ff6b6b;
+  color: white;
+  border-color: #ff5252;
+}
+
+.header-btn.logout:hover {
+  background: #ff5252;
+}
+
+.header-resources {
+  background: white;
+  border: 2px solid #8b6f47;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #333;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .header-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
