@@ -122,3 +122,16 @@ class HeroItem(Base):
     hero: Mapped[Hero] = relationship(back_populates="hero_items")
     item: Mapped[Item] = relationship(back_populates="hero_items")
     item_type: Mapped[ItemType] = relationship()
+
+
+class Mission(Base):
+    __tablename__ = "missions"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str] = mapped_column(String(1000))
+    enemy_ids: Mapped[list[int]] = mapped_column(JSON, default=[])
+    xp_reward: Mapped[int] = mapped_column(Integer, default=100)
+    gold_reward: Mapped[int] = mapped_column(Integer, default=50)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

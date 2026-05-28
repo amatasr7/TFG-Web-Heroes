@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import "./CombatView.css";
 import BattleScreen from "./components/BattleScreen/BattleScreen";
+// Importamos el sprite del encargado del gremio (ajusta la ruta y el archivo a tu gusto)
+import spriteContratista from "../../assets/sprites/Icons_14.png";
 
 export default function CombatView() {
-  // Estado para guardar la misión que el jugador acepta
   const [activeMission, setActiveMission] = useState(null);
 
-  // Lista de misiones de prueba (puedes ampliarla o modificarla a tu gusto)
   const misionesDisponibles = [
     {
       id: 1,
@@ -31,8 +31,6 @@ export default function CombatView() {
     },
   ];
 
-  // SI EL USUARIO HA ACEPTADO UNA MISIÓN:
-  // Renderizamos la pantalla de combate real pasándole la misión actual y una función para volver.
   if (activeMission) {
     return (
       <BattleScreen
@@ -42,48 +40,84 @@ export default function CombatView() {
     );
   }
 
-  // SI NO HAY MISIÓN SELECCIONADA:
-  // Renderizamos el Tablón de Anuncios medieval/retro
   return (
     <div className="tablon-wrapper">
       <div className="tablon-container">
-        <h2 className="tablon-titulo">📜 TABLÓN DE ANUNCIOS DEL GREMIO 📜</h2>
-        <p className="tablon-subtitulo">
-          Elige un contrato firmado con sangre para iniciar la batalla
-        </p>
-
-        <div className="tablon-cuadricula">
-          {misionesDisponibles.map((mision) => (
-            <div key={mision.id} className="mision-card">
-              <h3 className="mision-card-titulo">{mision.titulo}</h3>
-
-              <div className="mision-detalles">
-                <p>
-                  ⚠️ Enemigo:{" "}
-                  <span className="mision-val">{mision.enemigo}</span>
-                </p>
-                <p>
-                  ⚡ Dificultad:{" "}
-                  <span
-                    className={`mision-diff diff-${mision.dificultad.toLowerCase()}`}
-                  >
-                    {mision.dificultad}
-                  </span>
-                </p>
-                <p>
-                  💰 Recompensa:{" "}
-                  <span className="mision-oro">{mision.recompensa} oro</span>
-                </p>
-              </div>
-
-              <button
-                className="tablon-btn"
-                onClick={() => setActiveMission(mision)}
-              >
-                Aceptar Contrato
-              </button>
+        {/* FILA SUPERIOR: CONTRATISTA Y TABLÓN */}
+        <div className="tablon-fila-superior">
+          {/* PANEL IZQUIERDO: RETRATO DEL ENCARGADO */}
+          <div className="tablon-panel-contratista">
+            <div className="tablon-marco-retrato">
+              <img
+                src={spriteContratista}
+                alt="Contratista del Gremio"
+                className="tablon-retrato-img"
+              />
             </div>
-          ))}
+          </div>
+
+          {/* PANEL DERECHO: EL TABLÓN DE MADERA CON PERGAMINOS */}
+          <div className="tablon-panel-misiones">
+            <h2 className="tablon-titulo">
+              Recompensas ofrecidas por El Gremio
+            </h2>
+            <div className="tablon-cuadricula">
+              {misionesDisponibles.map((mision) => (
+                <div key={mision.id} className="mision-card">
+                  <h3 className="mision-card-titulo">{mision.titulo}</h3>
+
+                  <div className="mision-detalles">
+                    <p>
+                      Enemigo:{" "}
+                      <span className="mision-val">{mision.enemigo}</span>
+                    </p>
+                    <p>
+                      Dificultad:{" "}
+                      <span
+                        className={`mision-diff diff-${mision.dificultad.toLowerCase()}`}
+                      >
+                        {mision.dificultad}
+                      </span>
+                    </p>
+                    <p>
+                      Recompensa:{" "}
+                      <span className="mision-oro">
+                        {mision.recompensa} oro
+                      </span>
+                    </p>
+                  </div>
+
+                  <button
+                    className="tablon-btn"
+                    onClick={() => setActiveMission(mision)}
+                  >
+                    Aceptar Contrato
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* FILA INFERIOR: TEXTO DE DIÁLOGO Y PANEL DE CONTROL SIMÉTRICO */}
+        <div className="tablon-fila-inferior">
+          {/* DIÁLOGO DEL CONTRATISTA */}
+          <div className="tablon-panel-texto">
+            <p className="tablon-texto-titulo">Contratista del Gremio</p>
+            <p className="tablon-texto-sub">
+              ¿Te atreves con alguna recompensa, viajero?
+            </p>
+          </div>
+
+          {/* PANEL DERECHO INFERIOR (Simétrico al de la tienda, libre para medallas o stats) */}
+          <div className="tablon-panel-controles">
+            <div className="tablon-bloque-decorativo">
+              <span className="tablon-decorativo-etiqueta">
+                Rango del Gremio
+              </span>
+              <span className="tablon-decorativo-valor">FAMA: 0 ★</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

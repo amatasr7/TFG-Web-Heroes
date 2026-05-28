@@ -1,55 +1,156 @@
+/* Importamos la fuente retro idéntica a la tienda */
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
 /* --- Contenedor general del Tablón --- */
 .tablon-wrapper {
-  padding: 40px 24px;
-  /* 1. Unimos un tinte oscuro translúcido y tu nueva imagen de fondo */
-  background:
-    linear-gradient(rgba(15, 15, 30, 0.4), rgba(15, 15, 30, 0.4)),
-    url("./components/mission-board-background.png");
+  padding: 24px;
+  background-image: url("./components/backgrounds/tavern-background.jpg");
   background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  min-height: 100%;
+  color: #e2e8f0;
+  min-height: 100vh;
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  letter-spacing: 0.8px;
   box-sizing: border-box;
 }
 
 .tablon-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  text-align: center;
 }
 
-.tablon-titulo {
-  font-size: 36px;
-  color: #fbbf24; /* Dorado RPG */
-  text-shadow: 3px 3px 0px #000;
-  margin-bottom: 8px;
-  letter-spacing: 2px;
+/* --- Layout de Filas Simétricas --- */
+.tablon-fila-superior {
+  display: flex;
+  gap: 24px;
+  height: 450px;
 }
 
-.tablon-subtitulo {
-  font-size: 20px;
-  color: #94a3b8;
-  margin-bottom: 40px;
-}
-
-/* --- Cuadrícula de misiones al estilo "Pergamino Clavado" --- */
-.tablon-cuadricula {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+.tablon-fila-inferior {
+  display: flex;
   gap: 24px;
 }
 
+/* --- Bloque Izquierdo: Retrato del Contratista (Estilo Vendedor) --- */
+.tablon-panel-contratista {
+  position: relative;
+  overflow: hidden;
+  width: 33.33%;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(4px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tablon-panel-contratista::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("./components/backgrounds/long-shield-with-two-sword-crossed-svgrepo-com.svg");
+  background-size: 92%;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.14;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+  z-index: 0;
+}
+.tablon-panel-contratista:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.7);
+}
+/* --- Marco del Retrato (Pixel Art con Borde Dorado RPG) --- */
+.tablon-marco-retrato {
+  background-color: #0f0f1e;
+  border: 4px solid #fbbf24;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.tablon-retrato-img {
+  width: 180px;
+  height: 180px;
+  image-rendering: pixelated;
+  image-rendering: -crisp-edges;
+  object-fit: contain;
+}
+
+/* --- Bloque Derecho: El Tablón Físico con Madera Animada --- */
+.tablon-panel-misiones {
+  width: 66.66%;
+  /* Inyectamos la madera real pero respetando las sombras del inventario */
+  background:
+    linear-gradient(rgba(15, 15, 30, 0.5), rgba(15, 15, 30, 0.5)),
+    url("./components/backgrounds/mission-board-background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  padding: 24px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tablon-panel-misiones:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.7);
+}
+
+.tablon-titulo {
+  font-size: 26px;
+  color: #fbbf24;
+  text-shadow: 2px 2px 0px #000;
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 800;
+}
+
+/* --- Cuadrícula de Pergaminos --- */
+.tablon-cuadricula {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* Tarjetas simulando pergaminos oscuros sobre la madera */
 .mision-card {
-  background: rgba(24, 24, 37, 0.9);
-  border: 3px solid #475569;
-  border-radius: 6px;
-  padding: 20px;
+  background: rgba(
+    15,
+    15,
+    30,
+    0.95
+  ); /* Contraste opaco alto para legibilidad */
+  border: 2px solid #475569;
+  border-radius: 4px;
+  padding: 16px;
   box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s;
 }
 
 .mision-card:hover {
@@ -57,40 +158,39 @@
 }
 
 .mision-card-titulo {
-  font-size: 26px;
-  color: #f1f5f9;
+  font-size: 24px;
+  color: #fbbf24;
   border-bottom: 2px dashed #475569;
-  padding-bottom: 10px;
-  margin-top: 0;
+  padding-bottom: 8px;
+  margin: 0;
+  font-weight: 800;
 }
 
 .mision-detalles {
   text-align: left;
-  font-size: 22px;
-  margin: 20px 0;
+  font-size: 22px; /* Escalado para la fuente VT323 */
+  margin: 16px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .mision-detalles p {
   margin: 0;
   color: #cbd5e1;
 }
-
 .mision-val {
   color: #f1f5f9;
 }
-
 .mision-oro {
   color: #fbbf24;
   font-weight: bold;
 }
 
-/* Colores dinámicos para las dificultades */
+/* Dificultades */
 .mision-diff {
   font-weight: bold;
-  padding: 2px 6px;
+  padding: 2px 4px;
   border-radius: 4px;
 }
 .diff-fácil {
@@ -104,30 +204,108 @@
   text-shadow: 1px 1px 0 #000;
 }
 
-/* --- Botón Retro para Aceptar Contratos --- */
+/* --- Botón de Contrato (Estilo Botón Comprar de la Tienda) --- */
 .tablon-btn {
   width: 100%;
-  min-height: 40px;
-  font-family: inherit;
+  min-height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
   font-size: 22px;
-  background: #1e293b;
-  border: 2px solid #64748b;
-  color: #e2e8f0;
+
+  /* Clonamos la estética del botón destacado dorado */
+  border: 2px solid #fbbf24;
+  background: #fbbf24;
+  color: #0f0f1e;
+  font-weight: 800;
   border-radius: 4px;
   cursor: pointer;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
-  transition: all 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 }
 
 .tablon-btn:hover {
-  background: #334155;
-  border-color: #94a3b8;
+  background: #f59e0b;
 }
 
 .tablon-btn:active {
   transform: translate(2px, 2px);
   box-shadow: none;
-  background: #fbbf24;
-  color: #0f0f1e;
-  border-color: #fbbf24;
+}
+
+/* --- Fila Inferior: Cuadro de Texto del Diálogo --- */
+.tablon-panel-texto {
+  width: 33.33%;
+  padding: 24px;
+  min-height: 120px;
+  box-sizing: border-box;
+
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(4px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tablon-panel-texto:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.7);
+}
+
+.tablon-texto-titulo {
+  font-size: 24px;
+  margin-top: 0;
+  margin-bottom: 4px;
+  color: #fbbf24;
+}
+
+.tablon-texto-sub {
+  color: #94a3b8;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* --- Fila Inferior Derecha: Estadísticas del Gremio (Estilo Bloque Dinero) --- */
+.tablon-panel-controles {
+  width: 66.66%;
+  display: flex;
+}
+
+.tablon-bloque-decorativo {
+  flex: 1;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(4px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tablon-bloque-decorativo:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.7);
+}
+
+.tablon-decorativo-etiqueta {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.tablon-decorativo-valor {
+  font-size: 32px;
+  color: #fbbf24;
+  text-shadow: 2px 2px 0px #000000;
+  font-weight: bold;
 }
