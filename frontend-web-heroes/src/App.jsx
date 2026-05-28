@@ -5,10 +5,8 @@ import ShopView from "./views/ShopView/ShopView";
 import CombatView from "./views/CombatView/CombatView";
 
 export default function App() {
-  // El "cerebro" que sabe en qué pantalla estamos
   const [currentView, setCurrentView] = useState("heroes");
 
-  // Elige qué cuerpo renderizar según el estado
   const renderView = () => {
     switch (currentView) {
       case "heroes":
@@ -23,10 +21,13 @@ export default function App() {
   };
 
   return (
-    <div className="shell">
+    <div
+      className="shell"
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    >
       <Header currentView={currentView} setCurrentView={setCurrentView} />
 
-      <main className="content" style={{ marginTop: "20px" }}>
+      <main className="content" style={{ flexGrow: 1 }}>
         {renderView()}
       </main>
     </div>

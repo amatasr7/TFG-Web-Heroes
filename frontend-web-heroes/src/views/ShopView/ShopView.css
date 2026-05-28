@@ -1,0 +1,255 @@
+/* Importamos la fuente retro */
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+/* --- Contenedor general de la tienda --- */
+.tienda-wrapper {
+  padding: 24px;
+  background-image: url("./components/shop-background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #e2e8f0;
+  min-height: 100vh;
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  letter-spacing: 0.8px;
+}
+
+.tienda-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* --- Layout de Filas --- */
+.tienda-fila-superior {
+  display: flex;
+  gap: 24px;
+  height: 450px;
+}
+
+.tienda-fila-inferior {
+  display: flex;
+  gap: 24px;
+}
+
+/* --- Bloques base de paneles (Estilo Backoffice) --- */
+.tienda-panel-vendedor,
+.tienda-panel-inventarios,
+.tienda-panel-texto,
+.tienda-bloque-dinero {
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(4px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tienda-panel-vendedor:hover,
+.tienda-panel-inventarios:hover,
+.tienda-panel-texto:hover,
+.tienda-bloque-dinero:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.7);
+}
+
+.tienda-panel-vendedor {
+  width: 33.33%;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tienda-panel-inventarios {
+  width: 66.66%;
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+}
+
+/* --- Marco del Retrato (Pixel Art) --- */
+.tienda-marco-retrato {
+  background-color: #0f0f1e;
+  border: 4px solid #fbbf24; /* Cambiado a Dorado RPG */
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tienda-retrato-img {
+  width: 180px;
+  height: 180px;
+  image-rendering: pixelated;
+  image-rendering: -crisp-edges;
+  object-fit: contain;
+}
+
+/* --- Sección de Inventarios --- */
+.tienda-columna-inventario {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tienda-inventario-titulo {
+  color: #fbbf24;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-weight: 800;
+  font-size: 24px;
+}
+
+.tienda-inventario-cuadricula {
+  background: rgba(15, 15, 30, 0.9);
+  border: 2px solid #475569;
+  border-radius: 4px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  flex-grow: 1;
+  align-content: start;
+}
+
+.tienda-slot {
+  aspect-ratio: 1 / 1;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.tienda-slot:hover {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.tienda-divisor-vertical {
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  align-self: stretch;
+}
+
+/* --- Fila Inferior: Texto del diálogo --- */
+.tienda-panel-texto {
+  width: 33.33%;
+  padding: 24px;
+  min-height: 120px;
+  box-sizing: border-box;
+}
+
+.tienda-texto-titulo {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.tienda-texto-sub {
+  color: #94a3b8;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* --- Fila Inferior: Dinero y Controles --- */
+.tienda-panel-controles {
+  width: 66.66%;
+  display: flex;
+  gap: 24px;
+}
+
+.tienda-bloque-dinero {
+  flex: 1;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tienda-dinero-etiqueta {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.tienda-dinero-valor-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tienda-dinero-cantidad {
+  font-size: 32px;
+  color: #fbbf24;
+  text-shadow: 2px 2px 0px #000000;
+}
+
+.tienda-dinero-icono {
+  font-size: 24px;
+}
+
+.tienda-bloque-botones {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Botones base herencia backoffice */
+.tienda-btn {
+  flex: 1;
+  min-height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 22px;
+  border: 2px solid #94a3b8;
+  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.tienda-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+/* Botón Primary */
+.tienda-btn-comprar {
+  border-color: #fbbf24;
+  background: #fbbf24;
+  color: #0f0f1e;
+  font-weight: 800;
+}
+
+.tienda-btn-comprar:hover {
+  background: #f59e0b;
+}
+
+/* Botón Secundario / Cancelar */
+.tienda-btn-vender {
+  border-color: #94a3b8;
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+}
+
+.tienda-btn-vender:hover {
+  background: rgba(51, 65, 85, 0.8);
+}

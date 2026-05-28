@@ -1,0 +1,133 @@
+/* --- Contenedor general del Tablón --- */
+.tablon-wrapper {
+  padding: 40px 24px;
+  /* 1. Unimos un tinte oscuro translúcido y tu nueva imagen de fondo */
+  background:
+    linear-gradient(rgba(15, 15, 30, 0.4), rgba(15, 15, 30, 0.4)),
+    url("./components/mission-board-background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.tablon-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.tablon-titulo {
+  font-size: 36px;
+  color: #fbbf24; /* Dorado RPG */
+  text-shadow: 3px 3px 0px #000;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.tablon-subtitulo {
+  font-size: 20px;
+  color: #94a3b8;
+  margin-bottom: 40px;
+}
+
+/* --- Cuadrícula de misiones al estilo "Pergamino Clavado" --- */
+.tablon-cuadricula {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.mision-card {
+  background: rgba(24, 24, 37, 0.9);
+  border: 3px solid #475569;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s;
+}
+
+.mision-card:hover {
+  border-color: #fbbf24;
+}
+
+.mision-card-titulo {
+  font-size: 26px;
+  color: #f1f5f9;
+  border-bottom: 2px dashed #475569;
+  padding-bottom: 10px;
+  margin-top: 0;
+}
+
+.mision-detalles {
+  text-align: left;
+  font-size: 22px;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mision-detalles p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.mision-val {
+  color: #f1f5f9;
+}
+
+.mision-oro {
+  color: #fbbf24;
+  font-weight: bold;
+}
+
+/* Colores dinámicos para las dificultades */
+.mision-diff {
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.diff-fácil {
+  color: #4ade80;
+}
+.diff-media {
+  color: #f97316;
+}
+.diff-difícil {
+  color: #ef4444;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* --- Botón Retro para Aceptar Contratos --- */
+.tablon-btn {
+  width: 100%;
+  min-height: 40px;
+  font-family: inherit;
+  font-size: 22px;
+  background: #1e293b;
+  border: 2px solid #64748b;
+  color: #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  transition: all 0.1s ease;
+}
+
+.tablon-btn:hover {
+  background: #334155;
+  border-color: #94a3b8;
+}
+
+.tablon-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+  background: #fbbf24;
+  color: #0f0f1e;
+  border-color: #fbbf24;
+}

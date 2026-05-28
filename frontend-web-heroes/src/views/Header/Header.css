@@ -1,63 +1,163 @@
-/* Header Component Styles */
+/* --- Contenedor Principal del Header --- */
 .header {
-  background: linear-gradient(90deg, #d4a574 0%, #c9955a 100%);
-  padding: 12px 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-bottom: 3px solid #8b6f47;
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 0px rgba(0, 0, 0, 0.6);
+  border-bottom: 2px solid #475569;
+  padding: 12px 24px;
   flex-shrink: 0;
+  font-family: "VT323", monospace;
+  position: relative;
+  z-index: 100; /* Asegura que el menú quede por encima de la tienda */
 }
 
 .header-nav {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
 }
 
+.nav-group-left,
+.nav-group-right {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* --- Botones Principales (Estilo Retro) --- */
 .header-btn {
-  background: white;
-  border: 2px solid #8b6f47;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: bold;
-  font-size: 12px;
-  color: #333;
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 22px;
+  font-family: inherit;
+  border: 2px solid #94a3b8;
+  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
   cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  transition: all 0.1s ease;
 }
 
-.header-btn:hover {
-  background: #f0f0f0;
-  transform: scale(1.05);
+/* Efecto hover general */
+.header-btn:hover:not(.active) {
+  background: rgba(51, 65, 85, 0.9);
 }
 
-.header-btn.logout {
-  margin-left: auto;
-  background: #ff6b6b;
-  color: white;
-  border-color: #ff5252;
+/* Efecto click (hundirse) y Estado Activo (pulsado permanentemente) */
+.header-btn:active,
+.header-btn.active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
-.header-btn.logout:hover {
-  background: #ff5252;
-}
-
-.header-resources {
-  background: white;
-  border: 2px solid #8b6f47;
-  border-radius: 8px;
-  padding: 8px 16px;
+/* Color especial para la pestaña activa */
+.header-btn.active {
+  background: #fbbf24; /* Dorado JRPG */
+  border-color: #fbbf24;
+  color: #0f0f1e;
   font-weight: bold;
-  font-size: 12px;
-  color: #333;
-  margin-left: auto;
-  margin-right: 10px;
 }
 
-@media (max-width: 768px) {
-  .header-btn {
-    padding: 6px 10px;
-    font-size: 11px;
-  }
+/* --- Recursos --- */
+.header-resources {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #475569;
+  border-radius: 4px;
+  min-height: 38px;
+}
+
+.resource-value {
+  font-size: 24px;
+  color: #fbbf24;
+  font-weight: bold;
+  text-shadow: 2px 2px 0px #000000;
+}
+
+.resource-icon {
+  font-size: 18px;
+}
+
+/* --- Menú Hamburguesa y Desplegable --- */
+.user-menu-container {
+  position: relative;
+}
+
+.hamburger-btn {
+  padding: 0 12px;
+  font-size: 24px;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 12px;
+  background: rgba(15, 15, 30, 0.95);
+  border: 2px solid #475569;
+  border-radius: 4px;
+  padding: 8px;
+  min-width: 200px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dropdown-header {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-username {
+  color: #fbbf24;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.dropdown-header small {
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+.dropdown-divider {
+  height: 2px;
+  background: #475569;
+  margin: 4px 0;
+}
+
+.dropdown-item {
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  font-size: 20px;
+  text-align: left;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 2px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.dropdown-item:hover {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8; /* Azul cursor de selección estilo backoffice */
+}
+
+/* Botón especial para cerrar sesión */
+.dropdown-item.logout {
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.dropdown-item.logout:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
 }
