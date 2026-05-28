@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./Header.css";
+// Importa aquí tu logo exportado en PNG
+import logoWebHeroes from "./logo-web-heroes2.png";
 
 export default function Header({ currentView, setCurrentView }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -7,8 +9,17 @@ export default function Header({ currentView, setCurrentView }) {
   return (
     <header className="header">
       <nav className="header-nav">
-        {/* GRUPO IZQUIERDO: Navegación Principal */}
+        {/* GRUPO IZQUIERDO: Navegación Principal y Logo */}
         <div className="nav-group-left">
+          {/* Contenedor del Logo */}
+          <div className="header-logo-container">
+            <img
+              src={logoWebHeroes}
+              alt="Web Heroes Logo"
+              className="header-logo-img"
+            />
+          </div>
+
           <button
             className={`header-btn ${currentView === "shop" ? "active" : ""}`}
             onClick={() => setCurrentView("shop")}

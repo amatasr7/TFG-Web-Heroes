@@ -161,3 +161,28 @@
   background: rgba(239, 68, 68, 0.15);
   color: #fca5a5;
 }
+
+/* Contenedor del logo: le damos el espacio necesario */
+.header-logo-container {
+  width: 130px; /* Espacio reservado para que no se solape con el botón de Tienda */
+  position: relative;
+  height: 48px;
+}
+
+/* Imagen del logo: ampliada y centrada */
+.header-logo-img {
+  height: 58px; /* Tamaño mayor para que se vea bien */
+  width: auto;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* Filtros para mantener el aspecto nítido de pixel art */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
+  /* Sombra para despegarlo del fondo */
+  filter: drop-shadow(0px 2px 0px rgba(0, 0, 0, 0.5));
+  z-index: 10;
+}
