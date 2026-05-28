@@ -1,0 +1,257 @@
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+/* --- Contenedor Principal --- */
+.heroe-wrapper {
+  padding: 24px;
+  background-image: url("./components/armory-background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #e2e8f0;
+  height: 100vh;
+  overflow-y: auto;
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  letter-spacing: 0.8px;
+  box-sizing: border-box;
+}
+
+.heroe-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.heroe-titulo {
+  font-size: 40px;
+  color: #fbbf24;
+  margin: 0;
+  text-shadow: 3px 3px 0px #000000;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+/* --- Layout Estricto en 3 Columnas Soportado por Flex --- */
+.heroe-layout-tres-columnas {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+}
+
+.heroe-columna {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0; /* Evita que los flex-items rompan el layout horizontal */
+}
+
+/* --- Bloques base de la interfaz JRPG --- */
+.heroe-bloque {
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroe-bloque-superior {
+  height: 280px; /* Forzamos altura idéntica en los tres paneles de arriba */
+}
+
+.heroe-bloque-inferior {
+  height: 340px; /* Forzamos altura idéntica en los tres paneles de abajo */
+}
+
+.heroe-bloque-titulo {
+  font-size: 24px;
+  color: #fbbf24;
+  margin-top: 0;
+  margin-bottom: 16px;
+  text-shadow: 2px 2px 0px #000000;
+  border-bottom: 2px solid #374151;
+  padding-bottom: 6px;
+}
+
+/* ================= COMPONENTES COLUMNA IZQUIERDA ================= */
+.heroe-cuadricula-equipo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.heroe-slot-equipo {
+  display: flex;
+  justify-content: space-between;
+  background: #1e293b;
+  border: 2px solid #475569;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.heroe-slot-etiqueta {
+  color: #94a3b8;
+  font-size: 18px;
+}
+
+.heroe-slot-item {
+  color: #f8fafc;
+}
+
+/* Cuadrícula de inventario idéntica a la de la tienda */
+.heroe-inventario-cuadricula {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.heroe-slot-vacio {
+  aspect-ratio: 1;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px dashed #475569;
+  border-radius: 4px;
+}
+
+/* ================= COMPONENTES COLUMNA CENTRAL ================= */
+.heroe-centrado-retrato {
+  justify-content: center;
+  align-items: center;
+}
+
+.heroe-marco-retrato {
+  width: 160px;
+  height: 160px;
+  background: #111827;
+  border: 2px solid #fbbf24;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroe-retrato-img {
+  width: auto;
+  height: 85%;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+/* Lista de Atributos */
+.heroe-stats-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.heroe-stat-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 22px;
+}
+
+.heroe-stat-val {
+  color: #f8fafc;
+}
+
+.font-amarillo {
+  color: #fbbf24;
+}
+.font-verde {
+  color: #10b981;
+}
+.font-azul {
+  color: #3b82f6;
+}
+
+/* ================= COMPONENTES COLUMNA DERECHA ================= */
+.heroe-menu-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+  height: 100%;
+}
+
+.heroe-btn-accion {
+  width: 100%;
+  min-height: 40px;
+  font: inherit;
+  font-size: 20px;
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 2px solid #4b5563;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+}
+
+.heroe-btn-accion:hover {
+  background: #334155;
+  border-color: #64748b;
+}
+
+.heroe-btn-accion.btn-subir {
+  color: #fbbf24;
+  border-color: #fbbf24;
+}
+
+.heroe-btn-accion:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+/* Lista Scrollable de Personajes abajo a la derecha */
+.heroe-lista-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.heroe-item-seleccion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.heroe-item-seleccion:hover {
+  background: #334155;
+}
+
+.heroe-item-activo {
+  background: #1e1b4b;
+  border-color: #fbbf24;
+  box-shadow: inset 0 0 6px rgba(251, 191, 36, 0.2);
+}
+
+.heroe-item-nombre {
+  font-size: 22px;
+  color: #f8fafc;
+  display: block;
+}
+
+.heroe-item-clase {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.heroe-item-lvl {
+  font-size: 20px;
+  color: #fbbf24;
+}
