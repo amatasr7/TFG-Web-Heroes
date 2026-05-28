@@ -309,3 +309,92 @@
   text-shadow: 2px 2px 0px #000000;
   font-weight: bold;
 }
+/* --- Ajustes en la tarjeta para la botonera doble --- */
+.mision-card-botones {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: auto; /* Empuja los botones siempre al fondo de la card */
+}
+
+/* Diferenciación visual sutil para el botón de detalles */
+.tablon-btn.btn-detalles {
+  background: #334155;
+  border-color: #475569;
+}
+
+.tablon-btn.btn-detalles:hover {
+  background: #475569;
+  border-color: #64748b;
+}
+
+/* --- OVERLAY Y VENTANA MODAL JRPG --- */
+.tablon-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(5, 5, 10, 0.75); /* Fondo oscuro translúcido */
+  backdrop-filter: blur(6px); /* Desenfoque de interfaz RPG */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999; /* Por encima de todo */
+}
+
+.tablon-modal-content {
+  width: 500px;
+  max-width: 90%;
+  padding: 32px;
+  background: rgba(15, 15, 30, 0.95); /* Mismo azul marino del backoffice */
+  border: 2px solid #4b5563;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tablon-modal-titulo {
+  font-size: 28px;
+  color: #fbbf24; /* Título amarillo/oro */
+  margin: 0;
+  text-shadow: 2px 2px 0px #000000;
+}
+
+.tablon-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Controlamos la división con espacios limpios */
+}
+
+.tablon-modal-info p {
+  margin: 0;
+}
+
+.tablon-modal-descripcion {
+  margin-top: 16px !important; /* Separación prudente sin usar barras divisorias */
+  color: #cbd5e1;
+  line-height: 1.4;
+  font-size: 19px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 14px;
+  border-radius: 4px;
+}
+
+.tablon-modal-botones {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.tablon-btn.btn-cerrar {
+  background: #991b1b; /* Tono rojizo retro para indicar salir/cerrar */
+  border-color: #b91c1c;
+}
+
+.tablon-btn.btn-cerrar:hover {
+  background: #b91c1c;
+  border-color: #dc2626;
+}
