@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./ShopView.css";
-import spriteMercader from "../../assets/sprites/Icons_15.png";
+import spriteMercader from "/sprites/Mercader.png";
 
 export default function ShopView() {
   const [oroJugador] = useState(150);

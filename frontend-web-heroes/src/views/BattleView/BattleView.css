@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 .root {
   font-family: "VT323", monospace;
-  background-image: url("./components/backgrounds/146Z_2107.w026.n002.565B.p1.565.jpg");
+  background-image: url("./components/backgrounds/combat-background.jpg");
   background-size: cover;
   min-height: 100vh;
   display: flex;

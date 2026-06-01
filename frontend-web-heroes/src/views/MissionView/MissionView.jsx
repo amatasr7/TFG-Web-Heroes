@@ -1,41 +1,69 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./MissionView.css";
 import BattleView from "../BattleView/BattleView";
-import spriteContratista from "../../assets/sprites/Icons_14.png";
+import spriteContratista from "/sprites/Contratista.png";
+
+const PAGE_SIZE = 3;
+
+function mapMissionFromApi(mission) {
+  const dificultad = mission.xp_reward < 150 ? "Fácil" : mission.xp_reward < 300 ? "Media" : "Difícil";
+  const enemigo = mission.enemy_ids.length
+    ? mission.enemy_ids.length === 1
+      ? `Enemigo ${mission.enemy_ids[0]}`
+      : `${mission.enemy_ids.length} enemigos`
+    : "Sin enemigos";
+
+  return {
+    id: mission.id,
+    titulo: mission.name,
+    descripcion: mission.description,
+    recompensa: mission.gold_reward,
+    enemigo,
+    dificultad,
+    enemy_ids: mission.enemy_ids,
+    xp_reward: mission.xp_reward,
+    gold_reward: mission.gold_reward,
+  };
+}
 
 export default function MissionView() {
   const [activeMission, setActiveMission] = useState(null);
   const [viewingDetails, setViewingDetails] = useState(null);
+  const [missions, setMissions] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const misionesDisponibles = [
-    {
-      id: 1,
-      titulo: "Plaga en el Sótano",
-      dificultad: "Fácil",
-      enemigo: "Rata Gigante",
-      recompensa: 50,
-      descripcion:
-        "El tabernero del 'Pony Pisador' se queja de ruidos extraños bajo los barriles de cerveza. Resulta que una rata de tamaño descomunal se ha asentado allí y está devorando los suministros de queso. ¡Sácala antes de que se beba todo el hidromiel!",
-    },
-    {
-      id: 2,
-      titulo: "Emboscada en el Camino",
-      dificultad: "Media",
-      enemigo: "Goblino Asaltante",
-      recompensa: 120,
-      descripcion:
-        "Varios comerciantes reportan que un pequeño grupo de goblins maliciosos ha montado una barricada en el camino del este. Asaltan a los carromatos usando flechas rudimentarias. Despeja la ruta comercial para restaurar el orden.",
-    },
-    {
-      id: 3,
-      titulo: "El Despertar del Dragón",
-      dificultad: "Difícil",
-      enemigo: "Cría de Dragón",
-      recompensa: 450,
-      descripcion:
-        "En las profundidades de las cavernas de azufre, un huevo ancestral ha eclosionado. Aunque es solo una cría, su aliento de fuego ya ha calcinado dos granjas cercanas. Es extremadamente peligrosa. Ve con tu mejor equipo.",
-    },
-  ];
+  useEffect(() => {
+    const fetchMissions = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/missions?page=${page}&page_size=${PAGE_SIZE}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error en el servidor: Código ${response.status}`);
+        }
+
+        const data = await response.json();
+        setMissions(data.missions.map(mapMissionFromApi));
+        setTotalPages(Math.max(1, Math.ceil(data.total / PAGE_SIZE)));
+      } catch (err) {
+        setError(err.message);
+        setMissions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMissions();
+  }, [page]);
+
+  const misionesDisponibles = missions;
 
   if (activeMission) {
     return (
@@ -67,6 +95,22 @@ export default function MissionView() {
             <h2 className="tablon-titulo">
               Recompensas ofrecidas por El Gremio
             </h2>
+            {isLoading && (
+              <div className="tablon-cargando">
+                <p>Cargando misiones desde la base de datos...</p>
+              </div>
+            )}
+            {error && (
+              <div className="tablon-error">
+                <p>Error cargando misiones:</p>
+                <p>{error}</p>
+              </div>
+            )}
+            {!isLoading && !error && misionesDisponibles.length === 0 && (
+              <div className="tablon-aviso">
+                <p>No hay misiones disponibles en este momento.</p>
+              </div>
+            )}
             <div className="tablon-cuadricula">
               {misionesDisponibles.map((mision) => (
                 <div key={mision.id} className="mision-card">
@@ -108,6 +152,23 @@ export default function MissionView() {
                   </button>
                 </div>
               ))}
+            </div>
+            <div className="pagination-controls">
+              <button
+                className="tablon-btn page-button"
+                onClick={() => setPage((current) => Math.max(current - 1, 1))}
+                disabled={page <= 1}
+              >
+                Anterior
+              </button>
+              <span className="page-info">Página {page} de {totalPages}</span>
+              <button
+                className="tablon-btn page-button"
+                onClick={() => setPage((current) => Math.min(current + 1, totalPages))}
+                disabled={page >= totalPages}
+              >
+                Siguiente
+              </button>
             </div>
           </div>
         </div>

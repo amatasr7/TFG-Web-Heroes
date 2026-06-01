@@ -37,47 +37,36 @@ export default function BattleView() {
   }
 
   return (
-    // FIX 2: position:relative para que el overlay de inventario se ancle bien
-    <div className="battle-view-container">
-      
-      {/* FIX 3: se pasan TODAS las props que BattleMap necesita */}
-      <div className="view-map">
-        <BattleMap
-          enemies={enemies}
-          heroes={heroes}
-          selectedEnemy={selectedEnemy}
-          onSelectEnemy={setSelectedEnemy}
-        />
-      </div>
+    <div className="root">
+      <div className="battle-view-container">
+        
+        <div className="view-map">
+          <BattleMap /* ...props */ />
+        </div>
 
-      {/* FIX 4: se pasa actors a TurnOrder */}
-      <div className="view-turns">
-        <TurnOrder actors={actors} />
-      </div>
+        <div className="view-turns">
+          <TurnOrder actors={actors} />
+        </div>
 
-      <div className="view-log">
-        <CombatLog logs={logs} />
-      </div>
+        <div className="view-log">
+          <CombatLog logs={logs} />
+        </div>
 
-      <div className="view-stats">
-        <CharacterStats character={character} />
-      </div>
+        <div className="view-stats">
+          <CharacterStats character={character} />
+        </div>
 
-      {/* FIX 5: se pasa onAction (no onOpenInventory) */}
-      <div className="view-actions">
-        <ActionButtons onAction={handleAction} />
-      </div>
+        <div className="view-actions">
+          <ActionButtons onAction={handleAction} />
+        </div>
 
-      {/* FIX 6: el inventario ocupa su celda del grid como panel permanente
-          o bien se muestra como overlay — elige el modo que prefieras.
-          Aquí usamos la celda del grid para respetar el boceto. */}
-      <div className="view-inventory-slot">
-        {isInventoryOpen
-          ? <Inventory onClose={() => setIsInventoryOpen(false)} />
-          : <div className="inventory-placeholder">Inventario</div>
-        }
+        <div className="view-inventory-slot">
+          {isInventoryOpen
+            ? <Inventory onClose={() => setIsInventoryOpen(false)} />
+            : <div className="inventory-placeholder">Inventario</div>
+          }
+        </div>
       </div>
-
     </div>
   );
 }

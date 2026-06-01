@@ -1,7 +1,5 @@
 import "./ActionButtons.css";
 
-// FIX: el componente recibe `onAction`, no `onOpenInventory`.
-// BattleView centraliza la lógica: cuando action === "items" abre el inventario.
 export default function ActionButtons({ onAction }) {
   return (
     <div className="action-buttons">
@@ -14,7 +12,6 @@ export default function ActionButtons({ onAction }) {
       <button className="action-btn" onClick={() => onAction("abilities")}>
         Habilidades
       </button>
-      {/* FIX: "Usar objeto" abre el inventario a través del handler central */}
       <button className="action-btn" onClick={() => onAction("items")}>
         Usar objeto
       </button>

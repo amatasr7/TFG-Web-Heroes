@@ -9,6 +9,7 @@ class HeroBase(BaseModel):
     user_id: int
     hero_class_id: int
     name: str
+    sprite_id: str
     hp_current: int = 10
     mp_current: int = 10
     energy_current: int = 10

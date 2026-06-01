@@ -237,6 +237,44 @@
   box-shadow: none;
 }
 
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.page-button {
+  min-width: 120px;
+}
+
+.page-info {
+  color: #cbd5e1;
+  font-weight: bold;
+}
+
+.tablon-cargando,
+.tablon-error,
+.tablon-aviso {
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background: rgba(15, 15, 30, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tablon-error {
+  border-color: #f87171;
+}
+
+.tablon-cargando p,
+.tablon-error p,
+.tablon-aviso p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
 /* --- Fila Inferior: Cuadro de Texto del Diálogo --- */
 .tablon-panel-texto {
   width: 33.33%;

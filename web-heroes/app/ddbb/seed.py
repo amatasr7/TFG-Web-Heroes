@@ -1,7 +1,7 @@
 import random
 
 from app.ddbb.database import SessionLocal
-from app.ddbb.models import Enemy, Hero, HeroClass, Item, ItemType, User
+from app.ddbb.models import Enemy, Hero, HeroClass, Item, ItemType, Mission, User
 
 HERO_CLASSES = [
     {
@@ -149,37 +149,65 @@ def seed_database() -> None:
                 )
             )
 
-        db.add_all(
-            [
-                Enemy(
-                    name="Guerrero enemigo",
-                    hero_class_id=classes["Guerrero"].id,
-                    level=1,
-                    hp_max=8,
-                    hp_current=8,
-                    xp_reward=20,
-                    is_boss=False,
-                ),
-                Enemy(
-                    name="Chaman enemigo",
-                    hero_class_id=classes["Mago"].id,
-                    level=1,
-                    hp_max=6,
-                    hp_current=6,
-                    xp_reward=25,
-                    is_boss=False,
-                ),
-                Enemy(
-                    name="Dragon rojo",
-                    hero_class_id=classes["Jefe"].id,
-                    level=5,
-                    hp_max=30,
-                    hp_current=30,
-                    xp_reward=100,
-                    is_boss=True,
-                ),
-            ]
-        )
+        enemies = [
+            Enemy(
+                name="Guerrero enemigo",
+                hero_class_id=classes["Guerrero"].id,
+                level=1,
+                hp_max=8,
+                hp_current=8,
+                xp_reward=20,
+                is_boss=False,
+            ),
+            Enemy(
+                name="Chaman enemigo",
+                hero_class_id=classes["Mago"].id,
+                level=1,
+                hp_max=6,
+                hp_current=6,
+                xp_reward=25,
+                is_boss=False,
+            ),
+            Enemy(
+                name="Dragon rojo",
+                hero_class_id=classes["Jefe"].id,
+                level=5,
+                hp_max=30,
+                hp_current=30,
+                xp_reward=100,
+                is_boss=True,
+            ),
+        ]
+
+        db.add_all(enemies)
+        db.flush()
+
+        mission_seeds = [
+            {
+                "name": "Plaga en el Sótano",
+                "description": "El tabernero del 'Pony Pisador' pide ayuda para limpiar las raíces de una plaga de roedores gigantes que han invadido su almacén.",
+                "enemy_ids": [enemies[0].id],
+                "xp_reward": 50,
+                "gold_reward": 55,
+            },
+            {
+                "name": "Emboscada en el Camino",
+                "description": "Un grupo de bandidos ha bloqueado la ruta hacia el este y la caravana necesita protección para llegar sana y salva.",
+                "enemy_ids": [enemies[1].id],
+                "xp_reward": 120,
+                "gold_reward": 105,
+            },
+            {
+                "name": "El Despertar del Dragón",
+                "description": "Una cría de dragón ha sido avistada cerca de la aldea y se teme que atraiga a otras bestias de fuego.",
+                "enemy_ids": [enemies[2].id],
+                "xp_reward": 450,
+                "gold_reward": 220,
+            },
+        ]
+
+        for mission_data in mission_seeds:
+            db.add(Mission(**mission_data))
 
         db.commit()
     finally:

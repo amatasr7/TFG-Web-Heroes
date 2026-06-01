@@ -1,11 +1,11 @@
 import React from "react";
-import spriteHeroeDefault from "../../../../assets/sprites/Icons_01.png";
+import spriteHeroeDefault from "/sprites/Pelirrojo.png";
 
 const EmblemaClaseFondo = ({ clase }) => {
   const claseNormalizada = clase.toLowerCase();
 
   // Guerrero -> Espada
-  if (claseNormalizada.includes("guerrero") || claseNormalizada.includes("paladín") || claseNormalizada.includes("paladin")) {
+  if (claseNormalizada.includes("guerrero")){
     return (
       <svg className="heroe-svg-emblema" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M50 10L54 32H46L50 10Z" fill="currentColor" />
@@ -17,7 +17,7 @@ const EmblemaClaseFondo = ({ clase }) => {
   }
 
   // Mago -> Bastón
-  if (claseNormalizada.includes("mago") || claseNormalizada.includes("maga") || claseNormalizada.includes("hechicero")) {
+  if (claseNormalizada.includes("mago")) {
     return (
       <svg className="heroe-svg-emblema" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M48 28H52V85H48V28Z" fill="currentColor" />
@@ -29,7 +29,7 @@ const EmblemaClaseFondo = ({ clase }) => {
   }
 
   // Pícaro -> Arco
-  if (claseNormalizada.includes("pícaro") || claseNormalizada.includes("picaro") || claseNormalizada.includes("cazador") || claseNormalizada.includes("arquero")) {
+  if (claseNormalizada.includes("pícaro")) {
     return (
       <svg className="heroe-svg-emblema" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M35 20C58 20 68 32 68 50C68 68 58 80 35 80" stroke="currentColor" strokeWidth="3.5" fill="none" strokeLinecap="round" />

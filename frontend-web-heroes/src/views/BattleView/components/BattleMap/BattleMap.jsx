@@ -1,17 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import "./BattleMap.css";
 
-// FIX: import.meta.glob puede devolver un objeto vacío si no hay imágenes.
-// Usamos try/catch para que el componente no explote en entornos sin assets.
-let backgroundImages = {};
-try {
-  backgroundImages = import.meta.glob(
-    "../../assets/backgrounds/*.{jpg,jpeg,png}",
-    { eager: true, import: "default" }
-  );
-} catch {
-  // Sin imágenes disponibles — el fondo quedará con el color de CSS
-}
+// 1. Importamos las imágenes explícitamente para que el empaquetador las reconozca
+import caveImg from "/backgrounds/Cave.jpeg";
+import desertImg from "/backgrounds/Desert.jpeg";
+import forestImg from "/backgrounds/Forest.jpeg";
+import mineshaftImg from "/backgrounds/Mineshaft.jpeg";
+import mountainImg from "/backgrounds/Mountain.jpeg";
+
+// 2. Creamos el array con las imágenes importadas
+const backgroundOptions = [caveImg, desertImg, forestImg, mineshaftImg, mountainImg];
 
 export default function BattleMap({
   enemies = [],
@@ -19,30 +17,23 @@ export default function BattleMap({
   selectedEnemy = null,
   onSelectEnemy = () => {},
 }) {
-  const backgrounds = useMemo(
-    () => Object.values(backgroundImages).filter(Boolean),
-    []
-  );
   const [backgroundUrl, setBackgroundUrl] = useState(null);
 
   useEffect(() => {
-    if (backgrounds.length > 0) {
-      setBackgroundUrl(
-        backgrounds[Math.floor(Math.random() * backgrounds.length)]
-      );
-    }
-  }, [backgrounds]);
+    // 3. Seleccionamos aleatoriamente una vez al montar
+    const randomIndex = Math.floor(Math.random() * backgroundOptions.length);
+    setBackgroundUrl(backgroundOptions[randomIndex]);
+  }, []);
 
   return (
-    // FIX: se añade la clase `.battle-map` que faltaba en el CSS
     <div className="battle-map">
       <div
         className="map-background"
         style={{
-          backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : undefined,
+          // 4. Aplicamos el fondo correctamente
+          backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : "none",
         }}
       >
-        {/* Columna de Enemigos (Izquierda) */}
         <div className="combat-column enemies-side">
           {enemies.map((enemy) => (
             <div
@@ -56,7 +47,6 @@ export default function BattleMap({
           ))}
         </div>
 
-        {/* Columna de Héroes (Derecha) */}
         <div className="combat-column heroes-side">
           {heroes.map((hero) => (
             <div key={hero.id} className="sprite-marker hero-sprite" title={hero.name}>
