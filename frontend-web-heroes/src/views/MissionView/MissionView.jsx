@@ -3,7 +3,7 @@ import "./MissionView.css";
 import BattleView from "../BattleView/BattleView";
 import spriteContratista from "/sprites/Contratista.png";
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 4;
 
 function mapMissionFromApi(mission) {
   const dificultad = mission.xp_reward < 150 ? "Fácil" : mission.xp_reward < 300 ? "Media" : "Difícil";

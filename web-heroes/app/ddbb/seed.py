@@ -11,6 +11,8 @@ HERO_CLASSES = [
         "adjectives": ["Bruto", "Cicatrizado", "Acorazado", ""],
         "base_hp_max": 10,
         "base_mp_max": 2,
+        "base_attack": 4,
+        "base_defense": 5,
     },
     {
         "name": "Mago",
@@ -19,6 +21,8 @@ HERO_CLASSES = [
         "adjectives": ["Oscuro", "Ascendente", "Malvado", ""],
         "base_hp_max": 6,
         "base_mp_max": 10,
+        "base_attack": 3,
+        "base_defense": 3,
     },
     {
         "name": "Picaro",
@@ -27,6 +31,8 @@ HERO_CLASSES = [
         "adjectives": ["Astuto", "Acechante", "Ratero", ""],
         "base_hp_max": 8,
         "base_mp_max": 5,
+        "base_attack": 5,
+        "base_defense": 4,
     },
     {
         "name": "Jefe",
@@ -35,6 +41,8 @@ HERO_CLASSES = [
         "adjectives": ["Rojo", "Azul", "Negro", ""],
         "base_hp_max": 30,
         "base_mp_max": 15,
+        "base_attack": 7,
+        "base_defense": 7,
     },
 ]
 
@@ -138,14 +146,17 @@ def seed_database() -> None:
             ("Sombra", "Picaro", 8, 5, 10),
         ]
         for name, class_name, hp, mp, energy in hero_seeds:
+            hero_class = classes[class_name]
             db.add(
                 Hero(
                     user_id=user.id,
-                    hero_class_id=classes[class_name].id,
+                    hero_class_id=hero_class.id,
                     name=name,
                     hp_current=hp,
                     mp_current=mp,
                     energy_current=energy,
+                    attack=hero_class.base_attack,
+                    defense=hero_class.base_defense,
                 )
             )
 
@@ -204,6 +215,34 @@ def seed_database() -> None:
                 "xp_reward": 450,
                 "gold_reward": 220,
             },
+            {
+                "name": "Caza de Bestias",
+                "description": "Los granjeros locales han reportado avistamientos de criaturas salvajes que atacan su ganado. Se necesita un héroe para investigar y eliminar la amenaza.",
+                "enemy_ids": [enemies[0].id, enemies[1].id],
+                "xp_reward": 200,
+                "gold_reward": 150,
+            },
+            {
+                "name": "Defensa de la Aldea",
+                "description": "Una horda de enemigos se acerca a la aldea y los habitantes necesitan ayuda para defenderse.",
+                "enemy_ids": [enemies[0].id, enemies[1].id, enemies[2].id],
+                "xp_reward": 500,
+                "gold_reward": 300,
+            },
+            {
+                "name": "Misión de Prueba",
+                "description": "Una misión de prueba para verificar el funcionamiento del sistema.",
+                "enemy_ids": [enemies[0].id],
+                "xp_reward": 100,
+                "gold_reward": 50,
+            },
+            {
+                "name": "Misión de Prueba Avanzada",
+                "description": "Una misión de prueba más difícil para verificar el funcionamiento del sistema con múltiples enemigos.",
+                "enemy_ids": [enemies[0].id, enemies[1].id],
+                "xp_reward": 200,
+                "gold_reward": 100,
+            }
         ]
 
         for mission_data in mission_seeds:

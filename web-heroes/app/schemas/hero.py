@@ -9,10 +9,11 @@ class HeroBase(BaseModel):
     user_id: int
     hero_class_id: int
     name: str
-    sprite_id: str
     hp_current: int = 10
     mp_current: int = 10
     energy_current: int = 10
+    attack: int | None = None
+    defense: int | None = None
     experience: int = 0
     level: int = 1
     last_regen_at: datetime | None = None
@@ -29,6 +30,8 @@ class HeroUpdate(BaseModel):
     hp_current: int | None = None
     mp_current: int | None = None
     energy_current: int | None = None
+    attack: int | None = None
+    defense: int | None = None
     experience: int | None = None
     level: int | None = None
     last_regen_at: datetime | None = None
@@ -38,4 +41,6 @@ class HeroRead(HeroBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    attack: int
+    defense: int
     hero_class: HeroClassRead = Field(alias="hero_class")

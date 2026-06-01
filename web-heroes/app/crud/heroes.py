@@ -21,7 +21,25 @@ def get_hero(db: Session, hero_id: int) -> Hero | None:
 
 
 def create_hero(db: Session, payload: HeroCreate) -> Hero:
-    hero = base.create(db, Hero, payload)
+    # Get the hero class to get base attack and defense values
+    from app.ddbb.models import HeroClass
+    hero_class = db.query(HeroClass).filter(HeroClass.id == payload.hero_class_id).first()
+    
+    if not hero_class:
+        raise ValueError(f"HeroClass with id {payload.hero_class_id} not found")
+    
+    # Create hero with base values from hero class
+    hero_data = payload.model_dump(exclude_none=True)
+    # Always use hero class base values unless explicitly provided
+    if 'attack' not in hero_data:
+        hero_data['attack'] = hero_class.base_attack
+    if 'defense' not in hero_data:
+        hero_data['defense'] = hero_class.base_defense
+    
+    hero = Hero(**hero_data)
+    db.add(hero)
+    db.commit()
+    db.refresh(hero)
     return get_hero(db, hero.id)
 
 

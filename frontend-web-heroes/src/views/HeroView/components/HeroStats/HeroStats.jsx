@@ -39,14 +39,14 @@ export default function HeroStats({ heroe }) {
         <div className="heroe-stat-fila">
           <span>Ataque:</span>
           <span className="heroe-stat-val font-amarillo">
-            {heroe.ataque || 10}
+            {heroe.attack}
           </span>
         </div>
 
         <div className="heroe-stat-fila">
           <span>Defensa:</span>
           <span className="heroe-stat-val font-amarillo">
-            {heroe.defensa || 5}
+            {heroe.defense}
           </span>
         </div>
 

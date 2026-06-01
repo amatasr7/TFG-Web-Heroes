@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from app.ddbb.database import Base, engine
-from app.ddbb.schema import ensure_schema_updates
 from app.ddbb.seed import seed_database
 from app.endpoints import admin, combat, enemies, hero_classes, hero_items, heroes, item_types, items, missions, users
 
@@ -19,8 +17,6 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup() -> None:
-    Base.metadata.create_all(bind=engine)
-    ensure_schema_updates()
     seed_database()
 
 @app.get("/")
