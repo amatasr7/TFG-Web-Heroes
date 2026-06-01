@@ -1,0 +1,46 @@
+/* Combat Log Component Styles */
+.combat-log {
+  background: transparent;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.combat-log h3 {
+  margin: 0 0 10px 0;
+  color: #ffc533; /* Amarillo retro para los títulos */
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  border-bottom: 2px dashed #555;
+  padding-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.log-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 5px;
+}
+
+.log-entry {
+  margin: 0;
+  padding: 2px 0;
+  font-size: 0.95rem;
+  color: #cccccc;
+  line-height: 1.4;
+  font-family: monospace; /* Fuente de registro de daño */
+  flex-shrink: 0;
+}
+
+/* Añadimos un pequeño cursor de sistema a cada línea */
+.log-entry::before {
+  content: "▶";
+  color: #777;
+  margin-right: 8px;
+  font-size: 0.8em;
+}

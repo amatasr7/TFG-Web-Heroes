@@ -1,0 +1,74 @@
+/* FIX: clase wrapper que faltaba */
+.battle-map {
+  width: 100%;
+  height: 100%;
+}
+
+.map-background {
+  width: 100%;
+  height: 100%;
+  /* Fondo de fallback si no hay imagen */
+  background-color: #1a1a2e;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6), inset 0 0 18px rgba(0,0,0,0.6);
+  box-sizing: border-box;
+  border: 2px solid #475569;
+  border-radius: 4px;
+}
+
+.combat-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Sprite base ── */
+.sprite-marker {
+  width: 65px;
+  height: 65px;
+  background: #8b1c1c;
+  border: 2px solid #ff4444;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #141419;
+  transition: transform 0.12s ease, border-color 0.12s;
+  user-select: none;
+}
+
+.sprite-marker:hover {
+  transform: scale(1.08);
+}
+
+/* FIX: estado "seleccionado" para cuando el jugador elige un enemigo */
+.sprite-marker.selected {
+  border-color: #ffff00;
+  box-shadow: 0 0 12px #ffff00aa, 0 4px 0 #141419;
+}
+
+.sprite-label {
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+}
+
+/* ── Héroe ── */
+.hero-sprite {
+  background: #1c4b8b;
+  border-color: #4488ff;
+  box-shadow: 0 4px 0 #0d294a;
+  cursor: default; /* los héroes no son seleccionables por el jugador */
+}
+
+.hero-sprite:hover {
+  transform: none;
+}

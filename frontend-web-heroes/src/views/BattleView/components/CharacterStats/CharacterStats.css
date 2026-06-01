@@ -1,0 +1,93 @@
+/* Character Stats Component Styles */
+.character-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  padding: 0;
+  background: transparent;
+  height: 100%;
+}
+
+.stats-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px;
+  border: 2px solid #475569;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.6);
+}
+
+.stat-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-icon {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #777;
+  border-radius: 4px;
+  background-color: #222;
+  flex-shrink: 0;
+}
+
+.diamond-blue { border-color: #4da6ff; }
+.diamond-red { border-color: #ff6b6b; }
+
+.stat-display {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.health-bar,
+.mana-bar {
+  flex: 1;
+  height: 16px;
+  background: #111;
+  border: 2px solid #555;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.health-fill {
+  height: 100%;
+  background: #32CD32;
+  transition: width 0.3s steps(10); /* Movimiento menos fluido, más retro */
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.health-fill.enemy {
+  background: #cc0000;
+}
+
+.mana-fill {
+  height: 100%;
+  background: #0066cc;
+  transition: width 0.3s steps(10);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.mana-fill.enemy {
+  background: #8b4513;
+}
+
+.stat-text {
+  color: white;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 1rem;
+  min-width: 60px;
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .character-stats {
+    grid-template-columns: 1fr;
+  }
+}

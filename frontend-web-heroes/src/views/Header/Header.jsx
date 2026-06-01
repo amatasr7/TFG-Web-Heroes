@@ -35,8 +35,8 @@ export default function Header({ currentView, setCurrentView }) {
           </button>
 
           <button
-            className={`header-btn ${currentView === "combat" ? "active" : ""}`}
-            onClick={() => setCurrentView("combat")}
+            className={`header-btn ${currentView === "missions" ? "active" : ""}`}
+            onClick={() => setCurrentView("missions")}
           >
             Tablón
           </button>

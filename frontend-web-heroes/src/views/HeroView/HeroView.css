@@ -210,7 +210,6 @@
   box-shadow: none;
 }
 
-/* Lista Scrollable de Personajes abajo a la derecha */
 .heroe-lista-scroll {
   display: flex;
   flex-direction: column;
@@ -254,4 +253,31 @@
 .heroe-item-lvl {
   font-size: 20px;
   color: #fbbf24;
+}
+
+.heroe-marco-retrato {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroe-svg-emblema {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%;
+  height: 75%;
+  
+  color: rgba(255, 197, 51, 0.07); 
+  
+
+  z-index: 1;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.heroe-marco-retrato:hover .heroe-svg-emblema {
+  color: rgba(255, 197, 51, 0.12);
 }

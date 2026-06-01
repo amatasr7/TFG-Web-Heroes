@@ -18,7 +18,7 @@ const ItemIcon = ({ item }) => {
     display: "inline-block",
   };
 
-  return <div style={style} title={item.name} />;
+  return <div className="item-icon" style={style} title={item.name} />;
 };
 
 export default ItemIcon;

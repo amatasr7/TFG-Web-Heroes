@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import "./CombatView.css";
-import BattleScreen from "./components/BattleScreen/BattleScreen";
-// Importamos el sprite del encargado del gremio (ajusta la ruta y el archivo a tu gusto)
+import "./MissionView.css";
+import BattleView from "../BattleView/BattleView";
 import spriteContratista from "../../assets/sprites/Icons_14.png";
 
-export default function CombatView() {
+export default function MissionView() {
   const [activeMission, setActiveMission] = useState(null);
   const [viewingDetails, setViewingDetails] = useState(null);
 
@@ -40,7 +39,7 @@ export default function CombatView() {
 
   if (activeMission) {
     return (
-      <BattleScreen
+      <BattleView
         mission={activeMission}
         onLeave={() => setActiveMission(null)}
       />

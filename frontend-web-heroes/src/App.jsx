@@ -2,7 +2,7 @@ import { useState } from "react";
 import Header from "./views/Header/Header";
 import HeroView from "./views/HeroView/HeroView";
 import ShopView from "./views/ShopView/ShopView";
-import CombatView from "./views/CombatView/CombatView";
+import MissionView from "./views/MissionView/MissionView";
 
 export default function App() {
   const [currentView, setCurrentView] = useState("heroes");
@@ -13,8 +13,8 @@ export default function App() {
         return <HeroView />;
       case "shop":
         return <ShopView />;
-      case "combat":
-        return <CombatView />;
+      case "missions":
+        return <MissionView />;
       default:
         return <HeroView />;
     }
