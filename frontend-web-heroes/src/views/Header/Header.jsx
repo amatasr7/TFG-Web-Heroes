@@ -45,7 +45,7 @@ export default function Header({ currentView, setCurrentView, user, onLogout }) 
         {/* GRUPO DERECHO: Recursos y Menú de Usuario */}
         <div className="nav-group-right">
           <div className="header-resources">
-            <span className="resource-value">150</span>
+            <span className="resource-value">{user?.gold ?? 0}</span>
             <span className="resource-icon">💰</span>
           </div>
 

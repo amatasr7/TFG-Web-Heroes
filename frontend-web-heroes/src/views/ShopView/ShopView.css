@@ -151,12 +151,38 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   transition: background 0.2s;
 }
 
 .tienda-slot:hover {
   background: rgba(255, 255, 255, 0.1);
   cursor: pointer;
+}
+
+.tienda-slot-ocupado {
+  cursor: pointer;
+}
+
+.tienda-slot-seleccionado {
+  border: 2px solid #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.tienda-slot-cantidad {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-size: 11px;
+  color: #fbbf24;
+  line-height: 1;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.tienda-btn-inactivo {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .tienda-divisor-vertical {

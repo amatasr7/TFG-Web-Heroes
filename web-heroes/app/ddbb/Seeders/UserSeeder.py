@@ -17,6 +17,7 @@ def seed_users(db: Session) -> User:
         email="test@example.com",
         password="",
         is_admin=True,
+        gold=50,
     )
     db.add(user)
     db.flush()

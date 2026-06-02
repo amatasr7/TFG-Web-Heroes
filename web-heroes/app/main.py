@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.ddbb.seed import seed_database
-from app.endpoints import admin, combat, enemies, hero_classes, hero_items, heroes, item_types, items, missions, users, warbands
+from app.endpoints import admin, combat, enemies, hero_classes, hero_items, heroes, item_types, items, missions, shop, users, warbands
 
 app = FastAPI(title="Web Heroes API")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -37,4 +37,5 @@ app.include_router(item_types.router, prefix="/api")
 app.include_router(hero_items.router, prefix="/api")
 app.include_router(missions.router, prefix="/api")
 app.include_router(warbands.router, prefix="/api")
+app.include_router(shop.router, prefix="/api")
 app.include_router(admin.router)

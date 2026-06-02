@@ -1,4 +1,4 @@
-import itemsSheet from "../../../assets/sprites/Inventory_Spritesheet.png";
+import itemsSheet from "/sprites/Inventory_Spritesheet.png";
 
 const ItemIcon = ({ item }) => {
   const TAMAÑO_CASILLA = 32;

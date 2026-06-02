@@ -27,3 +27,4 @@ class UserRead(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    gold: int = 500

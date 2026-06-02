@@ -10,6 +10,8 @@ from app.ddbb.database import Base
 
 if TYPE_CHECKING:
     from app.ddbb.Models.ItemType import ItemType
+    from app.ddbb.Models.ShopItem import ShopItem
+    from app.ddbb.Models.UserItem import UserItem
 
 class Item(Base):
     __tablename__ = "items"
@@ -30,3 +32,5 @@ class Item(Base):
 
     type: Mapped[ItemType] = relationship(back_populates="items")
     hero_items: Mapped[list["HeroItem"]] = relationship(back_populates="item")
+    shop_items: Mapped[list["ShopItem"]] = relationship(back_populates="item")
+    user_items: Mapped[list["UserItem"]] = relationship(back_populates="item")
