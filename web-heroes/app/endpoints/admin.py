@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.ddbb.database import get_db
-from app.ddbb.models import Enemy, Hero, HeroClass, HeroItem, Item, ItemType, User
+from app.ddbb.Models import Enemy, Hero, HeroClass, HeroItem, Item, ItemType, User
 
 router = APIRouter(tags=["backoffice"])
 templates = Jinja2Templates(directory="app/templates")

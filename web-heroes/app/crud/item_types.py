@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.crud import base
-from app.ddbb.models import ItemType
+from app.ddbb.Models import ItemType
 from app.schemas.item_type import ItemTypeCreate, ItemTypeUpdate
 
 

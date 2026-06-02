@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.ddbb.database import Base
+
+if TYPE_CHECKING:
+    from app.ddbb.Models.HeroClass import HeroClass
 
 
 class Hero(Base):
@@ -27,3 +33,4 @@ class Hero(Base):
     user: Mapped[User] = relationship(back_populates="heroes")
     hero_class: Mapped[HeroClass] = relationship(back_populates="heroes")
     hero_items: Mapped[list["HeroItem"]] = relationship(back_populates="hero", cascade="all, delete-orphan")
+    warband_entry: Mapped["WarbandHero"] = relationship(back_populates="hero", uselist=False)

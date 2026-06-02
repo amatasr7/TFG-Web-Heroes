@@ -1,6 +1,5 @@
-from app.ddbb.database import Base
-from app.ddbb import models
-from app.ddbb.database import DATABASE_URL
+from app.ddbb.database import Base, DATABASE_URL
+from app.ddbb.Models import *  # noqa: F401, F403 - Load all models for Alembic autogenerate
 
 from logging.config import fileConfig
 

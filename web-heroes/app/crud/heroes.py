@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session, joinedload
 
 from app.crud import base
-from app.ddbb.models import Hero
+from app.ddbb.Models import Hero
 from app.schemas.hero import HeroCreate, HeroUpdate
 
 
@@ -22,7 +22,7 @@ def get_hero(db: Session, hero_id: int) -> Hero | None:
 
 def create_hero(db: Session, payload: HeroCreate) -> Hero:
     # Get the hero class to get base attack and defense values
-    from app.ddbb.models import HeroClass
+    from app.ddbb.Models import HeroClass
     hero_class = db.query(HeroClass).filter(HeroClass.id == payload.hero_class_id).first()
     
     if not hero_class:

@@ -3,7 +3,7 @@ import random
 from sqlalchemy.orm import Session
 
 from app.crud.heroes import add_experience
-from app.ddbb.models import Enemy, Hero
+from app.ddbb.Models import Enemy, Hero
 
 
 def calculate_damage(attacker: Hero) -> int:

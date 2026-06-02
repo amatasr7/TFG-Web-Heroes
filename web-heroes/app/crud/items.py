@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 
 from app.crud import base
-from app.ddbb.models import Item
+from app.ddbb.Models import Item
 from app.schemas.item import ItemCreate, ItemUpdate
 
 

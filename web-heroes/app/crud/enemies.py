@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 
 from app.crud import base
-from app.ddbb.models import Enemy
+from app.ddbb.Models import Enemy
 from app.schemas.enemy import EnemyCreate, EnemyUpdate
 
 

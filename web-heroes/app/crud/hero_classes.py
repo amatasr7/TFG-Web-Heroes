@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.crud import base
-from app.ddbb.models import HeroClass
+from app.ddbb.Models import HeroClass
 from app.schemas.hero_class import HeroClassCreate, HeroClassUpdate
 
 

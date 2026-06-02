@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.crud import base
-from app.ddbb.models import User
+from app.ddbb.Models import User
 from app.schemas.user import UserCreate, UserUpdate
 
 

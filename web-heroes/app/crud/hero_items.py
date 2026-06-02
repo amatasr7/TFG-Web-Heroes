@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.crud import base
-from app.ddbb.models import HeroItem
+from app.ddbb.Models import HeroItem
 from app.schemas.hero_item import HeroItemCreate, HeroItemUpdate
 
 
