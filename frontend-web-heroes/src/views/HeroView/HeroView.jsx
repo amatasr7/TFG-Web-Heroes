@@ -9,22 +9,28 @@ import HeroStats from "./components/HeroStats/HeroStats";
 import ManagementOptions from "./components/ManagementOptions/ManagementOptions";
 import HeroList from "./components/HeroList/HeroList";
 
-export default function HeroView() {
+export default function HeroView({ user }) {
   const [heroes, setHeroes] = useState([]);
   const [selectedHeroId, setSelectedHeroId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!user) {
+      setHeroes([]);
+      setIsLoading(false);
+      return;
+    }
+
     const fetchHeroes = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/heroes"); 
+        const response = await fetch(`http://localhost:8000/api/heroes?user_id=${user.id}`);
         if (!response.ok) {
           throw new Error(`Error en el servidor: Código de estado ${response.status}`);
         }
         const data = await response.json();
         setHeroes(data);
-        
+
         if (data.length > 0) {
           setSelectedHeroId(data[0].id);
         }
@@ -36,7 +42,7 @@ export default function HeroView() {
     };
 
     fetchHeroes();
-  }, []);
+  }, [user]);
 
   const heroeSeleccionado = heroes.find((h) => h.id === selectedHeroId) || heroes[0];
 

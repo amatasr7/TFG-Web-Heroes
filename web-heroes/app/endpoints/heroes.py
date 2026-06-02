@@ -11,8 +11,8 @@ router = APIRouter(tags=["heroes"])
 
 
 @router.get("/heroes", response_model=list[HeroRead])
-def index(db: Session = Depends(get_db)):
-    return list_heroes(db)
+def index(user_id: int | None = None, db: Session = Depends(get_db)):
+    return list_heroes(db, user_id)
 
 
 @router.get("/heroes/{hero_id}", response_model=HeroRead)

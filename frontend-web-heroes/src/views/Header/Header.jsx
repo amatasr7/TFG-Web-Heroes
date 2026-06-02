@@ -3,7 +3,7 @@ import "./Header.css";
 // Importa aquí tu logo exportado en PNG
 import logoWebHeroes from "./logo-web-heroes2.png";
 
-export default function Header({ currentView, setCurrentView }) {
+export default function Header({ currentView, setCurrentView, user, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -62,13 +62,17 @@ export default function Header({ currentView, setCurrentView }) {
             {isMenuOpen && (
               <div className="user-dropdown">
                 <div className="dropdown-header">
-                  <span className="dropdown-username">Aventurero</span>
-                  <small>Nivel 1</small>
+                  <span className="dropdown-username">
+                    {user?.name ?? "Aventurero"}
+                  </span>
+                  <small>{user ? "Bienvenido" : "Invitado"}</small>
                 </div>
                 <div className="dropdown-divider"></div>
                 <button className="dropdown-item">Mi Perfil</button>
                 <button className="dropdown-item">Ajustes</button>
-                <button className="dropdown-item logout">Cerrar sesión</button>
+                <button className="dropdown-item logout" onClick={onLogout}>
+                  Cerrar sesión
+                </button>
               </div>
             )}
           </div>

@@ -89,3 +89,13 @@ def delete_warband(db: Session, warband: Warband) -> Warband:
     db.delete(warband)
     db.commit()
     return warband
+
+
+def create_warband_for_user(db: Session, user_id: int, hero_ids: list[int], name: str = "Warband") -> Warband:
+    warband = Warband(user_id=user_id, name=name)
+    db.add(warband)
+    db.flush()
+    _create_warband_entries(db, warband, hero_ids)
+    db.commit()
+    db.refresh(warband)
+    return get_warband(db, warband.id)

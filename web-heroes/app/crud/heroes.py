@@ -7,8 +7,11 @@ from app.ddbb.Models import Hero
 from app.schemas.hero import HeroCreate, HeroUpdate
 
 
-def list_heroes(db: Session) -> list[Hero]:
-    return db.query(Hero).options(joinedload(Hero.hero_class)).order_by(Hero.id).all()
+def list_heroes(db: Session, user_id: int | None = None) -> list[Hero]:
+    query = db.query(Hero).options(joinedload(Hero.hero_class))
+    if user_id is not None:
+        query = query.filter(Hero.user_id == user_id)
+    return query.order_by(Hero.id).all()
 
 
 def get_hero(db: Session, hero_id: int) -> Hero | None:
