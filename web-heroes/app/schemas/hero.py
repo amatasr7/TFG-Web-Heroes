@@ -15,6 +15,8 @@ class HeroBase(BaseModel):
     hp_current: int = 10
     mp_current: int = 10
     energy_current: int = 10
+    hp_bonus: int = 0
+    mp_bonus: int = 0
     attack: int | None = None
     defense: int | None = None
     experience: int = 0
@@ -33,6 +35,8 @@ class HeroUpdate(BaseModel):
     hp_current: int | None = None
     mp_current: int | None = None
     energy_current: int | None = None
+    hp_bonus: int | None = None
+    mp_bonus: int | None = None
     attack: int | None = None
     defense: int | None = None
     experience: int | None = None
@@ -46,5 +50,6 @@ class HeroRead(HeroBase):
     id: int
     attack: int
     defense: int
+    last_action_at: datetime | None = None
     hero_class: HeroClassRead = Field(alias="hero_class")
     hero_items: list[HeroItemRead] = []

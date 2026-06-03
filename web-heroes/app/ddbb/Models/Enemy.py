@@ -19,7 +19,6 @@ class Enemy(Base):
     hero_class_id: Mapped[int] = mapped_column(ForeignKey("hero_classes.id"))
     level: Mapped[int] = mapped_column(Integer, default=1)
     hp_max: Mapped[int] = mapped_column(Integer)
-    hp_current: Mapped[int] = mapped_column(Integer, default=10)
     xp_reward: Mapped[int] = mapped_column(Integer, default=50)
     is_boss: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

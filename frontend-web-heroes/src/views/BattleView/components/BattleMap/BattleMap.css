@@ -11,7 +11,7 @@
   background-position: center;
   position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   padding: 16px 24px;
   box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6), inset 0 0 18px rgba(0, 0, 0, 0.6);
@@ -53,14 +53,8 @@
 }
 
 .sprite-marker.active-turn {
-  border-color: #00ffaa;
-  box-shadow: 0 0 12px #00ffaaaa;
-  animation: pulse-active 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes pulse-active {
-  from { box-shadow: 0 0 8px #00ffaaaa; }
-  to   { box-shadow: 0 0 18px #00ffaadd; }
+  border-color: #fbbf24;
+  box-shadow: 0 0 8px #fbbf2488;
 }
 
 .sprite-marker.dead {
@@ -70,8 +64,8 @@
 }
 
 .sprite-img {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
   image-rendering: pixelated;
   display: block;
@@ -83,7 +77,7 @@
   font-size: 0.9rem;
   text-shadow: 1px 1px 3px #000, -1px -1px 3px #000;
   text-align: center;
-  max-width: 88px;
+  max-width: 68px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

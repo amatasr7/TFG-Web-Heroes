@@ -192,7 +192,7 @@ export default function ShopView({ user, onUserUpdate }) {
               <span className="tienda-dinero-etiqueta">Mi Dinero</span>
               <div className="tienda-dinero-valor-contenedor">
                 <span className="tienda-dinero-cantidad">{gold}</span>
-                <span className="tienda-dinero-icono">💰</span>
+                <ItemIcon item={{ sprite_x: 7, sprite_y: 0, name: "Moneda de oro" }} />
               </div>
             </div>
 

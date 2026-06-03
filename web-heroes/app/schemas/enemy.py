@@ -8,7 +8,6 @@ class EnemyBase(BaseModel):
     hero_class_id: int
     level: int = 1
     hp_max: int
-    hp_current: int = 10
     xp_reward: int = 50
     is_boss: bool = False
 
@@ -22,7 +21,6 @@ class EnemyUpdate(BaseModel):
     hero_class_id: int | None = None
     level: int | None = None
     hp_max: int | None = None
-    hp_current: int | None = None
     xp_reward: int | None = None
     is_boss: bool | None = None
 

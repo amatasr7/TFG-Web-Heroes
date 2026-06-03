@@ -18,6 +18,7 @@
 
 .battle-view-container {
   display: grid;
+  width: 100%;
   height: 100vh;
   padding: 24px;
   gap: 24px;
@@ -62,6 +63,7 @@
   box-sizing: border-box;
   overflow: hidden;
   min-height: 0;
+  min-width: 0;
   border: 2px solid #475569;
 }
 
@@ -198,6 +200,63 @@
   font-family: "VT323", monospace;
   font-size: 1.3rem;
   margin: 0;
+}
+
+.battle-over-rewards {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.battle-over-gold {
+  color: #fbbf24;
+  font-family: "VT323", monospace;
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.battle-over-items {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.battle-over-items-label {
+  color: #94a3b8;
+  font-family: "VT323", monospace;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.battle-over-items-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.battle-over-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.battle-over-item-name {
+  color: #e2e8f0;
+  font-family: "VT323", monospace;
+  font-size: 1rem;
+  max-width: 64px;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.battle-over-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .battle-over-btn {

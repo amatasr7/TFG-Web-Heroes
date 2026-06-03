@@ -161,7 +161,14 @@ export default function HeroView({ user, onUserUpdate }) {
 
             {/* ================= COLUMNA DERECHA ================= */}
             <div className="heroe-columna">
-              <ManagementOptions />
+              <ManagementOptions
+                hero={heroeSeleccionado}
+                user={user}
+                onHeroUpdate={(updated) =>
+                  setHeroes((prev) => prev.map((h) => (h.id === updated.id ? updated : h)))
+                }
+                onGoldUpdate={(newGold) => onUserUpdate((prev) => ({ ...prev, gold: newGold }))}
+              />
               <HeroList
                 heroes={heroes}
                 selectedHeroId={selectedHeroId}

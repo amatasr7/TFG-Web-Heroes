@@ -13,6 +13,7 @@ class Mission(Base):
     name: Mapped[str] = mapped_column(String(255))
     description: Mapped[str] = mapped_column(String(1000))
     enemy_ids: Mapped[list[int]] = mapped_column(JSON, default=[])
+    item_reward_ids: Mapped[list[int]] = mapped_column(JSON, default=[])
     xp_reward: Mapped[int] = mapped_column(Integer, default=100)
     gold_reward: Mapped[int] = mapped_column(Integer, default=50)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 
 from sqlalchemy.orm import Session, joinedload, selectinload
@@ -5,6 +6,9 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from app.crud import base
 from app.ddbb.Models import Hero, HeroItem, Item
 from app.schemas.hero import HeroCreate, HeroUpdate
+
+ENERGY_MAX = 10
+XP_PER_LEVEL = 100
 
 
 def _hero_options():
@@ -31,21 +35,15 @@ def get_hero(db: Session, hero_id: int) -> Hero | None:
 
 
 def create_hero(db: Session, payload: HeroCreate) -> Hero:
-    # Get the hero class to get base attack and defense values
     from app.ddbb.Models import HeroClass
     hero_class = db.query(HeroClass).filter(HeroClass.id == payload.hero_class_id).first()
-    
     if not hero_class:
         raise ValueError(f"HeroClass with id {payload.hero_class_id} not found")
-    
-    # Create hero with base values from hero class
     hero_data = payload.model_dump(exclude_none=True)
-    # Always use hero class base values unless explicitly provided
-    if 'attack' not in hero_data:
-        hero_data['attack'] = hero_class.base_attack
-    if 'defense' not in hero_data:
-        hero_data['defense'] = hero_class.base_defense
-    
+    if "attack" not in hero_data:
+        hero_data["attack"] = hero_class.base_attack
+    if "defense" not in hero_data:
+        hero_data["defense"] = hero_class.base_defense
     hero = Hero(**hero_data)
     db.add(hero)
     db.commit()
@@ -62,41 +60,130 @@ def delete_hero(db: Session, hero: Hero) -> None:
     base.delete(db, hero)
 
 
+def _hp_max(hero: Hero) -> int:
+    return hero.hero_class.base_hp_max + hero.hp_bonus
+
+
+def _mp_max(hero: Hero) -> int:
+    return hero.hero_class.base_mp_max + hero.mp_bonus
+
+
 def refresh_hero_stats(db: Session, hero: Hero) -> Hero:
     now = datetime.utcnow()
     minutes_passed = int((now - hero.last_regen_at).total_seconds() // 60)
-
     if minutes_passed <= 0:
         return hero
-
     regen_amount = minutes_passed // 10
     if regen_amount <= 0:
         return hero
 
-    hero.hp_current = min(hero.hero_class.base_hp_max, hero.hp_current + regen_amount)
-    hero.mp_current = min(hero.hero_class.base_mp_max, hero.mp_current + regen_amount)
-    hero.energy_current = min(10, hero.energy_current + regen_amount)
+    hero.hp_current = min(_hp_max(hero), hero.hp_current + regen_amount)
+    hero.mp_current = min(_mp_max(hero), hero.mp_current + regen_amount)
+    hero.energy_current = min(ENERGY_MAX, hero.energy_current + regen_amount)
     hero.last_regen_at = now
     db.commit()
     db.refresh(hero)
     return hero
 
 
-def add_experience(db: Session, hero: Hero, amount: int) -> dict[str, int | bool]:
+def add_experience(db: Session, hero: Hero, amount: int) -> dict:
+    """Add XP. Does NOT auto-level — the user must level up manually."""
     hero.experience += amount
-    leveled_up = False
-
-    if hero.experience >= 100:
-        hero.level += 1
-        hero.experience -= 100
-        hero.hp_current = hero.hero_class.base_hp_max
-        leveled_up = True
-
     db.commit()
     db.refresh(hero)
     return {
         "xp_gained": amount,
         "current_xp": hero.experience,
         "level": hero.level,
-        "leveled_up": leveled_up,
+        "leveled_up": False,
+        "can_level_up": hero.experience >= XP_PER_LEVEL,
     }
+
+
+# ── Hero actions ──────────────────────────────────────────────────────────────
+
+def rest_hero(db: Session, hero: Hero) -> Hero:
+    """Restore energy to maximum."""
+    hero.energy_current = ENERGY_MAX
+    db.commit()
+    db.refresh(hero)
+    return get_hero(db, hero.id)
+
+
+def level_up_hero(db: Session, hero: Hero, stat: str) -> Hero:
+    """
+    Consume 100 XP, increment level, and boost the chosen stat.
+    stat must be one of: 'hp', 'mp', 'attack', 'defense'.
+    Raises ValueError if not enough XP or unknown stat.
+    """
+    if hero.experience < XP_PER_LEVEL:
+        raise ValueError("El héroe no tiene suficiente experiencia para subir de nivel.")
+
+    hero.experience -= XP_PER_LEVEL
+    hero.level += 1
+
+    if stat == "hp":
+        hero.hp_bonus += 2
+        hero.hp_current = _hp_max(hero)
+    elif stat == "mp":
+        hero.mp_bonus += 2
+        hero.mp_current = _mp_max(hero)
+    elif stat == "attack":
+        hero.attack += 1
+    elif stat == "defense":
+        hero.defense += 1
+    else:
+        raise ValueError(f"Estadística desconocida: {stat}")
+
+    db.commit()
+    db.refresh(hero)
+    return get_hero(db, hero.id)
+
+
+ACTION_COOLDOWNS: dict[str, int] = {
+    "meditate": 30,
+    "train": 60,
+    "steal": 30,
+}
+
+
+def check_action_cooldown(hero: Hero, action: str) -> int:
+    """Return remaining cooldown in minutes, or 0 if the action is available."""
+    cooldown_minutes = ACTION_COOLDOWNS.get(action, 0)
+    if cooldown_minutes == 0 or hero.last_action_at is None:
+        return 0
+    elapsed = (datetime.utcnow() - hero.last_action_at).total_seconds() / 60
+    remaining = cooldown_minutes - elapsed
+    return max(0, int(remaining))
+
+
+def meditate_hero(db: Session, hero: Hero) -> Hero:
+    """Restore MP to maximum (Mago action)."""
+    hero.mp_current = _mp_max(hero)
+    hero.last_action_at = datetime.utcnow()
+    db.commit()
+    db.refresh(hero)
+    return get_hero(db, hero.id)
+
+
+def train_hero(db: Session, hero: Hero) -> Hero:
+    """Permanently increase defense by 1 (Guerrero action)."""
+    hero.defense += 1
+    hero.last_action_at = datetime.utcnow()
+    db.commit()
+    db.refresh(hero)
+    return get_hero(db, hero.id)
+
+
+def steal_hero(db: Session, hero: Hero, user_id: int) -> dict:
+    """Award random 5-15 gold to the user (Pícaro action)."""
+    from app.ddbb.Models import User
+    user = db.get(User, user_id)
+    if user is None:
+        raise ValueError("Usuario no encontrado.")
+    gold = random.randint(5, 15)
+    user.gold += gold
+    hero.last_action_at = datetime.utcnow()
+    db.commit()
+    db.refresh(user)
+    return {"gold_gained": gold, "new_gold": user.gold}

@@ -44,8 +44,17 @@ ITEMS = [
     {"name": "Armadura de hierro", "type": "armor", "sprite_x": 5, "sprite_y": 7, "damage": 0, "hp": 5, "value": 40},
     {"name": "Armadura de placas", "type": "armor", "sprite_x": 7, "sprite_y": 6, "damage": 0, "hp": 5, "value": 70},
     {"name": "Pocion de Energia", "type": "consumable", "sprite_x": 4, "sprite_y": 0, "damage": 0, "hp": 25, "value": 8},
+    # Potions — Health
+    {"name": "Pocion Menor de Salud", "type": "consumable", "sprite_x": 5, "sprite_y": 0, "damage": 0, "hp": 10, "value": 4},
     {"name": "Pocion de Salud", "type": "consumable", "sprite_x": 5, "sprite_y": 0, "damage": 0, "hp": 25, "value": 8},
+    {"name": "Pocion Mayor de Salud", "type": "consumable", "sprite_x": 5, "sprite_y": 1, "damage": 0, "hp": 50, "value": 20},
+    {"name": "Elixir de Vida", "type": "consumable", "sprite_x": 5, "sprite_y": 2, "damage": 0, "hp": 100, "value": 50},
+    # Potions — Mana
+    {"name": "Pocion Menor de Mana", "type": "consumable", "sprite_x": 6, "sprite_y": 0, "damage": 0, "mp": 10, "value": 4},
     {"name": "Pocion de Mana", "type": "consumable", "sprite_x": 6, "sprite_y": 0, "damage": 0, "mp": 25, "value": 8},
+    {"name": "Pocion Mayor de Mana", "type": "consumable", "sprite_x": 6, "sprite_y": 1, "damage": 0, "mp": 50, "value": 20},
+    # Combined elixirs
+    {"name": "Elixir Vital", "type": "consumable", "sprite_x": 5, "sprite_y": 3, "damage": 0, "hp": 30, "mp": 30, "value": 35},
     {"name": "Moneda de oro", "type": "currency", "sprite_x": 7, "sprite_y": 0, "damage": 0, "hp": 0, "value": 1},
     {"name": "Saco de monedas de oro", "type": "currency", "sprite_x": 4, "sprite_y": 5, "damage": 0, "hp": 0, "value_min": 5, "value_max": 20},
     {"name": "Cofre lleno de oro", "type": "container", "sprite_x": 5, "sprite_y": 5, "damage": 0, "hp": 0, "value_min": 10, "value_max": 50},

@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.ddbb.database import get_db
-from app.ddbb.Models import Enemy, Hero, HeroClass, HeroItem, Item, ItemType, Mission, User
+from app.ddbb.Models import Enemy, Hero, HeroClass, HeroItem, Item, ItemType, Mission, ShopItem, User, UserItem, Warband, WarbandHero
 
 router = APIRouter(tags=["backoffice"])
 templates = Jinja2Templates(directory="app/templates")
@@ -60,7 +60,6 @@ TABLES: dict[str, dict[str, Any]] = {
             "hero_class_id": {"type": "select", "model": HeroClass, "label_field": "name"},
             "level": {"type": "int"},
             "hp_max": {"type": "int", "required": True},
-            "hp_current": {"type": "int"},
             "xp_reward": {"type": "int"},
             "is_boss": {"type": "boolean"},
         },
@@ -96,6 +95,52 @@ TABLES: dict[str, dict[str, Any]] = {
             "hero_id": {"type": "select", "model": Hero, "label_field": "name"},
             "item_id": {"type": "select", "model": Item, "label_field": "name"},
             "item_type_id": {"type": "select", "model": ItemType, "label_field": "slug"},
+        },
+    },
+    "missions": {
+        "label": "Misiones",
+        "model": Mission,
+        "fields": {
+            "name": {"type": "text", "required": True},
+            "description": {"type": "text", "required": True},
+            "enemy_ids": {"type": "json-list"},
+            "item_reward_ids": {"type": "json-list"},
+            "xp_reward": {"type": "int"},
+            "gold_reward": {"type": "int"},
+        },
+    },
+    "warbands": {
+        "label": "Warbands",
+        "model": Warband,
+        "fields": {
+            "user_id": {"type": "select", "model": User, "label_field": "email"},
+            "name": {"type": "text", "required": True},
+        },
+    },
+    "warband-heroes": {
+        "label": "Heroes en warband",
+        "model": WarbandHero,
+        "fields": {
+            "warband_id": {"type": "select", "model": Warband, "label_field": "name"},
+            "hero_id": {"type": "select", "model": Hero, "label_field": "name"},
+            "slot": {"type": "int"},
+        },
+    },
+    "user-items": {
+        "label": "Inventario de usuarios",
+        "model": UserItem,
+        "fields": {
+            "user_id": {"type": "select", "model": User, "label_field": "email"},
+            "item_id": {"type": "select", "model": Item, "label_field": "name"},
+            "quantity": {"type": "int"},
+        },
+    },
+    "shop-items": {
+        "label": "Tienda",
+        "model": ShopItem,
+        "fields": {
+            "item_id": {"type": "select", "model": Item, "label_field": "name"},
+            "quantity": {"type": "int"},
         },
     },
 }
@@ -189,6 +234,63 @@ def render_form(
             "select_options": select_options(db, config),
         },
     )
+
+
+@router.post("/admin/reseed-shop")
+def reseed_shop(db: Session = Depends(get_db)):
+    """Clear all shop items and re-seed with the updated ShopInventorySeeder."""
+    from app.ddbb.Seeders.ShopInventorySeeder import seed_shop_inventory
+
+    db.query(ShopItem).delete()
+    db.flush()
+    seed_shop_inventory(db)
+    db.commit()
+
+    count = db.query(ShopItem).count()
+    return JSONResponse({"status": "ok", "shop_items": count})
+
+
+@router.post("/admin/reseed-items-and-shop")
+def reseed_items_and_shop(db: Session = Depends(get_db)):
+    """
+    Re-seed items table (adds missing items) and then fully re-seed the shop.
+    Existing item IDs are preserved. New items from ItemSeeder are added.
+    """
+    from app.ddbb.Seeders.ItemSeeder import ITEMS
+    from app.ddbb.Seeders.ItemTypeSeeder import get_or_create_item_type
+    import random as _random
+
+    type_cache: dict = {}
+    added = 0
+    for item_data in ITEMS:
+        if not db.query(Item).filter(Item.name == item_data["name"]).first():
+            slug = item_data.get("type", "consumable")
+            item_type = get_or_create_item_type(db, type_cache, slug)
+            value = item_data.get("value", 0)
+            if "value_min" in item_data and "value_max" in item_data:
+                value = _random.randint(item_data["value_min"], item_data["value_max"])
+            db.add(Item(
+                name=item_data["name"],
+                item_type_id=item_type.id,
+                sprite_x=item_data.get("sprite_x", 0),
+                sprite_y=item_data.get("sprite_y", 0),
+                damage_bonus=item_data.get("damage", 0),
+                hp_bonus=item_data.get("hp", 0),
+                mp_bonus=item_data.get("mp", 0),
+                price=item_data.get("price", 0),
+                value=value,
+            ))
+            added += 1
+    db.flush()
+
+    from app.ddbb.Seeders.ShopInventorySeeder import seed_shop_inventory
+    db.query(ShopItem).delete()
+    db.flush()
+    seed_shop_inventory(db)
+    db.commit()
+
+    shop_count = db.query(ShopItem).count()
+    return JSONResponse({"status": "ok", "items_added": added, "shop_items": shop_count})
 
 
 @router.post("/admin/reseed-combat-data")

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Header.css";
-// Importa aquí tu logo exportado en PNG
 import logoWebHeroes from "./logo-web-heroes2.png";
+import ItemIcon from "../BattleView/components/ItemIcon";
 
 export default function Header({ currentView, setCurrentView, user, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function Header({ currentView, setCurrentView, user, onLogout }) 
         <div className="nav-group-right">
           <div className="header-resources">
             <span className="resource-value">{user?.gold ?? 0}</span>
-            <span className="resource-icon">💰</span>
+            <ItemIcon item={{ sprite_x: 7, sprite_y: 0, name: "Moneda de oro" }} />
           </div>
 
           {/* Contenedor relativo para el menú desplegable */}

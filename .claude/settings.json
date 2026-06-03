@@ -3,7 +3,25 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\amata\\\\Desktop\\\\Web-Heroes-master\" -Force)",
       "Bash(Select-Object Name, Mode)",
-      "Read(//c/Users/amata/.claude/projects/c--Users-amata-Desktop-Web-Heroes-master/**)"
+      "Read(//c/Users/amata/.claude/projects/c--Users-amata-Desktop-Web-Heroes-master/**)",
+      "Bash(dir \"C:\\\\Users\\\\amata\\\\Desktop\\\\Web-Heroes-master\" -Recurse -Directory -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\amata\\\\Desktop\\\\Web-Heroes-master\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\amata\\\\Desktop\\\\Web-Heroes-master\" -Recurse -Directory -Name)",
+      "Bash(Select-Object -First 30)",
+      "Bash(python -m alembic upgrade head)",
+      "Bash(py -m alembic upgrade head)",
+      "Bash(which python3 *)",
+      "Read(//usr/**)",
+      "Bash(python3 -m alembic upgrade head)",
+      "Read(//c/Users/amata/AppData/Local/Programs/**)",
+      "Bash(ls \"/c/Python\"*)",
+      "Read(//c/Users/amata/**)",
+      "Bash(\"/c/Users/amata/Desktop/Web-Heroes-master/.venv/Scripts/python.exe\" -m alembic upgrade head)",
+      "Bash(\"/c/laragon/bin/python/python-3.10/python.exe\" -m alembic upgrade head)",
+      "Bash(find /c/laragon -name \"alembic*\" 2>/dev/null | head -5; find /c/Users/amata -name \"alembic*\" 2>/dev/null | grep -v __pycache__ | head -5)",
+      "Read(//c/laragon/**)"
     ],
     "additionalDirectories": [
       "c:\\Users\\amata\\.claude\\projects\\c--Users-amata-Desktop-Web-Heroes-master\\memory"

@@ -7,6 +7,7 @@ class MissionBase(BaseModel):
     name: str
     description: str
     enemy_ids: list[int] = []
+    item_reward_ids: list[int] = []
     xp_reward: int = 100
     gold_reward: int = 50
 
@@ -19,6 +20,7 @@ class MissionUpdate(BaseModel):
     name: str | None = None
     description: str | None = None
     enemy_ids: list[int] | None = None
+    item_reward_ids: list[int] | None = None
     xp_reward: int | None = None
     gold_reward: int | None = None
 

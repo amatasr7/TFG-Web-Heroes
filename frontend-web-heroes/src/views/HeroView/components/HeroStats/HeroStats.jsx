@@ -28,20 +28,20 @@ export default function HeroStats({ heroe, heroItems = [] }) {
         <div className="heroe-stat-fila">
           <span>Salud (HP):</span>
           <span className="heroe-stat-val font-verde">
-            {heroe.hp_current} / {heroe.hero_class?.base_hp_max || 10}
+            {heroe.hp_current} / {(heroe.hero_class?.base_hp_max || 10) + (heroe.hp_bonus || 0)}
           </span>
         </div>
 
         <div className="heroe-stat-fila">
           <span>Maná (MP):</span>
           <span className="heroe-stat-val font-azul">
-            {heroe.mp_current} / {heroe.hero_class?.base_mp_max || 10}
+            {heroe.mp_current} / {(heroe.hero_class?.base_mp_max || 10) + (heroe.mp_bonus || 0)}
           </span>
         </div>
 
         <div className="heroe-stat-fila">
           <span>Energía:</span>
-          <span className="heroe-stat-val font-amarillo">{heroe.energy_current}</span>
+          <span className="heroe-stat-val font-amarillo">{heroe.energy_current} / 10</span>
         </div>
 
         <div className="heroe-stat-fila">

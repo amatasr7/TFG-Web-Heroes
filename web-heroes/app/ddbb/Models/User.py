@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.ddbb.Models.UserItem import UserItem
+    from app.ddbb.Models.UserMission import UserMission
 
 from app.ddbb.database import Base
 
@@ -25,3 +26,4 @@ class User(Base):
     heroes: Mapped[list["Hero"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     warband: Mapped["Warband"] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
     user_items: Mapped[list["UserItem"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    completed_missions: Mapped[list["UserMission"]] = relationship(back_populates="user", cascade="all, delete-orphan")

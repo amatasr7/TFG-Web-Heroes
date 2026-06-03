@@ -1,8 +1,8 @@
 import "./ActionButtons.css";
 
-export default function ActionButtons({ onAction, isPlayerTurn = false, hasSelectedEnemy = false }) {
+export default function ActionButtons({ onAction, isPlayerTurn = false, hasSelectedEnemy = false, currentHero = null }) {
   const canAct = isPlayerTurn;
-  const canAttack = canAct && hasSelectedEnemy;
+  const mp = currentHero?.mp_current ?? 0;
 
   return (
     <div className="action-buttons">
@@ -33,10 +33,11 @@ export default function ActionButtons({ onAction, isPlayerTurn = false, hasSelec
         className={`action-btn abilities-btn${!canAct ? " disabled" : ""}`}
         onClick={() => canAct && onAction("abilities")}
         disabled={!canAct}
-        title={!canAct ? "No es tu turno" : "Usar habilidades"}
+        title={!canAct ? "No es tu turno" : `Usar habilidades (MP: ${mp})`}
       >
         <span className="btn-icon">✨</span>
         <span className="btn-label">Habilidades</span>
+        {canAct && <span className="btn-mp">{mp} MP</span>}
       </button>
 
       <button

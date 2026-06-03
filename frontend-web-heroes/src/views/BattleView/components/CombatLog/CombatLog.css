@@ -35,6 +35,8 @@
   line-height: 1.4;
   font-family: "VT323", monospace;
   flex-shrink: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .log-entry::before {

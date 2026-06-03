@@ -6,7 +6,12 @@ import spriteContratista from "/sprites/Contratista.png";
 const PAGE_SIZE = 4;
 
 function mapMissionFromApi(mission) {
-  const dificultad = mission.xp_reward < 150 ? "Fácil" : mission.xp_reward < 300 ? "Media" : "Difícil";
+  const dificultad =
+    mission.xp_reward < 150
+      ? "Fácil"
+      : mission.xp_reward < 300
+        ? "Media"
+        : "Difícil";
   const enemigo = mission.enemy_ids.length
     ? mission.enemy_ids.length === 1
       ? `Enemigo ${mission.enemy_ids[0]}`
@@ -26,12 +31,14 @@ function mapMissionFromApi(mission) {
   };
 }
 
-export default function MissionView() {
+export default function MissionView({ user }) {
   const [activeMission, setActiveMission] = useState(null);
   const [viewingDetails, setViewingDetails] = useState(null);
   const [missions, setMissions] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [guildRank, setGuildRank] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -41,8 +48,9 @@ export default function MissionView() {
       setError(null);
 
       try {
+        const userParam = user?.id ? `&user_id=${user.id}` : "";
         const response = await fetch(
-          `http://localhost:8000/api/missions?page=${page}&page_size=${PAGE_SIZE}`
+          `http://localhost:8000/api/missions?page=${page}&page_size=${PAGE_SIZE}${userParam}`,
         );
 
         if (!response.ok) {
@@ -52,6 +60,7 @@ export default function MissionView() {
         const data = await response.json();
         setMissions(data.missions.map(mapMissionFromApi));
         setTotalPages(Math.max(1, Math.ceil(data.total / PAGE_SIZE)));
+        setGuildRank(data.guild_rank ?? 0);
       } catch (err) {
         setError(err.message);
         setMissions([]);
@@ -61,7 +70,7 @@ export default function MissionView() {
     };
 
     fetchMissions();
-  }, [page]);
+  }, [page, refreshKey]);
 
   const misionesDisponibles = missions;
 
@@ -69,7 +78,11 @@ export default function MissionView() {
     return (
       <BattleView
         mission={activeMission}
-        onLeave={() => setActiveMission(null)}
+        onLeave={() => {
+          setActiveMission(null);
+          setPage(1);
+          setRefreshKey((k) => k + 1);
+        }}
       />
     );
   }
@@ -161,10 +174,14 @@ export default function MissionView() {
               >
                 Anterior
               </button>
-              <span className="page-info">Página {page} de {totalPages}</span>
+              <span className="page-info">
+                Página {page} de {totalPages}
+              </span>
               <button
                 className="tablon-btn page-button"
-                onClick={() => setPage((current) => Math.min(current + 1, totalPages))}
+                onClick={() =>
+                  setPage((current) => Math.min(current + 1, totalPages))
+                }
                 disabled={page >= totalPages}
               >
                 Siguiente
@@ -186,9 +203,8 @@ export default function MissionView() {
           {/* PANEL DERECHO INFERIOR (Simétrico al de la tienda, libre para medallas o stats) */}
           <div className="tablon-panel-controles">
             <div className="tablon-bloque-decorativo">
-              <span className="tablon-decorativo-etiqueta">Fama: 0</span>
               <span className="tablon-decorativo-valor">
-                Rango del Gremio: 0 ★
+                Rango del Gremio: {guildRank} ★
               </span>
             </div>
           </div>

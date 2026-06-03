@@ -10,6 +10,7 @@ from app.ddbb.Models.Mission import Mission
 from app.ddbb.Models.ShopItem import ShopItem
 from app.ddbb.Models.User import User
 from app.ddbb.Models.UserItem import UserItem
+from app.ddbb.Models.UserMission import UserMission
 from app.ddbb.Models.Warband import Warband
 from app.ddbb.Models.WarbandHero import WarbandHero
 
@@ -24,6 +25,7 @@ __all__ = [
     "ShopItem",
     "User",
     "UserItem",
+    "UserMission",
     "Warband",
     "WarbandHero",
 ]

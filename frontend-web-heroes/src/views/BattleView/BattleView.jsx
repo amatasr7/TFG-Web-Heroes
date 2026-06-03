@@ -1,4 +1,5 @@
 import React, { useReducer, useEffect, useRef, useState } from "react";
+import ItemIcon from "./components/ItemIcon";
 import "./BattleView.css";
 import BattleMap from "./components/BattleMap/BattleMap";
 import TurnOrder from "./components/TurnOrder/TurnOrder";
@@ -6,6 +7,7 @@ import CombatLog from "./components/CombatLog/CombatLog";
 import ActionButtons from "./components/ActionButtons/ActionButtons";
 import CharacterStats from "./components/CharacterStats/CharacterStats";
 import BattleInventory from "./components/BattleInventory/BattleInventory";
+import AbilitiesMenu from "./components/AbilitiesMenu/AbilitiesMenu";
 
 const API = "http://localhost:8000/api";
 
@@ -185,23 +187,33 @@ function reducer(state, action) {
       const target = state.heroes.find((h) => h.id === action.targetId);
       if (!target) return { ...state, isAnimating: false };
 
+      const isEvading = target.isEvading ?? false;
+      const isDefendingHeavy = target.isDefendingHeavy ?? false;
       const isDefending = target.isDefending ?? false;
       const rawDmg = action.rawDamage;
-      const dmg = action.hit
-        ? isDefending
-          ? Math.max(1, Math.floor(rawDmg / 2))
-          : rawDmg
-        : 0;
 
-      const message = !action.hit
-        ? `${action.enemyName} intenta atacar a ${target.name}, ¡pero falla!`
-        : isDefending
-        ? `${action.enemyName} ataca a ${target.name}, ¡pero estaba defendiendo! (${dmg} daño)`
-        : `${action.enemyName} ataca a ${target.name} causando ${dmg} de daño.`;
+      let dmg = 0;
+      let message = "";
+
+      if (!action.hit || isEvading) {
+        dmg = 0;
+        message = isEvading
+          ? `${action.enemyName} ataca a ${target.name}, ¡pero esquiva en las sombras!`
+          : `${action.enemyName} intenta atacar a ${target.name}, ¡pero falla!`;
+      } else if (isDefendingHeavy) {
+        dmg = Math.max(1, Math.floor(rawDmg / 4));
+        message = `${action.enemyName} ataca a ${target.name}, ¡Grito de Guerra lo protege! (${dmg} daño)`;
+      } else if (isDefending) {
+        dmg = Math.max(1, Math.floor(rawDmg / 2));
+        message = `${action.enemyName} ataca a ${target.name}, ¡pero estaba defendiendo! (${dmg} daño)`;
+      } else {
+        dmg = rawDmg;
+        message = `${action.enemyName}${action.abilityName ? ` usa ${action.abilityName} sobre` : " ataca a"} ${target.name} causando ${dmg} de daño.`;
+      }
 
       const newHeroes = state.heroes.map((h) => {
         if (h.id !== action.targetId) return h;
-        return { ...h, hp_current: Math.max(0, h.hp_current - dmg), isDefending: false };
+        return { ...h, hp_current: Math.max(0, h.hp_current - dmg), isDefending: false, isDefendingHeavy: false, isEvading: false };
       });
       const newLogs = [...state.logs, { timestamp: ts(), message }];
       const allHeroesDead = newHeroes.every((h) => h.hp_current <= 0);
@@ -248,6 +260,49 @@ function reducer(state, action) {
       };
     }
 
+    case "HERO_USE_ABILITY": {
+      // Update hero MP and apply any self-buff flags
+      const newHeroes = state.heroes.map((h) => {
+        if (h.id !== action.heroId) return h;
+        return {
+          ...h,
+          mp_current: action.mpRemaining,
+          isDefendingHeavy: action.effectType === "heavy_defend" ? true : (h.isDefendingHeavy ?? false),
+          isEvading: action.effectType === "evasion" ? true : (h.isEvading ?? false),
+        };
+      });
+
+      // Apply damage to enemies
+      let newEnemies = state.enemies;
+      if (action.effectType === "damage_single" || action.effectType === "damage_pierce") {
+        newEnemies = state.enemies.map((e) =>
+          e.id === action.enemyId ? { ...e, hp_current: Math.max(0, e.hp_current - action.damage) } : e
+        );
+      } else if (action.effectType === "damage_all") {
+        newEnemies = state.enemies.map((e) =>
+          e.hp_current > 0 ? { ...e, hp_current: Math.max(0, e.hp_current - action.damage) } : e
+        );
+      }
+
+      const newLogs = [...state.logs, { timestamp: ts(), message: action.message }];
+      const allEnemiesDead = newEnemies.every((e) => e.hp_current <= 0);
+      const battleOver = allEnemiesDead ? { result: "victory", xpGained: 0 } : null;
+      const nextIndex = battleOver
+        ? state.currentTurnIndex
+        : nextAliveIndex(state.turnQueue, state.currentTurnIndex, newHeroes, newEnemies);
+
+      return {
+        ...state,
+        heroes: newHeroes,
+        enemies: newEnemies,
+        logs: newLogs,
+        isAnimating: false,
+        selectedEnemy: null,
+        battleOver,
+        currentTurnIndex: nextIndex,
+      };
+    }
+
     default:
       return state;
   }
@@ -258,6 +313,8 @@ export default function BattleView({ mission, onLeave }) {
   const stateRef = useRef(state);
   const userRef = useRef(null);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
+  const [isAbilitiesOpen, setIsAbilitiesOpen] = useState(false);
+  const [missionRewards, setMissionRewards] = useState(null);
 
   useEffect(() => {
     stateRef.current = state;
@@ -284,7 +341,7 @@ export default function BattleView({ mission, onLeave }) {
 
         const heroes = heroData
           .filter((h) => h.hp_current > 0)
-          .map((h) => ({ ...h, isDefending: false }));
+          .map((h) => ({ ...h, isDefending: false, isDefendingHeavy: false, isEvading: false }));
 
         const enemies = enemyData.map((e) => ({ ...e, hp_current: e.hp_max }));
         const userItems = (inventoryData.user_items ?? []).filter(
@@ -316,8 +373,35 @@ export default function BattleView({ mission, onLeave }) {
       const target = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
       const baseAtk = enemy?.hero_class?.base_attack ?? 2;
       const heroDef = target.defense ?? 0;
-      const rawDmg = Math.max(1, baseAtk - heroDef);
-      const hit = Math.random() < 0.6;
+      const enemyClass = (enemy?.hero_class?.name ?? "").toLowerCase();
+      const abilityRoll = Math.random();
+
+      let rawDmg = Math.max(1, baseAtk - heroDef);
+      let hit = Math.random() < 0.6;
+      let abilityName = null;
+
+      // Enemy class abilities (client-side)
+      if (enemyClass.includes("jefe") && abilityRoll < 0.35) {
+        // Golpe Aplastante: 2.5x damage, guaranteed
+        rawDmg = Math.max(1, Math.floor(baseAtk * 2.5) - heroDef);
+        hit = true;
+        abilityName = "Golpe Aplastante";
+      } else if (enemyClass.includes("guerrero") && abilityRoll < 0.25) {
+        // Golpe Potente: 2x damage, guaranteed
+        rawDmg = Math.max(1, baseAtk * 2 - heroDef);
+        hit = true;
+        abilityName = "Golpe Potente";
+      } else if (enemyClass.includes("mago") && abilityRoll < 0.25) {
+        // Rayo Arcano: flat 3 damage, ignores defense, guaranteed
+        rawDmg = 3;
+        hit = true;
+        abilityName = "Rayo Arcano";
+      } else if (enemyClass.includes("animal") && abilityRoll < 0.30) {
+        // Zarpazo Salvaje: 1.5x damage, guaranteed
+        rawDmg = Math.max(1, Math.floor(baseAtk * 1.5) - heroDef);
+        hit = true;
+        abilityName = "Zarpazo Salvaje";
+      }
 
       dispatch({
         type: "ENEMY_ATTACK",
@@ -325,12 +409,29 @@ export default function BattleView({ mission, onLeave }) {
         enemyName: cur.name,
         hit,
         rawDamage: rawDmg,
+        abilityName,
       });
     }, 1500);
 
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.currentTurnIndex, !!state.battleOver, state.isLoading]);
+
+  // Call mission complete endpoint on victory to award gold + items
+  useEffect(() => {
+    if (state.battleOver?.result !== "victory" || !mission?.id) return;
+    const user = userRef.current;
+    const heroIds = stateRef.current.heroes.map((h) => h.id);
+    fetch(`${API}/missions/${mission.id}/complete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: user?.id, hero_ids: heroIds }),
+    })
+      .then((r) => r.json())
+      .then((data) => setMissionRewards(data))
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.battleOver]);
 
   const currentActor = state.turnQueue[state.currentTurnIndex] ?? null;
   const isPlayerTurn =
@@ -353,6 +454,8 @@ export default function BattleView({ mission, onLeave }) {
       try {
         const res = await fetch(`${API}/combat/attack/${cur.id}/${enemy.id}`, {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ enemy_hp_current: enemy.hp_current }),
         });
         if (!res.ok) {
           const errData = await res.json();
@@ -403,12 +506,7 @@ export default function BattleView({ mission, onLeave }) {
         message: `${cur.name} adopta una postura defensiva.`,
       });
     } else if (action === "abilities") {
-      dispatch({
-        type: "HERO_SKIP",
-        heroId: cur.id,
-        defend: false,
-        message: `${cur.name} no tiene habilidades disponibles todavía.`,
-      });
+      setIsAbilitiesOpen(true);
     } else if (action === "items") {
       setIsInventoryOpen(true);
     }
@@ -452,6 +550,96 @@ export default function BattleView({ mission, onLeave }) {
       dispatch({ type: "ADD_LOG", message: "Error al usar el objeto." });
     } finally {
       setIsInventoryOpen(false);
+    }
+  }
+
+  async function handleUseAbility(ability) {
+    const cur = currentActor;
+    if (!cur || cur.type !== "hero") return;
+
+    const hero = state.heroes.find((h) => h.id === cur.id);
+    if (!hero) return;
+
+    dispatch({ type: "START_ANIMATING" });
+    setIsAbilitiesOpen(false);
+
+    try {
+      const res = await fetch(`${API}/combat/use-ability/${cur.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ability_id: ability.id }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        dispatch({ type: "ADD_LOG", message: err.detail ?? "Error al usar habilidad." });
+        dispatch({ type: "STOP_ANIMATING" });
+        return;
+      }
+      const data = await res.json();
+
+      // Compute actual damage on frontend
+      let damage = 0;
+      let message = "";
+      const effectType = data.effect_type;
+
+      if (effectType === "damage_single") {
+        const mult = data.damage_multiplier ?? 1.0;
+        damage = Math.max(1, Math.floor(hero.attack * mult));
+        const enemy = state.selectedEnemy;
+        message = `${cur.name} usa ${data.ability_name} sobre ${enemy?.name ?? "el enemigo"} causando ${damage} de daño.`;
+      } else if (effectType === "damage_pierce") {
+        damage = data.flat_damage ?? 4;
+        const enemy = state.selectedEnemy;
+        message = `${cur.name} lanza ${data.ability_name} sobre ${enemy?.name ?? "el enemigo"} causando ${damage} de daño mágico (ignora defensa).`;
+      } else if (effectType === "damage_all") {
+        damage = data.flat_damage ?? 3;
+        message = `${cur.name} lanza ${data.ability_name}, causando ${damage} de daño a todos los enemigos.`;
+      } else if (effectType === "heavy_defend") {
+        message = `${cur.name} grita con furia. ¡Grito de Guerra activo (75% reducción de daño)!`;
+      } else if (effectType === "evasion") {
+        message = `${cur.name} se funde con las sombras. ¡Evasión activa!`;
+      }
+
+      // Award XP for ability kills (same pattern as regular attacks)
+      if (effectType === "damage_single" || effectType === "damage_pierce") {
+        const enemy = state.selectedEnemy;
+        if (enemy && enemy.hp_current - damage <= 0) {
+          const allIds = state.heroes.filter((h) => h.hp_current > 0).map((h) => h.id);
+          if (allIds.length > 0) {
+            fetch(`${API}/combat/award-xp`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ hero_ids: allIds, amount: enemy.xp_reward ?? 0 }),
+            }).catch(() => {});
+          }
+        }
+      } else if (effectType === "damage_all") {
+        const killedEnemies = state.enemies.filter((e) => e.hp_current > 0 && e.hp_current - damage <= 0);
+        if (killedEnemies.length > 0) {
+          const totalXp = killedEnemies.reduce((sum, e) => sum + (e.xp_reward ?? 0), 0);
+          const allIds = state.heroes.filter((h) => h.hp_current > 0).map((h) => h.id);
+          if (totalXp > 0 && allIds.length > 0) {
+            fetch(`${API}/combat/award-xp`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ hero_ids: allIds, amount: totalXp }),
+            }).catch(() => {});
+          }
+        }
+      }
+
+      dispatch({
+        type: "HERO_USE_ABILITY",
+        heroId: cur.id,
+        mpRemaining: data.mp_remaining,
+        effectType,
+        damage,
+        enemyId: state.selectedEnemy?.id ?? null,
+        message,
+      });
+    } catch {
+      dispatch({ type: "ADD_LOG", message: "Error de red al usar habilidad." });
+      dispatch({ type: "STOP_ANIMATING" });
     }
   }
 
@@ -527,6 +715,7 @@ export default function BattleView({ mission, onLeave }) {
             onAction={handleAction}
             isPlayerTurn={isPlayerTurn}
             hasSelectedEnemy={!!state.selectedEnemy}
+            currentHero={currentActor?.type === "hero" ? state.heroes.find((h) => h.id === currentActor.id) : null}
           />
         </div>
 
@@ -538,6 +727,15 @@ export default function BattleView({ mission, onLeave }) {
           </div>
         </div>
       </div>
+
+      {isAbilitiesOpen && (
+        <AbilitiesMenu
+          hero={currentActor?.type === "hero" ? state.heroes.find((h) => h.id === currentActor.id) : null}
+          hasSelectedEnemy={!!state.selectedEnemy}
+          onUse={handleUseAbility}
+          onClose={() => setIsAbilitiesOpen(false)}
+        />
+      )}
 
       {isInventoryOpen && (
         <BattleInventory
@@ -554,13 +752,42 @@ export default function BattleView({ mission, onLeave }) {
             <h2 className="battle-over-title">
               {state.battleOver.result === "victory" ? "¡Victoria!" : "¡Derrota!"}
             </h2>
-            {state.battleOver.result === "victory" && state.battleOver.xpGained > 0 && (
-              <p className="battle-over-xp">+{state.battleOver.xpGained} XP ganada</p>
+            {state.battleOver.result === "victory" && (
+              <div className="battle-over-rewards">
+                {state.battleOver.xpGained > 0 && (
+                  <p className="battle-over-xp">+{state.battleOver.xpGained} XP (combate)</p>
+                )}
+                {missionRewards ? (
+                  <>
+                    <p className="battle-over-xp">+{missionRewards.xp_awarded} XP (misión)</p>
+                    <p className="battle-over-gold">+{missionRewards.gold_awarded} oro</p>
+                    {missionRewards.items_awarded.length > 0 && (
+                      <div className="battle-over-items">
+                        <p className="battle-over-items-label">Objetos obtenidos:</p>
+                        <div className="battle-over-items-list">
+                          {missionRewards.items_awarded.map((item) => (
+                            <div key={item.id} className="battle-over-item">
+                              <ItemIcon item={item} />
+                              <span className="battle-over-item-name">{item.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="battle-over-sub">Calculando recompensas...</p>
+                )}
+              </div>
             )}
             {state.battleOver.result === "defeat" && (
               <p className="battle-over-sub">Tus héroes han caído en combate.</p>
             )}
-            <button className="battle-over-btn" onClick={onLeave}>
+            <button
+              className="battle-over-btn"
+              onClick={onLeave}
+              disabled={state.battleOver.result === "victory" && !missionRewards}
+            >
               Volver al Tablón
             </button>
           </div>
