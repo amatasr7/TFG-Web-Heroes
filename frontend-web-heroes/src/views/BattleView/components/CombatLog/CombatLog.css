@@ -33,14 +33,18 @@
   font-size: 0.95rem;
   color: #cccccc;
   line-height: 1.4;
-  font-family: monospace; /* Fuente de registro de daño */
+  font-family: "VT323", monospace;
   flex-shrink: 0;
 }
 
-/* Añadimos un pequeño cursor de sistema a cada línea */
 .log-entry::before {
   content: "▶";
-  color: #777;
-  margin-right: 8px;
+  color: #555;
+  margin-right: 6px;
   font-size: 0.8em;
+}
+
+.log-time {
+  color: #475569;
+  font-size: 0.85em;
 }

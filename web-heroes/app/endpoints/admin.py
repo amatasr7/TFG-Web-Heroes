@@ -3,13 +3,13 @@ from typing import Any
 from urllib.parse import parse_qs
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.ddbb.database import get_db
-from app.ddbb.Models import Enemy, Hero, HeroClass, HeroItem, Item, ItemType, User
+from app.ddbb.Models import Enemy, Hero, HeroClass, HeroItem, Item, ItemType, Mission, User
 
 router = APIRouter(tags=["backoffice"])
 templates = Jinja2Templates(directory="app/templates")
@@ -189,6 +189,27 @@ def render_form(
             "select_options": select_options(db, config),
         },
     )
+
+
+@router.post("/admin/reseed-combat-data")
+def reseed_combat_data(db: Session = Depends(get_db)):
+    """
+    Delete all enemies and missions, then re-seed them with the updated seeders.
+    User and hero data are preserved. Call this once after updating the seeders.
+    """
+    from app.ddbb.Seeders.EnemySeeder import seed_enemies
+    from app.ddbb.Seeders.MissionSeeder import seed_missions
+
+    db.query(Mission).delete()
+    db.query(Enemy).delete()
+    db.flush()
+
+    classes = {hc.name: hc for hc in db.query(HeroClass).all()}
+    enemies = seed_enemies(db, classes)
+    seed_missions(db, enemies)
+    db.commit()
+
+    return JSONResponse({"status": "ok", "enemies_created": len(enemies)})
 
 
 @router.get("/admin", response_class=HTMLResponse)

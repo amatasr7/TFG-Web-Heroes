@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./AuthView.css";
-import logoImg from "./components/logo-web-heroes2.png"; 
+import logoImg from "./components/logo-web-heroes.png";
 
 const API_URL = "http://localhost:8000/api";
 
@@ -38,7 +38,9 @@ export default function AuthView({ onLogin }) {
 
       if (!response.ok) {
         const errorBody = await response.json();
-        throw new Error(errorBody.detail || "Ocurrió un error en la autenticación.");
+        throw new Error(
+          errorBody.detail || "Ocurrió un error en la autenticación.",
+        );
       }
 
       const user = await response.json();
@@ -104,8 +106,8 @@ export default function AuthView({ onLogin }) {
                 ? "Registrando..."
                 : "Entrando..."
               : isRegister
-              ? "Registrarme"
-              : "Iniciar sesión"}
+                ? "Registrarme"
+                : "Iniciar sesión"}
           </button>
         </form>
 

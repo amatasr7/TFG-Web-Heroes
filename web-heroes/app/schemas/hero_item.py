@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
+from app.schemas.item import ItemRead
+
 
 class HeroItemBase(BaseModel):
     hero_id: int
@@ -21,3 +23,4 @@ class HeroItemRead(HeroItemBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    item: ItemRead

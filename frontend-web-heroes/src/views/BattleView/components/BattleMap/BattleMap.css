@@ -1,4 +1,3 @@
-/* FIX: clase wrapper que faltaba */
 .battle-map {
   width: 100%;
   height: 100%;
@@ -7,16 +6,15 @@
 .map-background {
   width: 100%;
   height: 100%;
-  /* Fondo de fallback si no hay imagen */
   background-color: #1a1a2e;
   background-size: cover;
   background-position: center;
   position: relative;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6), inset 0 0 18px rgba(0,0,0,0.6);
+  padding: 16px 24px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6), inset 0 0 18px rgba(0, 0, 0, 0.6);
   box-sizing: border-box;
   border: 2px solid #475569;
   border-radius: 4px;
@@ -25,50 +23,83 @@
 .combat-column {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  align-items: center;
 }
 
 /* ── Sprite base ── */
 .sprite-marker {
-  width: 65px;
-  height: 65px;
-  background: #8b1c1c;
-  border: 2px solid #ff4444;
-  border-radius: 4px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 4px;
   cursor: pointer;
-  box-shadow: 0 4px 0 #141419;
-  transition: transform 0.12s ease, border-color 0.12s;
   user-select: none;
+  padding: 6px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+  background: rgba(0, 0, 0, 0.3);
 }
 
-.sprite-marker:hover {
-  transform: scale(1.08);
+.sprite-marker:not(.dead):not(.hero-sprite):hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
 }
 
-/* FIX: estado "seleccionado" para cuando el jugador elige un enemigo */
 .sprite-marker.selected {
   border-color: #ffff00;
-  box-shadow: 0 0 12px #ffff00aa, 0 4px 0 #141419;
+  box-shadow: 0 0 14px #ffff00bb;
 }
 
-.sprite-label {
-  color: #fff;
-  font-weight: bold;
+.sprite-marker.active-turn {
+  border-color: #00ffaa;
+  box-shadow: 0 0 12px #00ffaaaa;
+  animation: pulse-active 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-active {
+  from { box-shadow: 0 0 8px #00ffaaaa; }
+  to   { box-shadow: 0 0 18px #00ffaadd; }
+}
+
+.sprite-marker.dead {
+  opacity: 0.25;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.sprite-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  display: block;
+}
+
+.sprite-name {
+  color: #e2e8f0;
+  font-family: "VT323", monospace;
+  font-size: 0.9rem;
+  text-shadow: 1px 1px 3px #000, -1px -1px 3px #000;
+  text-align: center;
+  max-width: 88px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dead-mark {
+  color: #ef4444;
   font-size: 1.1rem;
-  text-transform: uppercase;
+  line-height: 1;
 }
 
-/* ── Héroe ── */
+/* ── Hero side — heroes are not clickable targets ── */
 .hero-sprite {
-  background: #1c4b8b;
-  border-color: #4488ff;
-  box-shadow: 0 4px 0 #0d294a;
-  cursor: default; /* los héroes no son seleccionables por el jugador */
+  cursor: default;
 }
 
-.hero-sprite:hover {
-  transform: none;
+.hero-sprite .sprite-name {
+  color: #93c5fd;
 }

@@ -1,80 +1,79 @@
-"""Seeder for Mission table."""
+"""Seeder for Mission table. Every mission assigns exactly 2 enemies."""
 
 from sqlalchemy.orm import Session
 
 from app.ddbb.Models import Enemy, Mission
 
 
+# enemy_indexes reference ENEMY_SEEDS order in EnemySeeder.py:
+# 0=Goblin Guerrero, 1=Goblin Arquero, 2=Slime Verde,
+# 3=Orco Guerrero,   4=Orco Chamán,    5=Lobo Salvaje,
+# 6=Lobo Alfa,       7=Oso Pardo,      8=Jabalí Furioso,
+# 9=Golem de Piedra, 10=Dragon Rojo
 MISSION_SEEDS = [
     {
         "name": "Plaga en el Sótano",
-        "description": "El tabernero del 'Pony Pisador' pide ayuda para limpiar las raíces de una plaga de roedores gigantes que han invadido su almacén.",
+        "description": "El tabernero del 'Pony Pisador' pide ayuda para limpiar los sótanos de una plaga de criaturas que han invadido su almacén.",
         "xp_reward": 50,
         "gold_reward": 55,
-        "enemy_indexes": [0],
+        "enemy_indexes": [0, 2],  # Goblin Guerrero + Slime Verde
     },
     {
         "name": "Emboscada en el Camino",
-        "description": "Un grupo de bandidos ha bloqueado la ruta hacia el este y la caravana necesita protección para llegar sana y salva.",
-        "xp_reward": 120,
-        "gold_reward": 105,
-        "enemy_indexes": [1],
+        "description": "Un grupo de goblins ha bloqueado la ruta hacia el este. La caravana necesita protección para llegar sana y salva.",
+        "xp_reward": 65,
+        "gold_reward": 70,
+        "enemy_indexes": [0, 1],  # Goblin Guerrero + Goblin Arquero
     },
     {
-        "name": "El Despertar del Dragón",
-        "description": "Una cría de dragón ha sido avistada cerca de la aldea y se teme que atraiga a otras bestias de fuego.",
-        "xp_reward": 450,
-        "gold_reward": 220,
-        "enemy_indexes": [2],
-    },
-    {
-        "name": "Caza de Bestias",
-        "description": "Los granjeros locales han reportado avistamientos de criaturas salvajes que atacan su ganado. Se necesita un héroe para investigar y eliminar la amenaza.",
-        "xp_reward": 200,
-        "gold_reward": 150,
-        "enemy_indexes": [0, 1],
-    },
-    {
-        "name": "Defensa de la Aldea",
-        "description": "Una horda de enemigos se acerca a la aldea y los habitantes necesitan ayuda para defenderse.",
-        "xp_reward": 500,
-        "gold_reward": 300,
-        "enemy_indexes": [0, 1, 2],
-    },
-    {
-        "name": "Misión de Prueba",
-        "description": "Una misión de prueba para verificar el funcionamiento del sistema.",
-        "xp_reward": 100,
-        "gold_reward": 50,
-        "enemy_indexes": [0],
-    },
-    {
-        "name": "Misión de Prueba Avanzada",
-        "description": "Una misión de prueba más difícil para verificar el funcionamiento del sistema con múltiples enemigos.",
-        "xp_reward": 200,
+        "name": "Cacería de Bestias",
+        "description": "Los granjeros reportan ataques nocturnos al ganado. Se necesita eliminar a las bestias que merodean por los alrededores.",
+        "xp_reward": 110,
         "gold_reward": 100,
-        "enemy_indexes": [0, 1],
-    }
+        "enemy_indexes": [5, 8],  # Lobo Salvaje + Jabalí Furioso
+    },
+    {
+        "name": "La Horda Orca",
+        "description": "Un campamento orco ha aparecido cerca del poblado. Hay que neutralizarlo antes de que se organicen.",
+        "xp_reward": 135,
+        "gold_reward": 120,
+        "enemy_indexes": [3, 4],  # Orco Guerrero + Orco Chamán
+    },
+    {
+        "name": "La Manada del Bosque",
+        "description": "Una manada de lobos liderada por un alfa ha tomado el control de los senderos del bosque.",
+        "xp_reward": 120,
+        "gold_reward": 110,
+        "enemy_indexes": [5, 6],  # Lobo Salvaje + Lobo Alfa
+    },
+    {
+        "name": "Amenaza en las Montañas",
+        "description": "Viajeros heridos informan de bestias gigantescas en los pasos de montaña que bloquean la ruta comercial.",
+        "xp_reward": 160,
+        "gold_reward": 150,
+        "enemy_indexes": [6, 7],  # Lobo Alfa + Oso Pardo
+    },
+    {
+        "name": "El Despertar del Golem",
+        "description": "Un antiguo golem de piedra ha despertado en las ruinas y un orco guerrero lo custodia. La región entera está en peligro.",
+        "xp_reward": 260,
+        "gold_reward": 220,
+        "enemy_indexes": [9, 3],  # Golem de Piedra + Orco Guerrero
+    },
+    {
+        "name": "Guarida del Dragón",
+        "description": "Un dragón rojo ha anidado en las cuevas junto a un golem que actúa como guardián. La misión más peligrosa del Tablón.",
+        "xp_reward": 480,
+        "gold_reward": 400,
+        "enemy_indexes": [10, 9],  # Dragon Rojo + Golem de Piedra
+    },
 ]
 
 
 def seed_missions(db: Session, enemies: list[Enemy]) -> None:
-    """
-    Seed missions table.
-    
-    Args:
-        db: Database session
-        enemies: List of created Enemy instances
-    """
     for mission_data in MISSION_SEEDS:
-        enemy_indexes = mission_data.pop("enemy_indexes")
+        data = dict(mission_data)
+        enemy_indexes = data.pop("enemy_indexes")
         enemy_ids = [enemies[i].id for i in enemy_indexes]
-        
-        db.add(
-            Mission(
-                enemy_ids=enemy_ids,
-                **mission_data
-            )
-        )
-    
+        db.add(Mission(enemy_ids=enemy_ids, **data))
     db.flush()

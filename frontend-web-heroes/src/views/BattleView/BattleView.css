@@ -1,10 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
+/* Fixed overlay so the battle fills the full viewport without causing page scroll.
+   This means the app header is hidden during battle (intentional immersion),
+   and after the battle the page returns to its exact pre-battle scroll position. */
 .root {
   font-family: "VT323", monospace;
   background-image: url("./components/backgrounds/combat-background.jpg");
   background-size: cover;
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,7 +69,8 @@
 .view-header {
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  gap: 16px;
+  padding: 0 8px;
   font-size: 1.1rem;
   font-weight: bold;
   color: #fbbf24;
@@ -83,6 +89,134 @@
   color: #555;
   font-style: italic;
   font-size: 0.9rem;
+}
+
+.battle-title {
+  color: #fbbf24;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.turn-indicator {
+  color: #94a3b8;
+  font-size: 1rem;
+  flex: 1;
+  text-align: center;
+}
+
+.flee-btn {
+  background: #3b0d0d;
+  border: 2px solid #991b1b;
+  color: #fca5a5;
+  font-family: "VT323", monospace;
+  font-size: 1.1rem;
+  padding: 4px 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.1s, border-color 0.1s;
+  margin-left: auto;
+}
+
+.flee-btn:hover {
+  background: #7f1d1d;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+/* ── Loading / error state ── */
+.battle-loading {
+  color: #fbbf24;
+  font-family: "VT323", monospace;
+  font-size: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Battle-over overlay ── */
+.battle-over-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.battle-over-modal {
+  background: rgba(10, 10, 20, 0.97);
+  border: 3px solid #475569;
+  border-radius: 6px;
+  padding: 40px 56px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+.battle-over-modal.victory {
+  border-color: #fbbf24;
+  box-shadow: 0 0 40px rgba(251, 191, 36, 0.25);
+}
+
+.battle-over-modal.defeat {
+  border-color: #dc2626;
+  box-shadow: 0 0 40px rgba(220, 38, 38, 0.25);
+}
+
+.battle-over-title {
+  font-family: "VT323", monospace;
+  font-size: 3.5rem;
+  margin: 0;
+  letter-spacing: 4px;
+}
+
+.victory .battle-over-title {
+  color: #fbbf24;
+}
+
+.defeat .battle-over-title {
+  color: #ef4444;
+}
+
+.battle-over-xp {
+  color: #86efac;
+  font-family: "VT323", monospace;
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.battle-over-sub {
+  color: #94a3b8;
+  font-family: "VT323", monospace;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.battle-over-btn {
+  background: #1e293b;
+  border: 2px solid #475569;
+  color: #e2e8f0;
+  font-family: "VT323", monospace;
+  font-size: 1.4rem;
+  padding: 8px 28px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.1s;
+  margin-top: 8px;
+}
+
+.battle-over-btn:hover {
+  background: #334155;
+  border-color: #fbbf24;
+  color: #fbbf24;
 }
 
 /* ── Overlay de inventario (alternativa modal) ──────────────────

@@ -11,7 +11,7 @@ const VENDOR_MESSAGES = {
   noStock: "No me queda stock de ese ítem.",
 };
 
-export default function ShopView({ user }) {
+export default function ShopView({ user, onUserUpdate }) {
   const [inventory, setInventory] = useState(null);
   const [gold, setGold] = useState(0);
   const [selected, setSelected] = useState(null); // { origin: 'shop'|'user', item_id, item }
@@ -25,6 +25,7 @@ export default function ShopView({ user }) {
         const data = await res.json();
         setInventory(data);
         setGold(data.user.gold);
+        onUserUpdate((prev) => ({ ...prev, gold: data.user.gold }));
       }
     } catch {
       setMessage("Error al conectar con el servidor.");
@@ -59,6 +60,7 @@ export default function ShopView({ user }) {
       if (res.ok) {
         setInventory(data);
         setGold(data.user.gold);
+        onUserUpdate((prev) => ({ ...prev, gold: data.user.gold }));
         setSelected(null);
         setMessage(`¡Trato hecho! Compraste ${selected.item.name}.`);
       } else {
@@ -83,6 +85,7 @@ export default function ShopView({ user }) {
       if (res.ok) {
         setInventory(data);
         setGold(data.user.gold);
+        onUserUpdate((prev) => ({ ...prev, gold: data.user.gold }));
         setSelected(null);
         setMessage(`¡Vendido! Recibiste ${selected.item.value} de oro.`);
       } else {

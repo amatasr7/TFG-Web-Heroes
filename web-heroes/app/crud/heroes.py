@@ -1,14 +1,21 @@
 from datetime import datetime
 
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.crud import base
-from app.ddbb.Models import Hero
+from app.ddbb.Models import Hero, HeroItem, Item
 from app.schemas.hero import HeroCreate, HeroUpdate
 
 
+def _hero_options():
+    return [
+        joinedload(Hero.hero_class),
+        selectinload(Hero.hero_items).joinedload(HeroItem.item).joinedload(Item.type),
+    ]
+
+
 def list_heroes(db: Session, user_id: int | None = None) -> list[Hero]:
-    query = db.query(Hero).options(joinedload(Hero.hero_class))
+    query = db.query(Hero).options(*_hero_options())
     if user_id is not None:
         query = query.filter(Hero.user_id == user_id)
     return query.order_by(Hero.id).all()
@@ -17,7 +24,7 @@ def list_heroes(db: Session, user_id: int | None = None) -> list[Hero]:
 def get_hero(db: Session, hero_id: int) -> Hero | None:
     return (
         db.query(Hero)
-        .options(joinedload(Hero.hero_class))
+        .options(*_hero_options())
         .filter(Hero.id == hero_id)
         .first()
     )

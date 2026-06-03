@@ -32,9 +32,9 @@ export default function App() {
 
     switch (currentView) {
       case "heroes":
-        return <HeroView user={user} />;
+        return <HeroView user={user} onUserUpdate={setUser} />;
       case "shop":
-        return <ShopView user={user} />;
+        return <ShopView user={user} onUserUpdate={setUser} />;
       case "missions":
         return <MissionView user={user} />;
       default:

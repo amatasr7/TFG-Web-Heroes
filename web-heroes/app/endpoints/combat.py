@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.crud.combat import handle_hero_attack
 from app.crud.enemies import get_enemy
-from app.crud.heroes import get_hero
+from app.crud.heroes import add_experience, get_hero
 from app.ddbb.database import get_db
 from app.schemas.combat import CombatResult
 
@@ -40,3 +41,20 @@ def attack(hero_id: int, enemy_id: int, db: Session = Depends(get_db)):
         )
 
     return handle_hero_attack(db, hero, enemy)
+
+
+class AwardXpPayload(BaseModel):
+    hero_ids: list[int]
+    amount: int
+
+
+@router.post("/combat/award-xp")
+def award_xp(payload: AwardXpPayload, db: Session = Depends(get_db)):
+    """Award XP to multiple heroes at once (warband-wide XP distribution)."""
+    results = []
+    for hero_id in payload.hero_ids:
+        hero = get_hero(db, hero_id)
+        if hero:
+            result = add_experience(db, hero, payload.amount)
+            results.append({"hero_id": hero_id, **result})
+    return results

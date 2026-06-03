@@ -1,25 +1,100 @@
 .turn-order {
   width: 100%;
   height: 100%;
-  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  overflow-y: auto;
+  gap: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.turn-order h3 {
+  color: #fbbf24;
+  font-family: "VT323", monospace;
+  font-size: 1.2rem;
+  margin: 0 0 6px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #475569;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .turn-order-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 2px;
 }
 
-.turn-order-card {
-  padding: 10px;
+.turn-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
   border-radius: 4px;
-  background: #2a2a35;
-  border: 2px solid #475569;
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.6);
-  font-size: 0.95rem;
-  text-align: center;
+  background: #1a1f2e;
+  border: 2px solid #2d3748;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+  transition: border-color 0.12s, background 0.12s;
+  flex-shrink: 0;
+}
+
+.turn-card.hero {
+  border-left: 3px solid #3b82f6;
+}
+
+.turn-card.enemy {
+  border-left: 3px solid #ef4444;
+}
+
+.turn-card.current {
+  background: #1e2d45;
+  border-color: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+}
+
+.turn-card.dead {
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+
+.turn-number {
+  color: #64748b;
+  font-family: "VT323", monospace;
+  font-size: 0.9rem;
+  min-width: 16px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.turn-sprite {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.turn-name {
+  color: #cbd5e1;
+  font-family: "VT323", monospace;
+  font-size: 1rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.turn-card.current .turn-name {
+  color: #fbbf24;
+}
+
+.turn-dead-mark {
+  color: #ef4444;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }

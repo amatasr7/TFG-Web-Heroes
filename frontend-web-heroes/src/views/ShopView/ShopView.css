@@ -200,6 +200,7 @@
 }
 
 .tienda-texto-titulo {
+  color: #fbbf24;
   font-size: 24px;
   margin-bottom: 4px;
 }
@@ -227,7 +228,7 @@
 
 .tienda-dinero-etiqueta {
   color: #94a3b8;
-  font-size: 14px;
+  font-size: 32px;
 }
 
 .tienda-dinero-valor-contenedor {

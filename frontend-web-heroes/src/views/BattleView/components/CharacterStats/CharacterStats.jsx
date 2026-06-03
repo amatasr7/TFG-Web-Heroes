@@ -1,37 +1,61 @@
 import "./CharacterStats.css";
 
-export default function CharacterStats({ character }) {
-  return (
-    <div className="character-stats" style={{ gridTemplateColumns: "1fr" }}>
-      <div className="stats-row">
-        {/* Barra de Vida del Héroe */}
-        <div className="stat-bar">
-          <div className="stat-icon diamond-blue"></div>
-          <div className="stat-display">
-            <div className="health-bar">
-              <div 
-                className="health-fill" 
-                style={{ width: `${(character.hp / character.maxHp) * 100}%` }}
-              ></div>
-            </div>
-            <span className="stat-text">{character.hp}/{character.maxHp}</span>
-          </div>
-        </div>
+function getHeroSprite(hero) {
+  const cls = (hero?.hero_class?.name ?? "").toLowerCase();
+  if (cls.includes("guerrero")) return "/sprites/Guerrero2.png";
+  if (cls.includes("mago")) return "/sprites/Maga.png";
+  if (cls.includes("picaro") || cls.includes("pícaro")) return "/sprites/Arquero.png";
+  if (cls.includes("jefe")) return "/sprites/Orco.png";
+  return "/sprites/Pelirrojo.png";
+}
 
-        {/* Barra de Maná del Héroe */}
-        <div className="stat-bar">
-          <div className="stat-icon diamond-blue"></div>
-          <div className="stat-display">
-            <div className="mana-bar">
-              <div 
-                className="mana-fill" 
-                style={{ width: `${(character.mana / character.maxMana) * 100}%` }}
-              ></div>
+export default function CharacterStats({ heroes = [], currentHeroId = null }) {
+  return (
+    <div className="character-stats">
+      {heroes.map((hero) => {
+        const maxHp = hero.hero_class?.base_hp_max ?? 100;
+        const maxMp = hero.hero_class?.base_mp_max ?? 50;
+        const hpPct = Math.max(0, Math.min(100, (hero.hp_current / maxHp) * 100));
+        const mpPct = Math.max(0, Math.min(100, (hero.mp_current / maxMp) * 100));
+        const isDead = hero.hp_current <= 0;
+        const isActive = hero.id === currentHeroId;
+        const sprite = getHeroSprite(hero);
+
+        return (
+          <div
+            key={hero.id}
+            className={`hero-stat-card${isActive ? " active" : ""}${isDead ? " dead" : ""}`}
+          >
+            <div className="hero-stat-portrait">
+              <img src={sprite} alt={hero.name} className="hero-stat-sprite" />
             </div>
-            <span className="stat-text">{character.mana}/{character.maxMana}</span>
+            <div className="hero-stat-info">
+              <div className="hero-stat-name">{hero.name}</div>
+              <div className="stat-bar-row">
+                <span className="stat-bar-label">HP</span>
+                <div className="stat-bar-bg">
+                  <div className="stat-bar-fill hp-fill" style={{ width: `${hpPct}%` }} />
+                </div>
+                <span className="stat-bar-value">
+                  {hero.hp_current}/{maxHp}
+                </span>
+              </div>
+              <div className="stat-bar-row">
+                <span className="stat-bar-label">MP</span>
+                <div className="stat-bar-bg">
+                  <div className="stat-bar-fill mp-fill" style={{ width: `${mpPct}%` }} />
+                </div>
+                <span className="stat-bar-value">
+                  {hero.mp_current}/{maxMp}
+                </span>
+              </div>
+              {hero.isDefending && (
+                <span className="defending-badge">🛡 Defendiendo</span>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 }

@@ -21,6 +21,12 @@ class ShopAction(BaseModel):
     quantity: int = 1
 
 
+class UseItemPayload(BaseModel):
+    user_id: int
+    item_id: int
+    hero_id: int
+
+
 class ShopInventoryRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -77,6 +83,48 @@ def buy(payload: ShopAction, db: Session = Depends(get_db)):
         "user": user,
         "user_items": list_user_items(db, user.id),
         "shop_items": list_shop_items(db),
+    }
+
+
+@router.post("/shop/use-item")
+def use_item(payload: UseItemPayload, db: Session = Depends(get_db)):
+    """Use one consumable item on a hero, restoring HP and/or MP."""
+    from app.crud.heroes import get_hero
+
+    user_item = get_user_item(db, payload.user_id, payload.item_id)
+    if not user_item or user_item.quantity <= 0:
+        raise HTTPException(status_code=400, detail="No tienes este objeto.")
+
+    item = get_item(db, payload.item_id)
+    if item is None or item.type.slug != "consumable":
+        raise HTTPException(status_code=400, detail="Este objeto no es consumible.")
+
+    hero = get_hero(db, payload.hero_id)
+    if hero is None:
+        raise HTTPException(status_code=404, detail="Héroe no encontrado.")
+
+    max_hp = hero.hero_class.base_hp_max
+    max_mp = hero.hero_class.base_mp_max
+    hp_restored = min(item.hp_bonus, max_hp - hero.hp_current)
+    mp_restored = min(item.mp_bonus, max_mp - hero.mp_current)
+
+    hero.hp_current = min(max_hp, hero.hp_current + item.hp_bonus)
+    hero.mp_current = min(max_mp, hero.mp_current + item.mp_bonus)
+
+    new_qty = user_item.quantity - 1
+    update_user_item_quantity(db, user_item, new_qty)
+
+    db.commit()
+    db.refresh(hero)
+
+    return {
+        "hp_restored": hp_restored,
+        "mp_restored": mp_restored,
+        "item_name": item.name,
+        "quantity_remaining": new_qty,
+        "hero_id": hero.id,
+        "hero_hp": hero.hp_current,
+        "hero_mp": hero.mp_current,
     }
 
 

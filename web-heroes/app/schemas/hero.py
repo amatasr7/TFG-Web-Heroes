@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.hero_class import HeroClassRead
+from app.schemas.hero_item import HeroItemRead
 
 
 class HeroBase(BaseModel):
@@ -44,3 +47,4 @@ class HeroRead(HeroBase):
     attack: int
     defense: int
     hero_class: HeroClassRead = Field(alias="hero_class")
+    hero_items: list[HeroItemRead] = []
