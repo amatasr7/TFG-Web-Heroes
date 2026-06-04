@@ -1,5 +1,7 @@
 """Database models for Web Heroes application."""
 
+from app.ddbb.Models.Ability import Ability
+from app.ddbb.Models.BattleSession import BattleSession
 from app.ddbb.Models.Enemy import Enemy
 from app.ddbb.Models.Hero import Hero
 from app.ddbb.Models.HeroClass import HeroClass
@@ -15,6 +17,8 @@ from app.ddbb.Models.Warband import Warband
 from app.ddbb.Models.WarbandHero import WarbandHero
 
 __all__ = [
+    "Ability",
+    "BattleSession",
     "Enemy",
     "Hero",
     "HeroClass",

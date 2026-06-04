@@ -5,61 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.crud.heroes import add_experience
 from app.ddbb.Models import Enemy, Hero
-
-
-# ── Ability definitions ───────────────────────────────────────────────────────
-
-ABILITIES: dict[str, dict] = {
-    # Guerrero
-    "golpe_brutal": {
-        "class_name": "Guerrero",
-        "mp_cost": 1,
-        "effect_type": "damage_single",
-        "damage_multiplier": 1.5,
-        "guaranteed_hit": True,
-        "name": "Golpe Brutal",
-    },
-    "grito_de_guerra": {
-        "class_name": "Guerrero",
-        "mp_cost": 1,
-        "effect_type": "heavy_defend",
-        "guaranteed_hit": False,
-        "name": "Grito de Guerra",
-    },
-    # Mago
-    "bola_de_fuego": {
-        "class_name": "Mago",
-        "mp_cost": 4,
-        "effect_type": "damage_all",
-        "flat_damage": 3,
-        "guaranteed_hit": True,
-        "name": "Bola de Fuego",
-    },
-    "rayo_de_hielo": {
-        "class_name": "Mago",
-        "mp_cost": 2,
-        "effect_type": "damage_pierce",
-        "flat_damage": 4,
-        "guaranteed_hit": True,
-        "name": "Rayo de Hielo",
-    },
-    # Pícaro / Picaro
-    "golpe_furtivo": {
-        "class_name": "Picaro",
-        "mp_cost": 2,
-        "effect_type": "damage_single",
-        "damage_multiplier": 2.0,
-        "guaranteed_hit": True,
-        "name": "Golpe Furtivo",
-    },
-    "evasion": {
-        "class_name": "Picaro",
-        "mp_cost": 1,
-        "effect_type": "evasion",
-        "guaranteed_hit": False,
-        "name": "Evasión",
-    },
-}
+from app.ddbb.Models.Ability import Ability
 
 
 def _normalize(text: str) -> str:
@@ -68,30 +14,30 @@ def _normalize(text: str) -> str:
 
 def use_ability(db: Session, hero: Hero, ability_id: str) -> dict:
     """Validate and deduct MP for a hero ability. Returns ability metadata for frontend to apply."""
-    ability = ABILITIES.get(ability_id)
+    ability = db.query(Ability).filter(Ability.slug == ability_id).first()
     if ability is None:
         raise ValueError(f"Habilidad desconocida: {ability_id}")
 
     hero_class = _normalize(hero.hero_class.name)
-    required_class = _normalize(ability["class_name"])
+    required_class = _normalize(ability.class_name)
     if hero_class != required_class:
         raise ValueError(f"{hero.name} no puede usar esa habilidad.")
 
-    if hero.mp_current < ability["mp_cost"]:
-        raise ValueError(f"Maná insuficiente. Necesitas {ability['mp_cost']} MP.")
+    if hero.mp_current < ability.mp_cost:
+        raise ValueError(f"Maná insuficiente. Necesitas {ability.mp_cost} MP.")
 
-    hero.mp_current -= ability["mp_cost"]
+    hero.mp_current -= ability.mp_cost
     db.commit()
     db.refresh(hero)
 
     return {
         "ability_id": ability_id,
-        "ability_name": ability["name"],
+        "ability_name": ability.name,
         "mp_remaining": hero.mp_current,
-        "effect_type": ability["effect_type"],
-        "damage_multiplier": ability.get("damage_multiplier"),
-        "flat_damage": ability.get("flat_damage"),
-        "guaranteed_hit": ability.get("guaranteed_hit", False),
+        "effect_type": ability.effect_type,
+        "damage_multiplier": ability.damage_multiplier,
+        "flat_damage": ability.flat_damage,
+        "guaranteed_hit": ability.guaranteed_hit,
     }
 
 

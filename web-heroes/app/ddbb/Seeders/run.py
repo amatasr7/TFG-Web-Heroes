@@ -2,6 +2,7 @@
 
 from sqlalchemy.orm import Session
 
+from app.ddbb.Seeders.AbilitySeeder import seed_abilities
 from app.ddbb.Seeders.HeroClassSeeder import seed_hero_classes
 from app.ddbb.Seeders.ItemSeeder import seed_items
 from app.ddbb.Seeders.ItemTypeSeeder import seed_item_types
@@ -30,6 +31,7 @@ def run_all_seeders(db: Session) -> None:
         db: Database session
     """
     # Seed base tables (no dependencies)
+    seed_abilities(db)
     classes = seed_hero_classes(db)
     seed_item_types(db)
     user = seed_users(db)

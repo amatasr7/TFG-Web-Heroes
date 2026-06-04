@@ -11,22 +11,13 @@ import AbilitiesMenu from "./components/AbilitiesMenu/AbilitiesMenu";
 
 const API = "http://localhost:8000/api";
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 function ts() {
   const now = new Date();
   return `${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
 }
 
 export function getSpriteForHero(hero) {
-  const cls = (hero?.hero_class?.name ?? "").toLowerCase();
+  const cls = (hero?.hero_class?.name ?? hero?.hero_class_name ?? "").toLowerCase();
   if (cls.includes("guerrero")) return "/sprites/Guerrero2.png";
   if (cls.includes("mago")) return "/sprites/Maga.png";
   if (cls.includes("picaro") || cls.includes("pícaro")) return "/sprites/Arquero.png";
@@ -36,7 +27,7 @@ export function getSpriteForHero(hero) {
 
 export function getSpriteForEnemy(enemy) {
   const name = (enemy?.name ?? "").toLowerCase();
-  const cls = (enemy?.hero_class?.name ?? "").toLowerCase();
+  const cls = (enemy?.hero_class?.name ?? enemy?.hero_class_name ?? "").toLowerCase();
   if (name.includes("goblin") || cls.includes("goblin")) return "/sprites/Goblin-guerrero.png";
   if (name.includes("slime")) return "/sprites/Slime.png";
   if (name.includes("orco") || name.includes("orc")) return "/sprites/Orco.png";
@@ -47,45 +38,24 @@ export function getSpriteForEnemy(enemy) {
   return "/sprites/Orco.png";
 }
 
-function buildTurnQueue(heroes, enemies) {
-  const sh = shuffle(heroes);
-  const se = shuffle(enemies);
-  const result = [];
-  const maxLen = Math.max(sh.length, se.length);
-  for (let i = 0; i < maxLen; i++) {
-    if (i < sh.length) {
-      result.push({ id: sh[i].id, name: sh[i].name, type: "hero", sprite: getSpriteForHero(sh[i]) });
-    }
-    if (i < se.length) {
-      result.push({ id: se[i].id, name: se[i].name, type: "enemy", sprite: getSpriteForEnemy(se[i]) });
-    }
-  }
-  return result;
-}
-
-function nextAliveIndex(queue, current, heroes, enemies) {
-  const total = queue.length;
-  if (total === 0) return 0;
-  let next = (current + 1) % total;
-  for (let i = 0; i < total; i++) {
-    const actor = queue[next];
-    const hp =
-      actor.type === "hero"
-        ? (heroes.find((h) => h.id === actor.id)?.hp_current ?? 0)
-        : (enemies.find((e) => e.id === actor.id)?.hp_current ?? 0);
-    if (hp > 0) return next;
-    next = (next + 1) % total;
-  }
-  return next;
+function enrichTurnQueue(queue, heroesState, enemiesState) {
+  return queue.map((item) => ({
+    ...item,
+    sprite:
+      item.type === "hero"
+        ? getSpriteForHero(heroesState.find((h) => h.id === item.id))
+        : getSpriteForEnemy(enemiesState.find((e) => e.id === item.id)),
+  }));
 }
 
 const INITIAL_STATE = {
+  sessionId: null,
   heroes: [],
   enemies: [],
   userItems: [],
   turnQueue: [],
   currentTurnIndex: 0,
-  logs: [{ timestamp: "00:00", message: "¡La batalla comienza!" }],
+  logs: [{ timestamp: "00:00", message: "Cargando batalla..." }],
   selectedEnemy: null,
   isAnimating: false,
   battleOver: null,
@@ -98,10 +68,13 @@ function reducer(state, action) {
     case "LOAD":
       return {
         ...state,
-        heroes: action.heroes,
-        enemies: action.enemies,
+        sessionId: action.sessionId,
+        heroes: action.heroesState,
+        enemies: action.enemiesState,
         userItems: action.userItems ?? [],
-        turnQueue: action.turnQueue,
+        turnQueue: enrichTurnQueue(action.turnQueue, action.heroesState, action.enemiesState),
+        currentTurnIndex: action.currentTurnIndex,
+        logs: action.newLogs.map((m, i) => ({ timestamp: i === 0 ? "00:00" : ts(), message: m })),
         isLoading: false,
         loadError: null,
       };
@@ -124,184 +97,31 @@ function reducer(state, action) {
         logs: [...state.logs, { timestamp: ts(), message: action.message }],
       };
 
-    case "HERO_ATTACK": {
-      const newHeroes = state.heroes.map((h) =>
-        h.id === action.heroId ? { ...h, hp_current: action.heroHp } : h
-      );
-      const newEnemies = state.enemies.map((e) =>
-        e.id === action.enemyId ? { ...e, hp_current: action.enemyHp } : e
-      );
+    case "BATTLE_UPDATE": {
       const newLogs = [
         ...state.logs,
-        ...action.messages.map((m) => ({ timestamp: ts(), message: m })),
+        ...action.newLogs.map((m) => ({ timestamp: ts(), message: m })),
       ];
-      if (action.xpMessage) {
-        newLogs.push({ timestamp: ts(), message: action.xpMessage });
-      }
-      const allEnemiesDead = newEnemies.every((e) => e.hp_current <= 0);
-      const allHeroesDead = newHeroes.every((h) => h.hp_current <= 0);
-      const battleOver = allEnemiesDead
-        ? { result: "victory", xpGained: action.xpGained ?? 0 }
-        : allHeroesDead
-        ? { result: "defeat", xpGained: 0 }
-        : null;
-      const nextIndex = battleOver
-        ? state.currentTurnIndex
-        : nextAliveIndex(state.turnQueue, state.currentTurnIndex, newHeroes, newEnemies);
+      const battleOver =
+        action.status === "victory"
+          ? { result: "victory" }
+          : action.status === "defeat"
+          ? { result: "defeat" }
+          : null;
       return {
         ...state,
-        heroes: newHeroes,
-        enemies: newEnemies,
+        heroes: action.heroesState,
+        enemies: action.enemiesState,
+        currentTurnIndex: action.currentTurnIndex,
         logs: newLogs,
         isAnimating: false,
         selectedEnemy: null,
         battleOver,
-        currentTurnIndex: nextIndex,
       };
     }
 
-    case "HERO_SKIP": {
-      const newHeroes = action.defend
-        ? state.heroes.map((h) =>
-            h.id === action.heroId ? { ...h, isDefending: true } : h
-          )
-        : state.heroes;
-      const newLogs = [...state.logs, { timestamp: ts(), message: action.message }];
-      const nextIndex = nextAliveIndex(
-        state.turnQueue,
-        state.currentTurnIndex,
-        newHeroes,
-        state.enemies
-      );
-      return {
-        ...state,
-        heroes: newHeroes,
-        logs: newLogs,
-        isAnimating: false,
-        selectedEnemy: null,
-        currentTurnIndex: nextIndex,
-      };
-    }
-
-    case "ENEMY_ATTACK": {
-      const target = state.heroes.find((h) => h.id === action.targetId);
-      if (!target) return { ...state, isAnimating: false };
-
-      const isEvading = target.isEvading ?? false;
-      const isDefendingHeavy = target.isDefendingHeavy ?? false;
-      const isDefending = target.isDefending ?? false;
-      const rawDmg = action.rawDamage;
-
-      let dmg = 0;
-      let message = "";
-
-      if (!action.hit || isEvading) {
-        dmg = 0;
-        message = isEvading
-          ? `${action.enemyName} ataca a ${target.name}, ¡pero esquiva en las sombras!`
-          : `${action.enemyName} intenta atacar a ${target.name}, ¡pero falla!`;
-      } else if (isDefendingHeavy) {
-        dmg = Math.max(1, Math.floor(rawDmg / 4));
-        message = `${action.enemyName} ataca a ${target.name}, ¡Grito de Guerra lo protege! (${dmg} daño)`;
-      } else if (isDefending) {
-        dmg = Math.max(1, Math.floor(rawDmg / 2));
-        message = `${action.enemyName} ataca a ${target.name}, ¡pero estaba defendiendo! (${dmg} daño)`;
-      } else {
-        dmg = rawDmg;
-        message = `${action.enemyName}${action.abilityName ? ` usa ${action.abilityName} sobre` : " ataca a"} ${target.name} causando ${dmg} de daño.`;
-      }
-
-      const newHeroes = state.heroes.map((h) => {
-        if (h.id !== action.targetId) return h;
-        return { ...h, hp_current: Math.max(0, h.hp_current - dmg), isDefending: false, isDefendingHeavy: false, isEvading: false };
-      });
-      const newLogs = [...state.logs, { timestamp: ts(), message }];
-      const allHeroesDead = newHeroes.every((h) => h.hp_current <= 0);
-      const battleOver = allHeroesDead ? { result: "defeat", xpGained: 0 } : null;
-      const nextIndex = battleOver
-        ? state.currentTurnIndex
-        : nextAliveIndex(state.turnQueue, state.currentTurnIndex, newHeroes, state.enemies);
-      return {
-        ...state,
-        heroes: newHeroes,
-        logs: newLogs,
-        isAnimating: false,
-        battleOver,
-        currentTurnIndex: nextIndex,
-      };
-    }
-
-    case "USE_ITEM": {
-      const newHeroes = state.heroes.map((h) =>
-        h.id === action.heroId
-          ? { ...h, hp_current: action.heroHp, mp_current: action.heroMp }
-          : h
-      );
-      const newUserItems = state.userItems
-        .map((ui) =>
-          ui.item_id === action.itemId ? { ...ui, quantity: action.newQty } : ui
-        )
-        .filter((ui) => ui.quantity > 0);
-      const newLogs = [...state.logs, { timestamp: ts(), message: action.message }];
-      const nextIndex = nextAliveIndex(
-        state.turnQueue,
-        state.currentTurnIndex,
-        newHeroes,
-        state.enemies
-      );
-      return {
-        ...state,
-        heroes: newHeroes,
-        userItems: newUserItems,
-        logs: newLogs,
-        isAnimating: false,
-        selectedEnemy: null,
-        currentTurnIndex: nextIndex,
-      };
-    }
-
-    case "HERO_USE_ABILITY": {
-      // Update hero MP and apply any self-buff flags
-      const newHeroes = state.heroes.map((h) => {
-        if (h.id !== action.heroId) return h;
-        return {
-          ...h,
-          mp_current: action.mpRemaining,
-          isDefendingHeavy: action.effectType === "heavy_defend" ? true : (h.isDefendingHeavy ?? false),
-          isEvading: action.effectType === "evasion" ? true : (h.isEvading ?? false),
-        };
-      });
-
-      // Apply damage to enemies
-      let newEnemies = state.enemies;
-      if (action.effectType === "damage_single" || action.effectType === "damage_pierce") {
-        newEnemies = state.enemies.map((e) =>
-          e.id === action.enemyId ? { ...e, hp_current: Math.max(0, e.hp_current - action.damage) } : e
-        );
-      } else if (action.effectType === "damage_all") {
-        newEnemies = state.enemies.map((e) =>
-          e.hp_current > 0 ? { ...e, hp_current: Math.max(0, e.hp_current - action.damage) } : e
-        );
-      }
-
-      const newLogs = [...state.logs, { timestamp: ts(), message: action.message }];
-      const allEnemiesDead = newEnemies.every((e) => e.hp_current <= 0);
-      const battleOver = allEnemiesDead ? { result: "victory", xpGained: 0 } : null;
-      const nextIndex = battleOver
-        ? state.currentTurnIndex
-        : nextAliveIndex(state.turnQueue, state.currentTurnIndex, newHeroes, newEnemies);
-
-      return {
-        ...state,
-        heroes: newHeroes,
-        enemies: newEnemies,
-        logs: newLogs,
-        isAnimating: false,
-        selectedEnemy: null,
-        battleOver,
-        currentTurnIndex: nextIndex,
-      };
-    }
+    case "UPDATE_ITEMS":
+      return { ...state, userItems: action.userItems };
 
     default:
       return state;
@@ -310,16 +130,12 @@ function reducer(state, action) {
 
 export default function BattleView({ mission, onLeave }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const stateRef = useRef(state);
   const userRef = useRef(null);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [isAbilitiesOpen, setIsAbilitiesOpen] = useState(false);
   const [missionRewards, setMissionRewards] = useState(null);
 
-  useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
-
+  // Load: start battle session on backend
   useEffect(() => {
     const stored = localStorage.getItem("webHeroesUser");
     userRef.current = stored ? JSON.parse(stored) : null;
@@ -327,101 +143,54 @@ export default function BattleView({ mission, onLeave }) {
 
     async function load() {
       try {
-        const enemyIds = mission?.enemy_ids ?? [];
-        const [heroRes, inventoryRes, ...enemyResArr] = await Promise.all([
-          fetch(`${API}/heroes?user_id=${user?.id}`),
+        const [battleRes, inventoryRes] = await Promise.all([
+          fetch(`${API}/combat/battle/start`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: user?.id,
+              mission_id: mission?.id ?? null,
+              enemy_ids: mission?.enemy_ids ?? [],
+            }),
+          }),
           fetch(`${API}/shop/inventory?user_id=${user?.id}`),
-          ...enemyIds.map((id) => fetch(`${API}/enemies/${id}`)),
         ]);
 
-        if (!heroRes.ok) throw new Error("No se pudieron cargar los héroes.");
-        const heroData = await heroRes.json();
+        if (!battleRes.ok) {
+          const err = await battleRes.json();
+          dispatch({ type: "LOAD_ERROR", message: err.detail ?? "No se pudo iniciar la batalla." });
+          return;
+        }
+
+        const battleData = await battleRes.json();
         const inventoryData = inventoryRes.ok ? await inventoryRes.json() : { user_items: [] };
-        const enemyData = await Promise.all(enemyResArr.map((r) => r.json()));
-
-        const heroes = heroData
-          .filter((h) => h.hp_current > 0)
-          .map((h) => ({ ...h, isDefending: false, isDefendingHeavy: false, isEvading: false }));
-
-        const enemies = enemyData.map((e) => ({ ...e, hp_current: e.hp_max }));
         const userItems = (inventoryData.user_items ?? []).filter(
           (ui) => ui.item?.type?.slug === "consumable" && ui.quantity > 0
         );
-        const turnQueue = buildTurnQueue(heroes, enemies);
-        dispatch({ type: "LOAD", heroes, enemies, userItems, turnQueue });
+
+        dispatch({
+          type: "LOAD",
+          sessionId: battleData.session_id,
+          heroesState: battleData.heroes_state,
+          enemiesState: battleData.enemies_state,
+          turnQueue: battleData.turn_queue,
+          currentTurnIndex: battleData.current_turn_index,
+          newLogs: battleData.new_logs,
+          userItems,
+        });
       } catch (err) {
         dispatch({ type: "LOAD_ERROR", message: err.message });
       }
     }
     load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Enemy auto-turn — intentionally excludes isAnimating from deps to avoid
-  // cancelling its own timer (dispatching START_ANIMATING would re-trigger the effect).
-  // isAnimating is only used for hero-side API calls.
-  useEffect(() => {
-    if (state.isLoading || state.battleOver) return;
-    const cur = state.turnQueue[state.currentTurnIndex];
-    if (!cur || cur.type !== "enemy") return;
-
-    const timer = setTimeout(() => {
-      const s = stateRef.current;
-      const aliveHeroes = s.heroes.filter((h) => h.hp_current > 0);
-      if (aliveHeroes.length === 0) return;
-
-      const enemy = s.enemies.find((e) => e.id === cur.id);
-      const target = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
-      const baseAtk = enemy?.hero_class?.base_attack ?? 2;
-      const heroDef = target.defense ?? 0;
-      const enemyClass = (enemy?.hero_class?.name ?? "").toLowerCase();
-      const abilityRoll = Math.random();
-
-      let rawDmg = Math.max(1, baseAtk - heroDef);
-      let hit = Math.random() < 0.6;
-      let abilityName = null;
-
-      // Enemy class abilities (client-side)
-      if (enemyClass.includes("jefe") && abilityRoll < 0.35) {
-        // Golpe Aplastante: 2.5x damage, guaranteed
-        rawDmg = Math.max(1, Math.floor(baseAtk * 2.5) - heroDef);
-        hit = true;
-        abilityName = "Golpe Aplastante";
-      } else if (enemyClass.includes("guerrero") && abilityRoll < 0.25) {
-        // Golpe Potente: 2x damage, guaranteed
-        rawDmg = Math.max(1, baseAtk * 2 - heroDef);
-        hit = true;
-        abilityName = "Golpe Potente";
-      } else if (enemyClass.includes("mago") && abilityRoll < 0.25) {
-        // Rayo Arcano: flat 3 damage, ignores defense, guaranteed
-        rawDmg = 3;
-        hit = true;
-        abilityName = "Rayo Arcano";
-      } else if (enemyClass.includes("animal") && abilityRoll < 0.30) {
-        // Zarpazo Salvaje: 1.5x damage, guaranteed
-        rawDmg = Math.max(1, Math.floor(baseAtk * 1.5) - heroDef);
-        hit = true;
-        abilityName = "Zarpazo Salvaje";
-      }
-
-      dispatch({
-        type: "ENEMY_ATTACK",
-        targetId: target.id,
-        enemyName: cur.name,
-        hit,
-        rawDamage: rawDmg,
-        abilityName,
-      });
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.currentTurnIndex, !!state.battleOver, state.isLoading]);
-
-  // Call mission complete endpoint on victory to award gold + items
+  // Call mission complete on victory
   useEffect(() => {
     if (state.battleOver?.result !== "victory" || !mission?.id) return;
     const user = userRef.current;
-    const heroIds = stateRef.current.heroes.map((h) => h.id);
+    const heroIds = state.heroes.map((h) => h.id);
     fetch(`${API}/missions/${mission.id}/complete`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -440,76 +209,70 @@ export default function BattleView({ mission, onLeave }) {
     !state.battleOver &&
     currentActor?.type === "hero";
 
+  async function sendAction(payload) {
+    dispatch({ type: "START_ANIMATING" });
+    try {
+      const res = await fetch(`${API}/combat/battle/${state.sessionId}/action`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        dispatch({ type: "ADD_LOG", message: err.detail ?? "Error en la acción." });
+        dispatch({ type: "STOP_ANIMATING" });
+        return;
+      }
+      const data = await res.json();
+      dispatch({
+        type: "BATTLE_UPDATE",
+        heroesState: data.heroes_state,
+        enemiesState: data.enemies_state,
+        currentTurnIndex: data.current_turn_index,
+        newLogs: data.new_logs,
+        status: data.status,
+      });
+    } catch {
+      dispatch({ type: "ADD_LOG", message: "Error de red." });
+      dispatch({ type: "STOP_ANIMATING" });
+    }
+  }
+
   async function handleAction(action) {
     if (!isPlayerTurn) return;
     const cur = currentActor;
 
-    if (action === "attack") {
-      const enemy = state.selectedEnemy;
-      if (!enemy) {
-        dispatch({ type: "ADD_LOG", message: "Selecciona un enemigo objetivo primero." });
-        return;
-      }
-      dispatch({ type: "START_ANIMATING" });
-      try {
-        const res = await fetch(`${API}/combat/attack/${cur.id}/${enemy.id}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ enemy_hp_current: enemy.hp_current }),
-        });
-        if (!res.ok) {
-          const errData = await res.json();
-          dispatch({ type: "ADD_LOG", message: errData.error ?? "Error al atacar." });
-          dispatch({ type: "STOP_ANIMATING" });
-          return;
-        }
-        const data = await res.json();
-
-        // Award XP to the whole warband when an enemy is killed
-        const xpGained = data.rewards?.xp_gained ?? 0;
-        if (data.enemy_status.is_dead && xpGained > 0) {
-          const otherIds = state.heroes
-            .filter((h) => h.id !== cur.id && h.hp_current > 0)
-            .map((h) => h.id);
-          if (otherIds.length > 0) {
-            fetch(`${API}/combat/award-xp`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ hero_ids: otherIds, amount: xpGained }),
-            }).catch(() => {});
-          }
-        }
-
-        const xpMessage = xpGained > 0
-          ? `¡La warband gana ${xpGained} XP!`
-          : null;
-
-        dispatch({
-          type: "HERO_ATTACK",
-          heroId: cur.id,
-          enemyId: enemy.id,
-          heroHp: data.hero_status.hp_remaining,
-          enemyHp: data.enemy_status.hp_remaining,
-          messages: data.combat_log,
-          xpGained,
-          xpMessage,
-        });
-      } catch {
-        dispatch({ type: "ADD_LOG", message: "Error de red al atacar." });
-        dispatch({ type: "STOP_ANIMATING" });
-      }
-    } else if (action === "defend") {
-      dispatch({
-        type: "HERO_SKIP",
-        heroId: cur.id,
-        defend: true,
-        message: `${cur.name} adopta una postura defensiva.`,
-      });
-    } else if (action === "abilities") {
+    if (action === "abilities") {
       setIsAbilitiesOpen(true);
-    } else if (action === "items") {
-      setIsInventoryOpen(true);
+      return;
     }
+    if (action === "items") {
+      setIsInventoryOpen(true);
+      return;
+    }
+    if (action === "attack" && !state.selectedEnemy) {
+      dispatch({ type: "ADD_LOG", message: "Selecciona un enemigo objetivo primero." });
+      return;
+    }
+
+    await sendAction({
+      action,
+      hero_id: cur.id,
+      target_enemy_id: state.selectedEnemy?.id ?? null,
+    });
+  }
+
+  async function handleUseAbility(ability) {
+    const cur = currentActor;
+    if (!cur || cur.type !== "hero") return;
+    setIsAbilitiesOpen(false);
+
+    await sendAction({
+      action: "use_ability",
+      hero_id: cur.id,
+      target_enemy_id: state.selectedEnemy?.id ?? null,
+      ability_id: ability.id,
+    });
   }
 
   async function handleUseItem(userItem) {
@@ -518,13 +281,14 @@ export default function BattleView({ mission, onLeave }) {
     const user = userRef.current;
 
     try {
-      const res = await fetch(`${API}/shop/use-item`, {
+      const res = await fetch(`${API}/combat/battle/${state.sessionId}/action`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: user?.id,
-          item_id: userItem.item_id,
+          action: "use_item",
           hero_id: cur.id,
+          item_id: userItem.item_id,
+          user_id: user?.id,
         }),
       });
       if (!res.ok) {
@@ -533,19 +297,26 @@ export default function BattleView({ mission, onLeave }) {
         return;
       }
       const data = await res.json();
-      const restoreParts = [];
-      if (data.hp_restored > 0) restoreParts.push(`+${data.hp_restored} HP`);
-      if (data.mp_restored > 0) restoreParts.push(`+${data.mp_restored} MP`);
-      const effect = restoreParts.length > 0 ? ` (${restoreParts.join(", ")})` : "";
       dispatch({
-        type: "USE_ITEM",
-        heroId: cur.id,
-        itemId: userItem.item_id,
-        heroHp: data.hero_hp,
-        heroMp: data.hero_mp,
-        newQty: data.quantity_remaining,
-        message: `${cur.name} usa ${data.item_name}${effect}.`,
+        type: "BATTLE_UPDATE",
+        heroesState: data.heroes_state,
+        enemiesState: data.enemies_state,
+        currentTurnIndex: data.current_turn_index,
+        newLogs: data.new_logs,
+        status: data.status,
       });
+      // Refresh local item counts
+      if (user?.id) {
+        fetch(`${API}/shop/inventory?user_id=${user.id}`)
+          .then((r) => r.json())
+          .then((inv) => {
+            const items = (inv.user_items ?? []).filter(
+              (ui) => ui.item?.type?.slug === "consumable" && ui.quantity > 0
+            );
+            dispatch({ type: "UPDATE_ITEMS", userItems: items });
+          })
+          .catch(() => {});
+      }
     } catch {
       dispatch({ type: "ADD_LOG", message: "Error al usar el objeto." });
     } finally {
@@ -553,94 +324,11 @@ export default function BattleView({ mission, onLeave }) {
     }
   }
 
-  async function handleUseAbility(ability) {
-    const cur = currentActor;
-    if (!cur || cur.type !== "hero") return;
-
-    const hero = state.heroes.find((h) => h.id === cur.id);
-    if (!hero) return;
-
-    dispatch({ type: "START_ANIMATING" });
-    setIsAbilitiesOpen(false);
-
-    try {
-      const res = await fetch(`${API}/combat/use-ability/${cur.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ability_id: ability.id }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        dispatch({ type: "ADD_LOG", message: err.detail ?? "Error al usar habilidad." });
-        dispatch({ type: "STOP_ANIMATING" });
-        return;
-      }
-      const data = await res.json();
-
-      // Compute actual damage on frontend
-      let damage = 0;
-      let message = "";
-      const effectType = data.effect_type;
-
-      if (effectType === "damage_single") {
-        const mult = data.damage_multiplier ?? 1.0;
-        damage = Math.max(1, Math.floor(hero.attack * mult));
-        const enemy = state.selectedEnemy;
-        message = `${cur.name} usa ${data.ability_name} sobre ${enemy?.name ?? "el enemigo"} causando ${damage} de daño.`;
-      } else if (effectType === "damage_pierce") {
-        damage = data.flat_damage ?? 4;
-        const enemy = state.selectedEnemy;
-        message = `${cur.name} lanza ${data.ability_name} sobre ${enemy?.name ?? "el enemigo"} causando ${damage} de daño mágico (ignora defensa).`;
-      } else if (effectType === "damage_all") {
-        damage = data.flat_damage ?? 3;
-        message = `${cur.name} lanza ${data.ability_name}, causando ${damage} de daño a todos los enemigos.`;
-      } else if (effectType === "heavy_defend") {
-        message = `${cur.name} grita con furia. ¡Grito de Guerra activo (75% reducción de daño)!`;
-      } else if (effectType === "evasion") {
-        message = `${cur.name} se funde con las sombras. ¡Evasión activa!`;
-      }
-
-      // Award XP for ability kills (same pattern as regular attacks)
-      if (effectType === "damage_single" || effectType === "damage_pierce") {
-        const enemy = state.selectedEnemy;
-        if (enemy && enemy.hp_current - damage <= 0) {
-          const allIds = state.heroes.filter((h) => h.hp_current > 0).map((h) => h.id);
-          if (allIds.length > 0) {
-            fetch(`${API}/combat/award-xp`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ hero_ids: allIds, amount: enemy.xp_reward ?? 0 }),
-            }).catch(() => {});
-          }
-        }
-      } else if (effectType === "damage_all") {
-        const killedEnemies = state.enemies.filter((e) => e.hp_current > 0 && e.hp_current - damage <= 0);
-        if (killedEnemies.length > 0) {
-          const totalXp = killedEnemies.reduce((sum, e) => sum + (e.xp_reward ?? 0), 0);
-          const allIds = state.heroes.filter((h) => h.hp_current > 0).map((h) => h.id);
-          if (totalXp > 0 && allIds.length > 0) {
-            fetch(`${API}/combat/award-xp`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ hero_ids: allIds, amount: totalXp }),
-            }).catch(() => {});
-          }
-        }
-      }
-
-      dispatch({
-        type: "HERO_USE_ABILITY",
-        heroId: cur.id,
-        mpRemaining: data.mp_remaining,
-        effectType,
-        damage,
-        enemyId: state.selectedEnemy?.id ?? null,
-        message,
-      });
-    } catch {
-      dispatch({ type: "ADD_LOG", message: "Error de red al usar habilidad." });
-      dispatch({ type: "STOP_ANIMATING" });
+  async function handleFlee() {
+    if (state.sessionId) {
+      await fetch(`${API}/combat/battle/${state.sessionId}/abandon`, { method: "POST" }).catch(() => {});
     }
+    onLeave();
   }
 
   if (state.isLoading) {
@@ -674,7 +362,7 @@ export default function BattleView({ mission, onLeave }) {
               ? `Turno: ${currentActor.name} ${currentActor.type === "hero" ? "⚔" : "☠"}`
               : ""}
           </span>
-          <button className="flee-btn" onClick={onLeave}>
+          <button className="flee-btn" onClick={handleFlee}>
             Huir
           </button>
         </div>
@@ -715,7 +403,11 @@ export default function BattleView({ mission, onLeave }) {
             onAction={handleAction}
             isPlayerTurn={isPlayerTurn}
             hasSelectedEnemy={!!state.selectedEnemy}
-            currentHero={currentActor?.type === "hero" ? state.heroes.find((h) => h.id === currentActor.id) : null}
+            currentHero={
+              currentActor?.type === "hero"
+                ? state.heroes.find((h) => h.id === currentActor.id)
+                : null
+            }
           />
         </div>
 
@@ -730,7 +422,11 @@ export default function BattleView({ mission, onLeave }) {
 
       {isAbilitiesOpen && (
         <AbilitiesMenu
-          hero={currentActor?.type === "hero" ? state.heroes.find((h) => h.id === currentActor.id) : null}
+          hero={
+            currentActor?.type === "hero"
+              ? state.heroes.find((h) => h.id === currentActor.id)
+              : null
+          }
           hasSelectedEnemy={!!state.selectedEnemy}
           onUse={handleUseAbility}
           onClose={() => setIsAbilitiesOpen(false)}
@@ -754,12 +450,9 @@ export default function BattleView({ mission, onLeave }) {
             </h2>
             {state.battleOver.result === "victory" && (
               <div className="battle-over-rewards">
-                {state.battleOver.xpGained > 0 && (
-                  <p className="battle-over-xp">+{state.battleOver.xpGained} XP (combate)</p>
-                )}
                 {missionRewards ? (
                   <>
-                    <p className="battle-over-xp">+{missionRewards.xp_awarded} XP (misión)</p>
+                    <p className="battle-over-xp">+{missionRewards.xp_awarded} XP</p>
                     <p className="battle-over-gold">+{missionRewards.gold_awarded} oro</p>
                     {missionRewards.items_awarded.length > 0 && (
                       <div className="battle-over-items">

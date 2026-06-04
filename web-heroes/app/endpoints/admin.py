@@ -9,13 +9,27 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.ddbb.database import get_db
-from app.ddbb.Models import Enemy, Hero, HeroClass, HeroItem, Item, ItemType, Mission, ShopItem, User, UserItem, Warband, WarbandHero
+from app.ddbb.Models import Ability, Enemy, Hero, HeroClass, HeroItem, Item, ItemType, Mission, ShopItem, User, UserItem, Warband, WarbandHero
 
 router = APIRouter(tags=["backoffice"])
 templates = Jinja2Templates(directory="app/templates")
 
 
 TABLES: dict[str, dict[str, Any]] = {
+    "abilities": {
+        "label": "Habilidades",
+        "model": Ability,
+        "fields": {
+            "slug": {"type": "text", "required": True},
+            "name": {"type": "text", "required": True},
+            "class_name": {"type": "text", "required": True},
+            "mp_cost": {"type": "int"},
+            "effect_type": {"type": "text", "required": True},
+            "damage_multiplier": {"type": "float"},
+            "flat_damage": {"type": "int"},
+            "guaranteed_hit": {"type": "boolean"},
+        },
+    },
     "users": {
         "label": "Usuarios",
         "model": User,
@@ -205,6 +219,8 @@ async def parse_payload(request: Request, config: dict[str, Any]) -> dict[str, A
             continue
         elif field_type in {"int", "select"}:
             data[field] = int(raw_value)
+        elif field_type == "float":
+            data[field] = float(raw_value)
         elif field_type == "json-list":
             data[field] = [part.strip() for part in raw_value.split(",")]
         else:

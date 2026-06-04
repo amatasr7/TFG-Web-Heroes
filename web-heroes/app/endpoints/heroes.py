@@ -3,21 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.crud.heroes import (
-    ACTION_COOLDOWNS,
-    check_action_cooldown,
-    create_hero,
-    delete_hero,
-    get_hero,
-    level_up_hero,
-    list_heroes,
-    meditate_hero,
-    refresh_hero_stats,
-    rest_hero,
-    steal_hero,
-    train_hero,
-    update_hero,
-)
+from app.ddbb.Controllers import HeroController
 from app.ddbb.database import get_db
 from app.endpoints.errors import raise_integrity_error
 from app.schemas.hero import HeroCreate, HeroRead, HeroUpdate
@@ -36,32 +22,33 @@ class ActionPayload(BaseModel):
 
 @router.get("/heroes", response_model=list[HeroRead])
 def index(user_id: int | None = None, db: Session = Depends(get_db)):
-    return list_heroes(db, user_id)
+    return HeroController.get_heroes_for_user(db, user_id)
 
 
 @router.get("/heroes/{hero_id}", response_model=HeroRead)
 def show(hero_id: int, db: Session = Depends(get_db)):
-    hero = get_hero(db, hero_id)
+    hero = HeroController.get_hero_with_refresh(db, hero_id)
     if hero is None:
         raise HTTPException(status_code=404, detail="Heroe no encontrado.")
-    return refresh_hero_stats(db, hero)
+    return hero
 
 
 @router.post("/heroes", response_model=HeroRead, status_code=status.HTTP_201_CREATED)
 def store(payload: HeroCreate, db: Session = Depends(get_db)):
     try:
-        return create_hero(db, payload)
+        return HeroController.create_new_hero(db, payload)
     except IntegrityError as error:
         raise_integrity_error(error)
 
 
 @router.put("/heroes/{hero_id}", response_model=HeroRead)
 def replace(hero_id: int, payload: HeroUpdate, db: Session = Depends(get_db)):
+    from app.crud.heroes import get_hero
     hero = get_hero(db, hero_id)
     if hero is None:
         raise HTTPException(status_code=404, detail="Heroe no encontrado.")
     try:
-        return update_hero(db, hero, payload)
+        return HeroController.update_hero_data(db, hero, payload)
     except IntegrityError as error:
         raise_integrity_error(error)
 
@@ -73,11 +60,12 @@ def patch(hero_id: int, payload: HeroUpdate, db: Session = Depends(get_db)):
 
 @router.delete("/heroes/{hero_id}", status_code=status.HTTP_204_NO_CONTENT)
 def destroy(hero_id: int, db: Session = Depends(get_db)):
+    from app.crud.heroes import get_hero
     hero = get_hero(db, hero_id)
     if hero is None:
         raise HTTPException(status_code=404, detail="Heroe no encontrado.")
     try:
-        delete_hero(db, hero)
+        HeroController.delete_hero_record(db, hero)
     except IntegrityError as error:
         raise_integrity_error(error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -85,67 +73,33 @@ def destroy(hero_id: int, db: Session = Depends(get_db)):
 
 @router.post("/heroes/{hero_id}/rest", response_model=HeroRead)
 def rest(hero_id: int, db: Session = Depends(get_db)):
-    """Restore hero energy to maximum."""
+    from app.crud.heroes import get_hero
     hero = get_hero(db, hero_id)
     if hero is None:
         raise HTTPException(status_code=404, detail="Heroe no encontrado.")
-    return rest_hero(db, hero)
+    return HeroController.rest_hero_energy(db, hero)
 
 
 @router.post("/heroes/{hero_id}/level-up", response_model=HeroRead)
 def level_up(hero_id: int, payload: LevelUpPayload, db: Session = Depends(get_db)):
-    """Manually level up a hero, choosing which stat to increase."""
+    from app.crud.heroes import get_hero
     hero = get_hero(db, hero_id)
     if hero is None:
         raise HTTPException(status_code=404, detail="Heroe no encontrado.")
     try:
-        return level_up_hero(db, hero, payload.stat)
+        return HeroController.level_up(db, hero, payload.stat)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/heroes/{hero_id}/action")
 def class_action(hero_id: int, payload: ActionPayload, db: Session = Depends(get_db)):
-    """Execute a class-specific action (meditate, train, steal)."""
+    from app.crud.heroes import get_hero
     hero = get_hero(db, hero_id)
     if hero is None:
         raise HTTPException(status_code=404, detail="Heroe no encontrado.")
-
-    # Cooldown check
-    remaining = check_action_cooldown(hero, payload.action)
-    if remaining > 0:
-        cooldown_total = ACTION_COOLDOWNS.get(payload.action, 0)
-        if remaining >= 60:
-            time_str = f"{remaining // 60}h {remaining % 60}min"
-        else:
-            time_str = f"{remaining} min"
-        raise HTTPException(
-            status_code=429,
-            detail=f"Acción en recarga. Disponible en {time_str}. (Recarga: {cooldown_total} min)",
-        )
-
     try:
-        if payload.action == "meditate":
-            updated = meditate_hero(db, hero)
-            return {"hero": HeroRead.model_validate(updated), "message": f"{hero.name} medita y recupera su maná."}
-
-        if payload.action == "train":
-            updated = train_hero(db, hero)
-            return {"hero": HeroRead.model_validate(updated), "message": f"{hero.name} entrena y su defensa aumenta."}
-
-        if payload.action == "steal":
-            if not payload.user_id:
-                raise HTTPException(status_code=400, detail="user_id requerido para robar.")
-            result = steal_hero(db, hero, payload.user_id)
-            updated = get_hero(db, hero_id)
-            return {
-                "hero": HeroRead.model_validate(updated),
-                "message": f"{hero.name} roba {result['gold_gained']} de oro.",
-                "gold_gained": result["gold_gained"],
-                "new_gold": result["new_gold"],
-            }
-
-        raise HTTPException(status_code=400, detail=f"Acción desconocida: {payload.action}")
-
+        return HeroController.execute_class_action(db, hero, payload.action, payload.user_id)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        status_code = 429 if "recarga" in str(e).lower() else 400
+        raise HTTPException(status_code=status_code, detail=str(e))
