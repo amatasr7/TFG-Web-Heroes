@@ -12,6 +12,7 @@ class HeroBase(BaseModel):
     user_id: int
     hero_class_id: int
     name: str
+    sprite_url: str | None = None
     hp_current: int = 10
     mp_current: int = 10
     energy_current: int = 10
@@ -25,13 +26,15 @@ class HeroBase(BaseModel):
 
 
 class HeroCreate(HeroBase):
-    pass
+    hp_current: int | None = None
+    mp_current: int | None = None
 
 
 class HeroUpdate(BaseModel):
     user_id: int | None = None
     hero_class_id: int | None = None
     name: str | None = None
+    sprite_url: str | None = None
     hp_current: int | None = None
     mp_current: int | None = None
     energy_current: int | None = None

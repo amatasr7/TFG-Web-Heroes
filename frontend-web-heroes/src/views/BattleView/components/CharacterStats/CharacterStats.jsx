@@ -13,8 +13,8 @@ export default function CharacterStats({ heroes = [], currentHeroId = null }) {
   return (
     <div className="character-stats">
       {heroes.map((hero) => {
-        const maxHp = hero.hero_class?.base_hp_max ?? 100;
-        const maxMp = hero.hero_class?.base_mp_max ?? 50;
+        const maxHp = hero.hp_max ?? hero.hero_class?.base_hp_max ?? 100;
+        const maxMp = hero.mp_max ?? hero.hero_class?.base_mp_max ?? 50;
         const hpPct = Math.max(0, Math.min(100, (hero.hp_current / maxHp) * 100));
         const mpPct = Math.max(0, Math.min(100, (hero.mp_current / maxMp) * 100));
         const isDead = hero.hp_current <= 0;

@@ -15,6 +15,8 @@ from app.crud.user_items import get_user_item, update_user_item_quantity
 from app.ddbb.Models import Enemy, Hero, HeroItem, Item
 from app.ddbb.Models.Ability import Ability
 from app.ddbb.Models.BattleSession import BattleSession
+from app.ddbb.Models.Warband import Warband
+from app.ddbb.Models.WarbandHero import WarbandHero
 
 
 def _normalize(text: str) -> str:
@@ -35,6 +37,7 @@ def _build_heroes_state(heroes: list[Hero]) -> list[dict]:
         states.append({
             "id": hero.id,
             "name": hero.name,
+            "sprite_url": hero.sprite_url,
             "hp_current": hero.hp_current,
             "hp_max": hp_max,
             "mp_current": hero.mp_current,
@@ -427,17 +430,26 @@ def start_battle(
     mission_id: int | None,
     enemy_ids: list[int],
 ) -> tuple[BattleSession, list[str]]:
+    warband = db.query(Warband).filter(Warband.user_id == user_id).first()
+    if not warband:
+        raise ValueError("No tienes una banda de guerra configurada. Configura tu banda desde la vista de héroes.")
+
+    warband_hero_ids = [
+        entry.hero_id
+        for entry in db.query(WarbandHero).filter(WarbandHero.warband_id == warband.id).all()
+    ]
+
     heroes = (
         db.query(Hero)
         .options(
             joinedload(Hero.hero_class),
             selectinload(Hero.hero_items).joinedload(HeroItem.item),
         )
-        .filter(Hero.user_id == user_id, Hero.hp_current > 0)
+        .filter(Hero.id.in_(warband_hero_ids), Hero.hp_current > 0)
         .all()
     )
     if not heroes:
-        raise ValueError("No hay héroes disponibles para el combate.")
+        raise ValueError("Ningún héroe de tu banda de guerra está disponible para el combate.")
 
     enemies = (
         db.query(Enemy)

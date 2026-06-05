@@ -11,8 +11,25 @@ from sqlalchemy.orm import Session
 from app.ddbb.database import get_db
 from app.ddbb.Models import Ability, Enemy, Hero, HeroClass, HeroItem, Item, ItemType, Mission, ShopItem, User, UserItem, Warband, WarbandHero
 
-router = APIRouter(tags=["backoffice"])
 templates = Jinja2Templates(directory="app/templates")
+
+
+class AdminNotAuthenticated(Exception):
+    pass
+
+
+def require_admin(request: Request, db: Session = Depends(get_db)) -> None:
+    user_id = request.session.get("admin_user_id")
+    if not user_id:
+        raise AdminNotAuthenticated()
+    user = db.get(User, user_id)
+    if not user or not user.is_admin:
+        request.session.clear()
+        raise AdminNotAuthenticated()
+
+
+public_router = APIRouter(tags=["backoffice"])
+router = APIRouter(tags=["backoffice"], dependencies=[Depends(require_admin)])
 
 
 TABLES: dict[str, dict[str, Any]] = {
@@ -436,3 +453,40 @@ def delete_item(table_name: str, item_id: int, db: Session = Depends(get_db)):
         db.rollback()
 
     return RedirectResponse(f"/admin/{table_name}", status_code=status.HTTP_303_SEE_OTHER)
+
+
+# ── Auth routes (public — no require_admin dependency) ────────────────────────
+
+@public_router.get("/admin/login", response_class=HTMLResponse)
+def login_page(request: Request):
+    if request.session.get("admin_user_id"):
+        return RedirectResponse("/admin", status_code=status.HTTP_303_SEE_OTHER)
+    return templates.TemplateResponse(request, "backoffice/login.html", {"request": request})
+
+
+@public_router.post("/admin/login", response_class=HTMLResponse)
+async def login_post(request: Request, db: Session = Depends(get_db)):
+    from app.utils.security import verify_password
+
+    raw = (await request.body()).decode()
+    form = parse_qs(raw, keep_blank_values=True)
+    email = form.get("email", [""])[0].strip()
+    password = form.get("password", [""])[0].strip()
+
+    user = db.query(User).filter(User.email == email).first()
+    if not user or not user.is_admin or not verify_password(password, user.password):
+        return templates.TemplateResponse(
+            request,
+            "backoffice/login.html",
+            {"request": request, "error": "Credenciales incorrectas o sin permisos de administrador."},
+            status_code=401,
+        )
+
+    request.session["admin_user_id"] = user.id
+    return RedirectResponse("/admin", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@public_router.post("/admin/logout")
+def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse("/admin/login", status_code=status.HTTP_303_SEE_OTHER)

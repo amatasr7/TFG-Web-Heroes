@@ -32,7 +32,12 @@
         <p class="eyebrow">Backoffice</p>
         <h1>{{ title }}</h1>
       </div>
-      <a class="button" href="/docs">API Docs</a>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <a class="button" href="/docs">API Docs</a>
+        <form method="post" action="/admin/logout" style="margin: 0;">
+          <button type="submit" class="button danger">Salir</button>
+        </form>
+      </div>
     </header>
 
     <main class="content">

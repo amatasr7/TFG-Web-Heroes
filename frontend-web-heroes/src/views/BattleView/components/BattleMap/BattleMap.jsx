@@ -10,6 +10,7 @@ import mountainImg from "/backgrounds/Mountain.jpeg";
 const backgroundOptions = [caveImg, desertImg, forestImg, mineshaftImg, mountainImg];
 
 function getHeroSprite(hero) {
+  if (hero?.sprite_url) return hero.sprite_url;
   const cls = (hero?.hero_class?.name ?? "").toLowerCase();
   if (cls.includes("guerrero")) return "/sprites/Guerrero2.png";
   if (cls.includes("mago")) return "/sprites/Maga.png";

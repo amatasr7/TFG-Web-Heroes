@@ -35,7 +35,8 @@ def upgrade() -> None:
     if "item_reward_ids" not in mission_columns:
         op.add_column("missions", sa.Column("item_reward_ids", sa.JSON(), nullable=True))
         op.execute("UPDATE missions SET item_reward_ids = '[]' WHERE item_reward_ids IS NULL")
-        op.alter_column("missions", "item_reward_ids", nullable=False)
+        with op.batch_alter_table("missions") as batch_op:
+            batch_op.alter_column("item_reward_ids", existing_type=sa.JSON(), nullable=False)
 
 
 def downgrade() -> None:

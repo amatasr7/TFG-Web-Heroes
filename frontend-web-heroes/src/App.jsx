@@ -4,6 +4,7 @@ import HeroView from "./views/HeroView/HeroView";
 import ShopView from "./views/ShopView/ShopView";
 import MissionView from "./views/MissionView/MissionView";
 import AuthView from "./views/AuthView/AuthView";
+import CreateView from "./views/CreateView/CreateView";
 
 export default function App() {
   const [currentView, setCurrentView] = useState("heroes");
@@ -37,6 +38,8 @@ export default function App() {
         return <ShopView user={user} onUserUpdate={setUser} />;
       case "missions":
         return <MissionView user={user} />;
+      case "create":
+        return <CreateView user={user} onUserUpdate={setUser} onNavigate={setCurrentView} />;
       default:
         return <HeroView user={user} />;
     }

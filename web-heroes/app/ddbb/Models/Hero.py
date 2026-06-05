@@ -19,6 +19,7 @@ class Hero(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     hero_class_id: Mapped[int] = mapped_column(ForeignKey("hero_classes.id"))
     name: Mapped[str] = mapped_column(String(255))
+    sprite_url: Mapped[str | None] = mapped_column(String(255), nullable=True, default=None)
     hp_current: Mapped[int] = mapped_column(Integer, default=10)
     mp_current: Mapped[int] = mapped_column(Integer, default=10)
     energy_current: Mapped[int] = mapped_column(Integer, default=10)

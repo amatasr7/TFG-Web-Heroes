@@ -1,4 +1,6 @@
 """Hero business logic: stats calculation, class actions, leveling."""
+from pydantic import BaseModel
+
 from sqlalchemy.orm import Session
 
 from app.crud.heroes import (
@@ -18,6 +20,13 @@ from app.crud.heroes import (
 )
 from app.ddbb.Models import Hero
 from app.schemas.hero import HeroCreate, HeroRead, HeroUpdate
+
+
+class CreateWithContractPayload(BaseModel):
+    user_id: int
+    hero_class_id: int
+    name: str
+    sprite_url: str | None = None
 
 
 def get_heroes_for_user(db: Session, user_id: int | None = None) -> list[Hero]:
@@ -96,3 +105,38 @@ def execute_class_action(db: Session, hero: Hero, action: str, user_id: int | No
         }
 
     raise ValueError(f"Acción desconocida: {action}")
+
+
+def create_hero_with_contract(db: Session, payload: CreateWithContractPayload) -> Hero:
+    """Create a hero consuming one 'Contrato de heroe' from the user's inventory."""
+    from app.ddbb.Models.Item import Item
+    from app.ddbb.Models.UserItem import UserItem
+
+    contract = db.query(Item).filter(Item.name == "Contrato de heroe").first()
+    if not contract:
+        raise ValueError("El item 'Contrato de heroe' no existe en el sistema.")
+
+    user_item = (
+        db.query(UserItem)
+        .filter(UserItem.user_id == payload.user_id, UserItem.item_id == contract.id)
+        .first()
+    )
+    if not user_item or user_item.quantity < 1:
+        raise ValueError("No tienes contratos de héroe disponibles.")
+
+    hero = create_hero(
+        db,
+        HeroCreate(
+            user_id=payload.user_id,
+            hero_class_id=payload.hero_class_id,
+            name=payload.name,
+            sprite_url=payload.sprite_url,
+        ),
+    )
+
+    user_item.quantity -= 1
+    if user_item.quantity <= 0:
+        db.delete(user_item)
+    db.commit()
+
+    return hero

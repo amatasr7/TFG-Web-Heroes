@@ -17,6 +17,12 @@ export default function HeroView({ user, onUserUpdate }) {
   const [error, setError] = useState(null);
   const [userItems, setUserItems] = useState([]);
 
+  // Warband state
+  const [warbandId, setWarbandId] = useState(null);
+  const [warbandHeroIds, setWarbandHeroIds] = useState([]);
+  const [isSavingWarband, setIsSavingWarband] = useState(false);
+  const [warbandMsg, setWarbandMsg] = useState(null);
+
   useEffect(() => {
     if (!user) {
       setHeroes([]);
@@ -55,8 +61,26 @@ export default function HeroView({ user, onUserUpdate }) {
       }
     };
 
+    const fetchWarband = async () => {
+      try {
+        const res = await fetch(`${API}/warbands/user/${user.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setWarbandId(data.id);
+          setWarbandHeroIds(
+            data.entries
+              .sort((a, b) => a.slot - b.slot)
+              .map((e) => e.hero.id)
+          );
+        }
+      } catch {
+        // silently ignore — no warband yet
+      }
+    };
+
     fetchHeroes();
     fetchUserInventory();
+    fetchWarband();
   }, [user?.id]);
 
   const handleEquip = async (entry, typeSlug) => {
@@ -112,6 +136,57 @@ export default function HeroView({ user, onUserUpdate }) {
     }
   };
 
+  const handleToggleWarband = (heroId) => {
+    setWarbandHeroIds((prev) => {
+      if (prev.includes(heroId)) {
+        return prev.filter((id) => id !== heroId);
+      }
+      if (prev.length >= 3) return prev;
+      return [...prev, heroId];
+    });
+    setWarbandMsg(null);
+  };
+
+  const handleSaveWarband = async () => {
+    if (warbandHeroIds.length !== 3) return;
+    setIsSavingWarband(true);
+    setWarbandMsg(null);
+    try {
+      let res;
+      if (warbandId) {
+        res = await fetch(`${API}/warbands/${warbandId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ hero_ids: warbandHeroIds }),
+        });
+      } else {
+        res = await fetch(`${API}/warbands`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: user.id,
+            hero_ids: warbandHeroIds,
+            name: "Warband",
+          }),
+        });
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        setWarbandId(data.id);
+        setWarbandMsg({ type: "ok", text: "¡Banda de guerra guardada!" });
+      } else {
+        const err = await res.json();
+        setWarbandMsg({ type: "error", text: err.detail || "Error al guardar la banda." });
+      }
+    } catch {
+      setWarbandMsg({ type: "error", text: "Error de conexión." });
+    } finally {
+      setIsSavingWarband(false);
+      setTimeout(() => setWarbandMsg(null), 3000);
+    }
+  };
+
   const heroeSeleccionado = heroes.find((h) => h.id === selectedHeroId) || heroes[0];
 
   return (
@@ -133,7 +208,7 @@ export default function HeroView({ user, onUserUpdate }) {
 
         {!isLoading && !error && heroes.length === 0 && (
           <div className="heroe-aviso-estado">
-            <h3>No se encontraron héroes en tu cuenta. ¡Crea uno nuevo!</h3>
+            <h3>No se encontraron héroes en tu cuenta. ¡Recluta uno en la sección "Reclutar"!</h3>
           </div>
         )}
 
@@ -169,10 +244,21 @@ export default function HeroView({ user, onUserUpdate }) {
                 }
                 onGoldUpdate={(newGold) => onUserUpdate((prev) => ({ ...prev, gold: newGold }))}
               />
+
+              {warbandMsg && (
+                <p className={`heroe-accion-msg ${warbandMsg.type === "error" ? "heroe-accion-msg-error" : ""}`}>
+                  {warbandMsg.text}
+                </p>
+              )}
+
               <HeroList
                 heroes={heroes}
                 selectedHeroId={selectedHeroId}
                 onSelectHero={setSelectedHeroId}
+                warbandHeroIds={warbandHeroIds}
+                onToggleWarband={handleToggleWarband}
+                isSavingWarband={isSavingWarband}
+                onSaveWarband={handleSaveWarband}
               />
             </div>
 

@@ -10,6 +10,12 @@ from app.schemas.hero import HeroCreate, HeroUpdate
 ENERGY_MAX = 10
 XP_PER_LEVEL = 100
 
+_CLASS_STARTING_WEAPON = {
+    "Guerrero": "Hacha de hierro",
+    "Mago": "Espada de hierro",
+    "Picaro": "Arco de hierro",
+}
+
 
 def _hero_options():
     return [
@@ -44,11 +50,29 @@ def create_hero(db: Session, payload: HeroCreate) -> Hero:
         hero_data["attack"] = hero_class.base_attack
     if "defense" not in hero_data:
         hero_data["defense"] = hero_class.base_defense
+    if "hp_current" not in hero_data:
+        hero_data["hp_current"] = hero_class.base_hp_max
+    if "mp_current" not in hero_data:
+        hero_data["mp_current"] = hero_class.base_mp_max
     hero = Hero(**hero_data)
     db.add(hero)
     db.commit()
     db.refresh(hero)
+    hero = get_hero(db, hero.id)
+    equip_starting_items(db, hero)
+    db.commit()
     return get_hero(db, hero.id)
+
+
+def equip_starting_items(db: Session, hero: Hero) -> None:
+    """Equip leather armor + class-appropriate weapon to a newly created hero."""
+    weapon_name = _CLASS_STARTING_WEAPON.get(hero.hero_class.name)
+    names = ["Armadura de cuero"]
+    if weapon_name:
+        names.append(weapon_name)
+    items = db.query(Item).filter(Item.name.in_(names)).all()
+    for item in items:
+        db.add(HeroItem(hero_id=hero.id, item_id=item.id, item_type_id=item.item_type_id))
 
 
 def update_hero(db: Session, hero: Hero, payload: HeroUpdate) -> Hero:

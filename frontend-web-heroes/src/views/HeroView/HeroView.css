@@ -516,6 +516,94 @@
   align-items: center;
 }
 
+/* ═══════════════════════════════════
+   WARBAND (banda de guerra)
+═══════════════════════════════════ */
+
+.warband-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+  border-bottom: 2px solid #374151;
+  padding-bottom: 10px;
+}
+
+.warband-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.warband-contador {
+  font-size: 18px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.warband-completo {
+  color: #fbbf24;
+}
+
+.warband-guardar-btn {
+  font-size: 16px !important;
+  padding: 4px 10px !important;
+  min-height: 32px !important;
+}
+
+.warband-hint {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0 0 4px;
+  font-style: italic;
+}
+
+/* Botón de slot en cada héroe de la lista */
+.warband-slot-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 2px solid #475569;
+  background: transparent;
+  color: #64748b;
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.warband-slot-btn:hover:not(:disabled) {
+  border-color: #94a3b8;
+  color: #e2e8f0;
+  background: rgba(255,255,255,0.05);
+}
+
+.warband-slot-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.warband-slot-activo {
+  font-weight: bold;
+  border-color: #fbbf24 !important;
+  color: #0f172a !important;
+}
+
+.warband-slot-1 { background: #f59e0b !important; }
+.warband-slot-2 { background: #d97706 !important; }
+.warband-slot-3 { background: #b45309 !important; }
+
+.warband-slot-libre {
+  border-color: #334155;
+  color: #475569;
+}
+
 .heroe-svg-emblema {
   position: absolute;
   top: 50%;

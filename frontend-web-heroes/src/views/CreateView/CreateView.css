@@ -1,0 +1,410 @@
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+.create-wrapper {
+  padding: 24px;
+  background-image: url("./create-background.jpg");
+  background-size: cover;
+  color: #e2e8f0;
+  min-height: 100vh;
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  letter-spacing: 0.8px;
+  box-sizing: border-box;
+}
+
+.create-aviso {
+  text-align: center;
+  padding: 60px;
+}
+
+/* ── Contenedor principal ── */
+.create-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Cabecera ── */
+.create-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.create-titulo {
+  font-size: 38px;
+  color: #fbbf24;
+  margin: 0;
+  text-shadow: 3px 3px 0 #000;
+  letter-spacing: 2px;
+}
+
+.create-contratos {
+  background: rgba(15, 15, 30, 0.85);
+  border: 2px solid #fbbf24;
+  border-radius: 4px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  color: #fbbf24;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+}
+
+.create-contratos-vacio {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.create-contratos-icono {
+  font-size: 22px;
+}
+
+/* ── Aviso sin contrato ── */
+.create-aviso-sin-contrato {
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid #ef4444;
+  border-radius: 4px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 18px;
+  color: #fca5a5;
+}
+
+/* ── Layout dos columnas ── */
+.create-layout {
+  display: flex;
+  gap: 24px;
+}
+
+.create-columna {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* ── Bloques JRPG ── */
+.create-bloque {
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.create-bloque-titulo {
+  font-size: 24px;
+  color: #fbbf24;
+  margin: 0 0 16px;
+  text-shadow: 2px 2px 0 #000;
+  border-bottom: 2px solid #374151;
+  padding-bottom: 6px;
+}
+
+/* ── Input nombre ── */
+.create-input-nombre {
+  width: 100%;
+  box-sizing: border-box;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-radius: 4px;
+  color: #f8fafc;
+  font-family: "VT323", monospace;
+  font-size: 26px;
+  padding: 10px 14px;
+  outline: none;
+  letter-spacing: 1px;
+}
+
+.create-input-nombre:focus {
+  border-color: #fbbf24;
+}
+
+.create-input-nombre::placeholder {
+  color: #475569;
+}
+
+.create-input-nombre:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Cards de clase ── */
+.create-clases-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.create-clase-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-radius: 4px;
+  padding: 10px 14px;
+  cursor: pointer;
+  text-align: left;
+  color: #e2e8f0;
+  font-family: "VT323", monospace;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.create-clase-card:hover:not(:disabled) {
+  border-color: var(--clase-color, #fbbf24);
+  background: #1e2d3a;
+}
+
+.create-clase-card.create-clase-activa {
+  border-color: var(--clase-color, #fbbf24);
+  background: rgba(30, 30, 70, 0.9);
+  box-shadow: inset 0 0 8px rgba(251, 191, 36, 0.15);
+}
+
+.create-clase-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.create-clase-sprite {
+  width: 52px;
+  height: 52px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.create-clase-nombre {
+  font-size: 24px;
+  color: var(--clase-color, #fbbf24);
+  font-weight: bold;
+  display: block;
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+  min-width: 90px;
+}
+
+.create-clase-desc {
+  font-size: 16px;
+  color: #94a3b8;
+  flex: 1;
+}
+
+.create-clase-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 15px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.stat-hp  { color: #f87171; }
+.stat-mp  { color: #60a5fa; }
+.stat-atk { color: #fbbf24; }
+.stat-def { color: #34d399; }
+
+/* ── Botones ── */
+.create-btn {
+  font-family: "VT323", monospace;
+  font-size: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 10px 20px;
+  border: 2px solid;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+  transition: background 0.15s, box-shadow 0.1s, transform 0.1s;
+}
+
+.create-btn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.create-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.create-btn-primario {
+  background: #1e293b;
+  color: #fbbf24;
+  border-color: #fbbf24;
+}
+
+.create-btn-primario:hover:not(:disabled) {
+  background: #1e2d3a;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.5), 0 0 10px #fbbf2455;
+}
+
+.create-btn-secundario {
+  background: #1e293b;
+  color: #94a3b8;
+  border-color: #475569;
+}
+
+.create-btn-secundario:hover:not(:disabled) {
+  background: #334155;
+  border-color: #64748b;
+}
+
+.create-btn-grande {
+  width: 100%;
+  font-size: 26px;
+  padding: 14px;
+}
+
+.create-error {
+  color: #f87171;
+  font-size: 18px;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── Preview ── */
+.create-preview-bloque {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.create-preview-retrato {
+  width: 160px;
+  height: 160px;
+  background: #111827;
+  border: 2px solid #fbbf24;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px #fbbf2430;
+}
+
+.create-preview-img {
+  width: auto;
+  height: 85%;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.create-preview-info {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.create-preview-nombre {
+  font-size: 26px;
+  color: #f8fafc;
+}
+
+.create-preview-clase {
+  font-size: 18px;
+  color: #94a3b8;
+}
+
+/* ── Grid de sprites ── */
+.create-sprites-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.create-sprite-slot {
+  aspect-ratio: 1;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #475569;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 6px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.create-sprite-slot:hover:not(:disabled) {
+  border-color: #64748b;
+  background: rgba(255,255,255,0.05);
+}
+
+.create-sprite-slot.create-sprite-activo {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  box-shadow: inset 0 0 6px rgba(251, 191, 36, 0.25);
+}
+
+.create-sprite-slot:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.create-sprite-img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+/* ── Pantalla de éxito ── */
+.create-exito-panel {
+  max-width: 420px;
+  margin: 60px auto;
+  background: rgba(15, 15, 30, 0.9);
+  border: 2px solid #fbbf24;
+  border-radius: 6px;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 0 40px #fbbf2444;
+  text-align: center;
+}
+
+.create-exito-icono {
+  font-size: 64px;
+  animation: pulse-exito 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-exito {
+  from { text-shadow: 0 0 10px #fbbf24; }
+  to   { text-shadow: 0 0 30px #fbbf24, 0 0 60px #f59e0b; }
+}
+
+.create-exito-titulo {
+  font-size: 40px;
+  color: #fbbf24;
+  margin: 0;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.create-exito-sub {
+  font-size: 20px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.create-exito-botones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}

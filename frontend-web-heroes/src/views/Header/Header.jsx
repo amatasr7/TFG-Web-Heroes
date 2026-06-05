@@ -40,6 +40,13 @@ export default function Header({ currentView, setCurrentView, user, onLogout }) 
           >
             Tablón
           </button>
+
+          <button
+            className={`header-btn ${currentView === "create" ? "active" : ""}`}
+            onClick={() => setCurrentView("create")}
+          >
+            Reclutar
+          </button>
         </div>
 
         {/* GRUPO DERECHO: Recursos y Menú de Usuario */}

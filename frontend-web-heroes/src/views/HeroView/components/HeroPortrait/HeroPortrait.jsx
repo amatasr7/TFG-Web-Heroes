@@ -63,7 +63,7 @@ const EmblemaClaseFondo = ({ clase }) => getEmblemaFromClass(clase);
 
 export default function HeroPortrait({ heroe }) {
   const nombreClase = heroe?.hero_class?.name || "Desconocido";
-  const spriteSrc = getSpriteFromClass(nombreClase);
+  const spriteSrc = heroe?.sprite_url || getSpriteFromClass(nombreClase);
 
   return (
     <div className="heroe-bloque heroe-bloque-superior heroe-centrado-retrato">

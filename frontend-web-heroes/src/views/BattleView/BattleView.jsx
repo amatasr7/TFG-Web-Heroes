@@ -17,6 +17,7 @@ function ts() {
 }
 
 export function getSpriteForHero(hero) {
+  if (hero?.sprite_url) return hero.sprite_url;
   const cls = (hero?.hero_class?.name ?? hero?.hero_class_name ?? "").toLowerCase();
   if (cls.includes("guerrero")) return "/sprites/Guerrero2.png";
   if (cls.includes("mago")) return "/sprites/Maga.png";

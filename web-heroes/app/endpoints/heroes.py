@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.ddbb.Controllers import HeroController
+from app.ddbb.Controllers.HeroController import CreateWithContractPayload
 from app.ddbb.database import get_db
 from app.endpoints.errors import raise_integrity_error
 from app.schemas.hero import HeroCreate, HeroRead, HeroUpdate
@@ -18,6 +19,14 @@ class LevelUpPayload(BaseModel):
 class ActionPayload(BaseModel):
     action: str   # "meditate" | "train" | "steal"
     user_id: int | None = None
+
+
+@router.post("/heroes/create-with-contract", response_model=HeroRead, status_code=status.HTTP_201_CREATED)
+def create_with_contract(payload: CreateWithContractPayload, db: Session = Depends(get_db)):
+    try:
+        return HeroController.create_hero_with_contract(db, payload)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/heroes", response_model=list[HeroRead])

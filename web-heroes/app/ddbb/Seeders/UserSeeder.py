@@ -1,25 +1,17 @@
-"""Seeder for User table."""
-
 from sqlalchemy.orm import Session
-
 from app.ddbb.Models import User
-
+from app.utils.security import hash_password
 
 def seed_users(db: Session) -> User:
-    """
-    Seed users table.
-    
-    Returns:
-        The created test user instance
-    """
+
     user = User(
-        name="Test User",
-        email="test@example.com",
-        password="",
+        name="Admin",
+        email="admin@example.com",
+        password=hash_password("admin"),
         is_admin=True,
         gold=50,
     )
     db.add(user)
     db.flush()
-    
+
     return user

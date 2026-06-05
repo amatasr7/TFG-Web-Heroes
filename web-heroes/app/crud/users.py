@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.crud import base
+from app.crud.heroes import equip_starting_items
 from app.ddbb.Models import Hero, HeroClass, User
 from app.crud.warbands import create_warband_for_user
 from app.schemas.user import UserCreate, UserLogin, UserUpdate
@@ -27,9 +28,9 @@ def create_user(db: Session, payload: UserCreate) -> User:
     db.flush()
 
     starter_heroes = [
-        ("Aragorn", "Guerrero", 10, 2, 10),
-        ("Morgana", "Mago", 6, 10, 10),
-        ("Sombra", "Picaro", 8, 5, 10),
+        ("Varian", "Guerrero", 10, 2, 10),
+        ("Sharyn", "Mago", 6, 10, 10),
+        ("Deloth", "Picaro", 8, 5, 10),
     ]
 
     hero_classes = db.query(HeroClass).filter(HeroClass.name.in_([c for _, c, *_ in starter_heroes])).all()
@@ -51,7 +52,10 @@ def create_user(db: Session, payload: UserCreate) -> User:
             attack=hero_class.base_attack,
             defense=hero_class.base_defense,
         )
+        hero.hero_class = hero_class
         db.add(hero)
+        db.flush()
+        equip_starting_items(db, hero)
         created_heroes.append(hero)
 
     db.flush()

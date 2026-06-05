@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Web Heroes Backoffice</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/backoffice.css') }}">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      grid-template-columns: 1fr;
+    }
+    .login-wrap {
+      width: 100%;
+      max-width: 400px;
+      padding: 0 16px;
+    }
+    .login-card {
+      background: rgba(15, 15, 30, 0.92);
+      backdrop-filter: blur(4px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+      border-radius: 4px;
+      padding: 36px 32px;
+    }
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .login-submit {
+      width: 100%;
+      margin-top: 8px;
+    }
+    .field {
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-brand">
+        <span class="brand-mark">WH</span>
+        <span>
+          <strong>Web Heroes</strong>
+          <small>Backoffice</small>
+        </span>
+      </div>
+
+      <h2>Iniciar sesión</h2>
+
+      {% if error %}
+        <div class="notice error">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" action="/admin/login">
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" required autofocus>
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="button primary login-submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
