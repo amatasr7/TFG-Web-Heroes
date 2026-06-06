@@ -1,7 +1,3 @@
-"""
-Combat business logic: battle sessions, enemy AI, turn management, ability damage.
-Moves all game logic previously in BattleView.jsx to the backend.
-"""
 import random
 import unicodedata
 from typing import Optional
@@ -18,16 +14,11 @@ from app.ddbb.Models.BattleSession import BattleSession
 from app.ddbb.Models.Warband import Warband
 from app.ddbb.Models.WarbandHero import WarbandHero
 
-
 def _normalize(text: str) -> str:
     return unicodedata.normalize("NFD", text.lower()).encode("ascii", "ignore").decode()
 
-
-# ── State builders ─────────────────────────────────────────────────────────────
-
 def _hero_total_attack(hero: Hero) -> int:
     return hero.attack + sum(hi.item.damage_bonus for hi in hero.hero_items if hi.item)
-
 
 def _build_heroes_state(heroes: list[Hero]) -> list[dict]:
     states = []
@@ -52,7 +43,6 @@ def _build_heroes_state(heroes: list[Hero]) -> list[dict]:
         })
     return states
 
-
 def _build_enemies_state(enemies: list[Enemy]) -> list[dict]:
     return [
         {
@@ -68,7 +58,6 @@ def _build_enemies_state(enemies: list[Enemy]) -> list[dict]:
         for enemy in enemies
     ]
 
-
 def _build_turn_queue(heroes_state: list[dict], enemies_state: list[dict]) -> list[dict]:
     h = [{"id": s["id"], "name": s["name"], "type": "hero"} for s in heroes_state]
     e = [{"id": s["id"], "name": s["name"], "type": "enemy"} for s in enemies_state]
@@ -81,9 +70,6 @@ def _build_turn_queue(heroes_state: list[dict], enemies_state: list[dict]) -> li
         if i < len(e):
             queue.append(e[i])
     return queue
-
-
-# ── Turn helpers ───────────────────────────────────────────────────────────────
 
 def _next_alive_index(session: BattleSession) -> int:
     queue = session.turn_queue
@@ -102,7 +88,6 @@ def _next_alive_index(session: BattleSession) -> int:
             return idx
     return start
 
-
 def _check_battle_status(session: BattleSession) -> str:
     if all(e["hp_current"] <= 0 for e in session.enemies_state):
         return "victory"
@@ -110,16 +95,12 @@ def _check_battle_status(session: BattleSession) -> str:
         return "defeat"
     return "active"
 
-
 def _persist_session(session: BattleSession, db: Session) -> None:
     flag_modified(session, "heroes_state")
     flag_modified(session, "enemies_state")
     flag_modified(session, "turn_queue")
     db.commit()
     db.refresh(session)
-
-
-# ── Enemy AI ───────────────────────────────────────────────────────────────────
 
 def _process_enemy_turn(session: BattleSession) -> list[str]:
     queue = session.turn_queue
@@ -200,7 +181,6 @@ def _process_enemy_turn(session: BattleSession) -> list[str]:
 
 
 def _auto_process_enemy_turns(session: BattleSession, logs: list[str], db: Session) -> None:
-    """Process consecutive enemy turns until a hero's turn or battle ends."""
     while session.status == "active":
         queue = session.turn_queue
         if not queue:
@@ -215,9 +195,6 @@ def _auto_process_enemy_turns(session: BattleSession, logs: list[str], db: Sessi
         if session.status != "active":
             break
         session.current_turn_index = _next_alive_index(session)
-
-
-# ── Hero actions ───────────────────────────────────────────────────────────────
 
 def _hero_attack_action(session: BattleSession, hero_id: int, target_enemy_id: int, db: Session) -> list[str]:
     hero_state = next((h for h in session.heroes_state if h["id"] == hero_id), None)
@@ -257,7 +234,6 @@ def _hero_attack_action(session: BattleSession, hero_id: int, target_enemy_id: i
 
     return logs
 
-
 def _hero_defend_action(session: BattleSession, hero_id: int) -> list[str]:
     hero_state = next((h for h in session.heroes_state if h["id"] == hero_id), None)
     if hero_state is None:
@@ -267,7 +243,6 @@ def _hero_defend_action(session: BattleSession, hero_id: int) -> list[str]:
         for h in session.heroes_state
     ]
     return [f"{hero_state['name']} adopta una postura defensiva."]
-
 
 def _hero_use_ability_action(
     session: BattleSession,
@@ -365,14 +340,12 @@ def _hero_use_ability_action(
         ]
         logs.append(f"{hero_state['name']} se funde con las sombras. ¡Evasión activa!")
 
-    # Persist MP cost to hero DB record
     hero_db = crud_get_hero(db, hero_id)
     if hero_db:
         hero_db.mp_current = new_mp
         db.commit()
 
     return logs
-
 
 def _hero_use_item_action(
     session: BattleSession,
@@ -420,9 +393,6 @@ def _hero_use_item_action(
     effect = f" ({', '.join(restore_parts)})" if restore_parts else ""
 
     return [f"{hero_state['name']} usa {item.name}{effect}."]
-
-
-# ── Public API ─────────────────────────────────────────────────────────────────
 
 def start_battle(
     db: Session,
@@ -483,10 +453,8 @@ def start_battle(
 
     return session, logs
 
-
 def get_session(db: Session, session_id: int) -> Optional[BattleSession]:
     return db.get(BattleSession, session_id)
-
 
 def process_hero_action(
     db: Session,
@@ -543,7 +511,6 @@ def process_hero_action(
         "heroes_state": session.heroes_state,
         "enemies_state": session.enemies_state,
     }, logs
-
 
 def abandon_battle(db: Session, session: BattleSession) -> BattleSession:
     session.status = "abandoned"

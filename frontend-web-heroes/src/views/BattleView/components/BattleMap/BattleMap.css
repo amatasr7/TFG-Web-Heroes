@@ -16,7 +16,7 @@
   padding: 16px 24px;
   box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6), inset 0 0 18px rgba(0, 0, 0, 0.6);
   box-sizing: border-box;
-  border: 2px solid #475569;
+  border: var(--border);
   border-radius: 4px;
 }
 
@@ -53,7 +53,7 @@
 }
 
 .sprite-marker.active-turn {
-  border-color: #fbbf24;
+  border-color: var(--gold);
   box-shadow: 0 0 8px #fbbf2488;
 }
 
@@ -72,8 +72,8 @@
 }
 
 .sprite-name {
-  color: #e2e8f0;
-  font-family: "VT323", monospace;
+  color: var(--text);
+  font-family: var(--font-retro);
   font-size: 0.9rem;
   text-shadow: 1px 1px 3px #000, -1px -1px 3px #000;
   text-align: center;
@@ -84,7 +84,7 @@
 }
 
 .dead-mark {
-  color: #ef4444;
+  color: var(--color-error);
   font-size: 1.1rem;
   line-height: 1;
 }

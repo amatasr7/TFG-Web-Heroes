@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ItemIcon from "../../../BattleView/components/ItemIcon";
+import ItemIcon from "../../../../components/ItemIcon";
 
 export default function HeroEquipment({ heroItems, onEquip, onUnequip }) {
   const [dragOver, setDragOver] = useState(null);

@@ -1,6 +1,8 @@
 import React, { useReducer, useEffect, useRef, useState } from "react";
-import ItemIcon from "./components/ItemIcon";
 import "./BattleView.css";
+import { API } from "../../utils/api";
+import { getSpriteForHero, getSpriteForEnemy } from "../../utils/sprites";
+import ItemIcon from "../../components/ItemIcon";
 import BattleMap from "./components/BattleMap/BattleMap";
 import TurnOrder from "./components/TurnOrder/TurnOrder";
 import CombatLog from "./components/CombatLog/CombatLog";
@@ -9,34 +11,13 @@ import CharacterStats from "./components/CharacterStats/CharacterStats";
 import BattleInventory from "./components/BattleInventory/BattleInventory";
 import AbilitiesMenu from "./components/AbilitiesMenu/AbilitiesMenu";
 
-const API = "http://localhost:8000/api";
-
 function ts() {
   const now = new Date();
   return `${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
 }
 
-export function getSpriteForHero(hero) {
-  if (hero?.sprite_url) return hero.sprite_url;
-  const cls = (hero?.hero_class?.name ?? hero?.hero_class_name ?? "").toLowerCase();
-  if (cls.includes("guerrero")) return "/sprites/Guerrero2.png";
-  if (cls.includes("mago")) return "/sprites/Maga.png";
-  if (cls.includes("picaro") || cls.includes("pícaro")) return "/sprites/Arquero.png";
-  if (cls.includes("jefe")) return "/sprites/Orco.png";
-  return "/sprites/Pelirrojo.png";
-}
-
-export function getSpriteForEnemy(enemy) {
-  const name = (enemy?.name ?? "").toLowerCase();
-  const cls = (enemy?.hero_class?.name ?? enemy?.hero_class_name ?? "").toLowerCase();
-  if (name.includes("goblin") || cls.includes("goblin")) return "/sprites/Goblin-guerrero.png";
-  if (name.includes("slime")) return "/sprites/Slime.png";
-  if (name.includes("orco") || name.includes("orc")) return "/sprites/Orco.png";
-  if (name.includes("lobo") || name.includes("wolf")) return "/sprites/Lobo.png";
-  if (name.includes("oso") || name.includes("bear")) return "/sprites/Oso.png";
-  if (name.includes("golem")) return "/sprites/Golem.png";
-  if (name.includes("jabali") || name.includes("jabalí")) return "/sprites/Jabali.png";
-  return "/sprites/Orco.png";
+function filterConsumables(items) {
+  return (items ?? []).filter((ui) => ui.item?.type?.slug === "consumable" && ui.quantity > 0);
 }
 
 function enrichTurnQueue(queue, heroesState, enemiesState) {
@@ -136,7 +117,6 @@ export default function BattleView({ mission, onLeave }) {
   const [isAbilitiesOpen, setIsAbilitiesOpen] = useState(false);
   const [missionRewards, setMissionRewards] = useState(null);
 
-  // Load: start battle session on backend
   useEffect(() => {
     const stored = localStorage.getItem("webHeroesUser");
     userRef.current = stored ? JSON.parse(stored) : null;
@@ -165,9 +145,6 @@ export default function BattleView({ mission, onLeave }) {
 
         const battleData = await battleRes.json();
         const inventoryData = inventoryRes.ok ? await inventoryRes.json() : { user_items: [] };
-        const userItems = (inventoryData.user_items ?? []).filter(
-          (ui) => ui.item?.type?.slug === "consumable" && ui.quantity > 0
-        );
 
         dispatch({
           type: "LOAD",
@@ -177,7 +154,7 @@ export default function BattleView({ mission, onLeave }) {
           turnQueue: battleData.turn_queue,
           currentTurnIndex: battleData.current_turn_index,
           newLogs: battleData.new_logs,
-          userItems,
+          userItems: filterConsumables(inventoryData.user_items),
         });
       } catch (err) {
         dispatch({ type: "LOAD_ERROR", message: err.message });
@@ -187,7 +164,6 @@ export default function BattleView({ mission, onLeave }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Call mission complete on victory
   useEffect(() => {
     if (state.battleOver?.result !== "victory" || !mission?.id) return;
     const user = userRef.current;
@@ -243,14 +219,8 @@ export default function BattleView({ mission, onLeave }) {
     if (!isPlayerTurn) return;
     const cur = currentActor;
 
-    if (action === "abilities") {
-      setIsAbilitiesOpen(true);
-      return;
-    }
-    if (action === "items") {
-      setIsInventoryOpen(true);
-      return;
-    }
+    if (action === "abilities") { setIsAbilitiesOpen(true); return; }
+    if (action === "items") { setIsInventoryOpen(true); return; }
     if (action === "attack" && !state.selectedEnemy) {
       dispatch({ type: "ADD_LOG", message: "Selecciona un enemigo objetivo primero." });
       return;
@@ -267,7 +237,6 @@ export default function BattleView({ mission, onLeave }) {
     const cur = currentActor;
     if (!cur || cur.type !== "hero") return;
     setIsAbilitiesOpen(false);
-
     await sendAction({
       action: "use_ability",
       hero_id: cur.id,
@@ -306,16 +275,10 @@ export default function BattleView({ mission, onLeave }) {
         newLogs: data.new_logs,
         status: data.status,
       });
-      // Refresh local item counts
       if (user?.id) {
         fetch(`${API}/shop/inventory?user_id=${user.id}`)
           .then((r) => r.json())
-          .then((inv) => {
-            const items = (inv.user_items ?? []).filter(
-              (ui) => ui.item?.type?.slug === "consumable" && ui.quantity > 0
-            );
-            dispatch({ type: "UPDATE_ITEMS", userItems: items });
-          })
+          .then((inv) => dispatch({ type: "UPDATE_ITEMS", userItems: filterConsumables(inv.user_items) }))
           .catch(() => {});
       }
     } catch {
@@ -345,9 +308,7 @@ export default function BattleView({ mission, onLeave }) {
       <div className="root">
         <div className="battle-loading">
           <p>Error: {state.loadError}</p>
-          <button className="flee-btn" onClick={onLeave}>
-            Volver
-          </button>
+          <button className="flee-btn" onClick={onLeave}>Volver</button>
         </div>
       </div>
     );
@@ -363,9 +324,7 @@ export default function BattleView({ mission, onLeave }) {
               ? `Turno: ${currentActor.name} ${currentActor.type === "hero" ? "⚔" : "☠"}`
               : ""}
           </span>
-          <button className="flee-btn" onClick={handleFlee}>
-            Huir
-          </button>
+          <button className="flee-btn" onClick={handleFlee}>Huir</button>
         </div>
 
         <div className="view-map">

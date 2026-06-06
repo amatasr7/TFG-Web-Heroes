@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./HeroView.css";
-
+import { API } from "../../utils/api";
 import HeroEquipment from "./components/HeroEquipment/HeroEquipment";
 import UserInventory from "./components/UserInventory/UserInventory";
 import HeroPortrait from "./components/HeroPortrait/HeroPortrait";
 import HeroStats from "./components/HeroStats/HeroStats";
 import ManagementOptions from "./components/ManagementOptions/ManagementOptions";
 import HeroList from "./components/HeroList/HeroList";
-
-const API = "http://localhost:8000/api";
 
 export default function HeroView({ user, onUserUpdate }) {
   const [heroes, setHeroes] = useState([]);

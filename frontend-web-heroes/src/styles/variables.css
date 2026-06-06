@@ -1,0 +1,30 @@
+:root {
+  /* Tipografía */
+  --font-retro:    "VT323", monospace;
+
+  /* Colores principales */
+  --gold:          #fbbf24;
+  --gold-hover:    #f59e0b;
+  --text:          #e2e8f0;
+  --text-dim:      #cbd5e1;
+  --text-muted:    #94a3b8;
+  --text-subtle:   #64748b;
+
+  /* Estados de combate */
+  --color-hp:      #22c55e;
+  --color-mp:      #3b82f6;
+  --color-error:   #ef4444;
+  --color-success: #86efac;
+
+  /* Fondos de paneles */
+  --bg-panel:      rgba(15, 15, 30, 0.85);
+  --bg-panel-dark: rgba(15, 15, 30, 0.95);
+  --bg-dark:       #1e293b;
+  --backdrop:      blur(4px);
+
+  /* Bordes y sombras */
+  --border-color:  #475569;
+  --border:        2px solid #475569;
+  --shadow:        4px 4px 0px rgba(0, 0, 0, 0.6);
+  --shadow-sm:     2px 2px 0px rgba(0, 0, 0, 0.5);
+}

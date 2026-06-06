@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-
-const API = "http://localhost:8000/api";
+import { API } from "../../../../utils/api";
 
 const STAT_OPTIONS = [
   { key: "hp",      label: "Salud Máx. +2",  desc: "Aumenta tu vida máxima" },
@@ -176,7 +175,7 @@ export default function ManagementOptions({ hero, user, onHeroUpdate, onGoldUpda
       </div>
 
       {showLevelModal && (
-        <div className="heroe-modal-overlay" onClick={() => setShowLevelModal(false)}>
+        <div className="modal-overlay heroe-modal-overlay" onClick={() => setShowLevelModal(false)}>
           <div className="heroe-modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="heroe-modal-titulo">¡Nivel {hero.level + 1}!</h3>
             <p className="heroe-modal-sub">Elige qué estadística mejorar:</p>

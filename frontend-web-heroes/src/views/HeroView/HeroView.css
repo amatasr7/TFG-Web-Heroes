@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
-
 /* --- Contenedor Principal --- */
 .heroe-wrapper {
   padding: 24px;
@@ -7,10 +5,10 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color: #e2e8f0;
+  color: var(--text);
   height: 100vh;
   overflow-y: auto;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 20px;
   letter-spacing: 0.8px;
   box-sizing: border-box;
@@ -26,7 +24,7 @@
 
 .heroe-titulo {
   font-size: 40px;
-  color: #fbbf24;
+  color: var(--gold);
   margin: 0;
   text-shadow: 3px 3px 0px #000000;
   text-align: center;
@@ -50,10 +48,10 @@
 
 /* --- Bloques base de la interfaz JRPG --- */
 .heroe-bloque {
-  background: rgba(15, 15, 30, 0.85);
-  backdrop-filter: blur(4px);
+  background: var(--bg-panel);
+  backdrop-filter: var(--backdrop);
   border-radius: 4px;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow);
   padding: 20px;
   box-sizing: border-box;
   display: flex;
@@ -70,7 +68,7 @@
 
 .heroe-bloque-titulo {
   font-size: 24px;
-  color: #fbbf24;
+  color: var(--gold);
   margin-top: 0;
   margin-bottom: 16px;
   text-shadow: 2px 2px 0px #000000;
@@ -87,7 +85,7 @@
 }
 
 .heroe-slot-etiqueta {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 18px;
   white-space: nowrap;
 }
@@ -97,8 +95,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #1e293b;
-  border: 2px solid #475569;
+  background: var(--bg-dark);
+  border: var(--border);
   padding: 8px 12px;
   border-radius: 4px;
 }
@@ -108,7 +106,7 @@
   height: 48px;
   flex-shrink: 0;
   background: rgba(0, 0, 0, 0.4);
-  border: 2px dashed #475569;
+  border: 2px dashed var(--border-color);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -123,25 +121,25 @@
 }
 
 .heroe-equipo-drop-zone.heroe-equipo-ocupado:hover {
-  border-color: #ef4444;
+  border-color: var(--color-error);
   background: rgba(239, 68, 68, 0.1);
 }
 
 .heroe-equipo-drop-zone.heroe-equipo-drag-over {
-  border-color: #fbbf24;
+  border-color: var(--gold);
   background: rgba(251, 191, 36, 0.12);
 }
 
 .heroe-equipo-placeholder {
   font-size: 20px;
-  color: #475569;
+  color: var(--border-color);
   line-height: 1;
   user-select: none;
 }
 
 .heroe-equipo-nombre {
   font-size: 16px;
-  color: #94a3b8;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -160,7 +158,7 @@
 .heroe-slot-vacio {
   aspect-ratio: 1;
   background: rgba(0, 0, 0, 0.4);
-  border: 2px dashed #475569;
+  border: 2px dashed var(--border-color);
   border-radius: 4px;
 }
 
@@ -177,7 +175,7 @@
   bottom: 2px;
   right: 4px;
   font-size: 14px;
-  color: #fbbf24;
+  color: var(--gold);
   text-shadow: 1px 1px 0 #000;
   line-height: 1;
 }
@@ -192,7 +190,7 @@
 }
 
 .heroe-inventario-seleccionado {
-  border: 2px solid #fbbf24 !important;
+  border: 2px solid var(--gold) !important;
   box-shadow: inset 0 0 6px rgba(251, 191, 36, 0.25);
 }
 
@@ -202,7 +200,7 @@
   gap: 10px;
   margin-top: 10px;
   padding: 6px 10px;
-  background: #1e293b;
+  background: var(--bg-dark);
   border: 1px solid #374151;
   border-radius: 4px;
   font-size: 16px;
@@ -220,7 +218,7 @@
 }
 
 .heroe-inventario-info-hint {
-  color: #64748b;
+  color: var(--text-subtle);
   font-size: 14px;
   font-style: italic;
 }
@@ -240,7 +238,7 @@
   width: 160px;
   height: 160px;
   background: #111827;
-  border: 2px solid #fbbf24;
+  border: 2px solid var(--gold);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -272,15 +270,9 @@
   color: #f8fafc;
 }
 
-.font-amarillo {
-  color: #fbbf24;
-}
-.font-verde {
-  color: #10b981;
-}
-.font-azul {
-  color: #3b82f6;
-}
+.font-amarillo { color: var(--gold); }
+.font-verde    { color: #10b981; }
+.font-azul     { color: var(--color-mp); }
 
 /* ================= COMPONENTES COLUMNA DERECHA ================= */
 .heroe-menu-opciones {
@@ -296,8 +288,8 @@
   min-height: 40px;
   font: inherit;
   font-size: 20px;
-  background: #1e293b;
-  color: #e2e8f0;
+  background: var(--bg-dark);
+  color: var(--text);
   border: 2px solid #4b5563;
   border-radius: 4px;
   cursor: pointer;
@@ -307,12 +299,12 @@
 
 .heroe-btn-accion:hover {
   background: #334155;
-  border-color: #64748b;
+  border-color: var(--text-subtle);
 }
 
 .heroe-btn-accion.btn-subir {
-  color: #fbbf24;
-  border-color: #fbbf24;
+  color: var(--gold);
+  border-color: var(--gold);
 }
 
 .heroe-btn-accion:active {
@@ -329,13 +321,13 @@
 .heroe-btn-accion .heroe-btn-sub {
   display: block;
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
 .heroe-btn-accion.btn-ready {
-  border-color: #fbbf24;
-  color: #fbbf24;
+  border-color: var(--gold);
+  color: var(--gold);
   animation: glow-level 1.4s ease-in-out infinite alternate;
 }
 
@@ -371,9 +363,9 @@
 
 .heroe-accion-msg {
   margin-top: 10px;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 1rem;
-  color: #86efac;
+  color: var(--color-success);
   text-align: center;
   line-height: 1.3;
 }
@@ -384,18 +376,12 @@
 
 /* ── Modal de level-up ── */
 .heroe-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
   z-index: 200;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .heroe-modal {
   background: #0f172a;
-  border: 2px solid #fbbf24;
+  border: 2px solid var(--gold);
   border-radius: 6px;
   padding: 28px 32px;
   min-width: 320px;
@@ -407,17 +393,17 @@
 }
 
 .heroe-modal-titulo {
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 2.4rem;
-  color: #fbbf24;
+  color: var(--gold);
   margin: 0;
   text-align: center;
 }
 
 .heroe-modal-sub {
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 1.2rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin: 0;
   text-align: center;
 }
@@ -429,10 +415,10 @@
 }
 
 .heroe-modal-stat-btn {
-  background: #1e293b;
-  border: 2px solid #475569;
+  background: var(--bg-dark);
+  border: var(--border);
   border-radius: 4px;
-  color: #e2e8f0;
+  color: var(--text);
   padding: 10px 8px;
   cursor: pointer;
   display: flex;
@@ -443,7 +429,7 @@
 }
 
 .heroe-modal-stat-btn:hover {
-  border-color: #fbbf24;
+  border-color: var(--gold);
   background: #1e2d3a;
 }
 
@@ -453,15 +439,15 @@
 }
 
 .heroe-modal-stat-label {
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 1.3rem;
-  color: #fbbf24;
+  color: var(--gold);
 }
 
 .heroe-modal-stat-desc {
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 0.95rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .heroe-lista-scroll {
@@ -477,8 +463,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 14px;
-  background: #1e293b;
-  border: 2px solid #475569;
+  background: var(--bg-dark);
+  border: var(--border);
   border-radius: 4px;
   cursor: pointer;
 }
@@ -489,7 +475,7 @@
 
 .heroe-item-activo {
   background: #1e1b4b;
-  border-color: #fbbf24;
+  border-color: var(--gold);
   box-shadow: inset 0 0 6px rgba(251, 191, 36, 0.2);
 }
 
@@ -501,12 +487,12 @@
 
 .heroe-item-clase {
   font-size: 16px;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .heroe-item-lvl {
   font-size: 20px;
-  color: #fbbf24;
+  color: var(--gold);
 }
 
 .heroe-marco-retrato {
@@ -539,12 +525,12 @@
 
 .warband-contador {
   font-size: 18px;
-  color: #94a3b8;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
 .warband-completo {
-  color: #fbbf24;
+  color: var(--gold);
 }
 
 .warband-guardar-btn {
@@ -555,20 +541,19 @@
 
 .warband-hint {
   font-size: 15px;
-  color: #64748b;
+  color: var(--text-subtle);
   margin: 0 0 4px;
   font-style: italic;
 }
 
-/* Botón de slot en cada héroe de la lista */
 .warband-slot-btn {
   width: 30px;
   height: 30px;
   border-radius: 4px;
-  border: 2px solid #475569;
+  border: var(--border);
   background: transparent;
-  color: #64748b;
-  font-family: "VT323", monospace;
+  color: var(--text-subtle);
+  font-family: var(--font-retro);
   font-size: 18px;
   cursor: pointer;
   display: flex;
@@ -579,8 +564,8 @@
 }
 
 .warband-slot-btn:hover:not(:disabled) {
-  border-color: #94a3b8;
-  color: #e2e8f0;
+  border-color: var(--text-muted);
+  color: var(--text);
   background: rgba(255,255,255,0.05);
 }
 
@@ -591,7 +576,7 @@
 
 .warband-slot-activo {
   font-weight: bold;
-  border-color: #fbbf24 !important;
+  border-color: var(--gold) !important;
   color: #0f172a !important;
 }
 
@@ -601,7 +586,7 @@
 
 .warband-slot-libre {
   border-color: #334155;
-  color: #475569;
+  color: var(--border-color);
 }
 
 .heroe-svg-emblema {
@@ -611,10 +596,7 @@
   transform: translate(-50%, -50%);
   width: 75%;
   height: 75%;
-  
-  color: rgba(255, 197, 51, 0.07); 
-  
-
+  color: rgba(255, 197, 51, 0.07);
   z-index: 1;
   pointer-events: none;
   transition: color 0.3s ease;

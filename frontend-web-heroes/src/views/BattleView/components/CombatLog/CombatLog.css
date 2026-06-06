@@ -10,7 +10,7 @@
 
 .combat-log h3 {
   margin: 0 0 10px 0;
-  color: #ffc533; /* Amarillo retro para los títulos */
+  color: var(--gold);
   font-size: 1.1rem;
   text-transform: uppercase;
   border-bottom: 2px dashed #555;
@@ -33,7 +33,7 @@
   font-size: 0.95rem;
   color: #cccccc;
   line-height: 1.4;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   flex-shrink: 0;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -47,6 +47,6 @@
 }
 
 .log-time {
-  color: #475569;
+  color: var(--border-color);
   font-size: 0.85em;
 }

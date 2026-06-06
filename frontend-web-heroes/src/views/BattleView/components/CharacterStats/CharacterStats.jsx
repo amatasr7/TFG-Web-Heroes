@@ -1,13 +1,5 @@
 import "./CharacterStats.css";
-
-function getHeroSprite(hero) {
-  const cls = (hero?.hero_class?.name ?? "").toLowerCase();
-  if (cls.includes("guerrero")) return "/sprites/Guerrero2.png";
-  if (cls.includes("mago")) return "/sprites/Maga.png";
-  if (cls.includes("picaro") || cls.includes("pícaro")) return "/sprites/Arquero.png";
-  if (cls.includes("jefe")) return "/sprites/Orco.png";
-  return "/sprites/Pelirrojo.png";
-}
+import { getSpriteForHero } from "../../../../utils/sprites";
 
 export default function CharacterStats({ heroes = [], currentHeroId = null }) {
   return (
@@ -19,7 +11,7 @@ export default function CharacterStats({ heroes = [], currentHeroId = null }) {
         const mpPct = Math.max(0, Math.min(100, (hero.mp_current / maxMp) * 100));
         const isDead = hero.hp_current <= 0;
         const isActive = hero.id === currentHeroId;
-        const sprite = getHeroSprite(hero);
+        const sprite = getSpriteForHero(hero);
 
         return (
           <div
@@ -36,18 +28,14 @@ export default function CharacterStats({ heroes = [], currentHeroId = null }) {
                 <div className="stat-bar-bg">
                   <div className="stat-bar-fill hp-fill" style={{ width: `${hpPct}%` }} />
                 </div>
-                <span className="stat-bar-value">
-                  {hero.hp_current}/{maxHp}
-                </span>
+                <span className="stat-bar-value">{hero.hp_current}/{maxHp}</span>
               </div>
               <div className="stat-bar-row">
                 <span className="stat-bar-label">MP</span>
                 <div className="stat-bar-bg">
                   <div className="stat-bar-fill mp-fill" style={{ width: `${mpPct}%` }} />
                 </div>
-                <span className="stat-bar-value">
-                  {hero.mp_current}/{maxMp}
-                </span>
+                <span className="stat-bar-value">{hero.mp_current}/{maxMp}</span>
               </div>
               {hero.isDefending && (
                 <span className="defending-badge">🛡 Defendiendo</span>

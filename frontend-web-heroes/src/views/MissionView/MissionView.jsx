@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./MissionView.css";
+import { API } from "../../utils/api";
 import BattleView from "../BattleView/BattleView";
 import spriteContratista from "/sprites/Contratista.png";
 
@@ -50,7 +51,7 @@ export default function MissionView({ user }) {
       try {
         const userParam = user?.id ? `&user_id=${user.id}` : "";
         const response = await fetch(
-          `http://localhost:8000/api/missions?page=${page}&page_size=${PAGE_SIZE}${userParam}`,
+          `${API}/missions?page=${page}&page_size=${PAGE_SIZE}${userParam}`,
         );
 
         if (!response.ok) {
@@ -212,7 +213,7 @@ export default function MissionView({ user }) {
       </div>
       {viewingDetails && (
         <div
-          className="tablon-modal-overlay"
+          className="modal-overlay tablon-modal-overlay"
           onClick={() => setViewingDetails(null)}
         >
           <div

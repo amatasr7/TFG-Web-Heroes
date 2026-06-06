@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./ShopView.css";
+import { API } from "../../utils/api";
 import spriteMercader from "/sprites/Mercader.png";
-import ItemIcon from "../BattleView/components/ItemIcon";
-
-const API = "http://localhost:8000/api";
+import ItemIcon from "../../components/ItemIcon";
 
 const VENDOR_MESSAGES = {
   idle: "¡Bienvenido, viajero! ¿Qué deseas hoy?",

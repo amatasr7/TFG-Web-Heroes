@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Header.css";
 import logoWebHeroes from "./logo-web-heroes2.png";
-import ItemIcon from "../BattleView/components/ItemIcon";
+import ItemIcon from "../../components/ItemIcon";
 
 export default function Header({ currentView, setCurrentView, user, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

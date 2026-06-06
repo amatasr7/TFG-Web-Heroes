@@ -1,8 +1,7 @@
 import { useState } from "react";
 import "./AuthView.css";
+import { API } from "../../utils/api";
 import logoImg from "./components/logo-web-heroes.png";
-
-const API_URL = "http://localhost:8000/api";
 
 export default function AuthView({ onLogin }) {
   const [isRegister, setIsRegister] = useState(false);
@@ -30,7 +29,7 @@ export default function AuthView({ onLogin }) {
       : { email, password };
 
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      const response = await fetch(`${API}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

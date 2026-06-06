@@ -1,14 +1,14 @@
 /* --- Contenedor Principal del Header --- */
 .header {
-  background: rgba(15, 15, 30, 0.85);
-  backdrop-filter: blur(4px);
+  background: var(--bg-panel);
+  backdrop-filter: var(--backdrop);
   box-shadow: 0 4px 0px rgba(0, 0, 0, 0.6);
-  border-bottom: 2px solid #475569;
+  border-bottom: var(--border);
   padding: 12px 24px;
   flex-shrink: 0;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   position: relative;
-  z-index: 100; /* Asegura que el menú quede por encima de la tienda */
+  z-index: 100;
 }
 
 .header-nav {
@@ -30,31 +30,28 @@
   padding: 0 16px;
   font-size: 22px;
   font-family: inherit;
-  border: 2px solid #94a3b8;
+  border: 2px solid var(--text-muted);
   border-radius: 4px;
   background: rgba(30, 41, 59, 0.8);
-  color: #e2e8f0;
+  color: var(--text);
   cursor: pointer;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-sm);
   transition: all 0.1s ease;
 }
 
-/* Efecto hover general */
 .header-btn:hover:not(.active) {
   background: rgba(51, 65, 85, 0.9);
 }
 
-/* Efecto click (hundirse) y Estado Activo (pulsado permanentemente) */
 .header-btn:active,
 .header-btn.active {
   transform: translate(2px, 2px);
   box-shadow: none;
 }
 
-/* Color especial para la pestaña activa */
 .header-btn.active {
-  background: #fbbf24; /* Dorado JRPG */
-  border-color: #fbbf24;
+  background: var(--gold);
+  border-color: var(--gold);
   color: #0f0f1e;
   font-weight: bold;
 }
@@ -66,14 +63,14 @@
   gap: 8px;
   padding: 0 16px;
   background: rgba(0, 0, 0, 0.4);
-  border: 2px solid #475569;
+  border: var(--border);
   border-radius: 4px;
   min-height: 38px;
 }
 
 .resource-value {
   font-size: 24px;
-  color: #fbbf24;
+  color: var(--gold);
   font-weight: bold;
   text-shadow: 2px 2px 0px #000000;
 }
@@ -97,12 +94,12 @@
   top: 100%;
   right: 0;
   margin-top: 12px;
-  background: rgba(15, 15, 30, 0.95);
-  border: 2px solid #475569;
+  background: var(--bg-panel-dark);
+  border: var(--border);
   border-radius: 4px;
   padding: 8px;
   min-width: 200px;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -115,26 +112,26 @@
 }
 
 .dropdown-username {
-  color: #fbbf24;
+  color: var(--gold);
   font-size: 22px;
   font-weight: bold;
 }
 
 .dropdown-header small {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 16px;
 }
 
 .dropdown-divider {
   height: 2px;
-  background: #475569;
+  background: var(--border-color);
   margin: 4px 0;
 }
 
 .dropdown-item {
   background: transparent;
   border: none;
-  color: #cbd5e1;
+  color: var(--text-dim);
   font-size: 20px;
   text-align: left;
   padding: 8px 12px;
@@ -148,12 +145,11 @@
 
 .dropdown-item:hover {
   background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8; /* Azul cursor de selección estilo backoffice */
+  color: #38bdf8;
 }
 
-/* Botón especial para cerrar sesión */
 .dropdown-item.logout {
-  color: #ef4444;
+  color: var(--color-error);
   margin-top: 4px;
 }
 
@@ -162,27 +158,22 @@
   color: #fca5a5;
 }
 
-/* Contenedor del logo: le damos el espacio necesario */
+/* Contenedor del logo */
 .header-logo-container {
-  width: 130px; /* Espacio reservado para que no se solape con el botón de Tienda */
+  width: 130px;
   position: relative;
   height: 48px;
 }
 
-/* Imagen del logo: ampliada y centrada */
 .header-logo-img {
-  height: 58px; /* Tamaño mayor para que se vea bien */
+  height: 58px;
   width: auto;
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-
-  /* Filtros para mantener el aspecto nítido de pixel art */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-
-  /* Sombra para despegarlo del fondo */
   filter: drop-shadow(0px 2px 0px rgba(0, 0, 0, 0.5));
   z-index: 10;
 }

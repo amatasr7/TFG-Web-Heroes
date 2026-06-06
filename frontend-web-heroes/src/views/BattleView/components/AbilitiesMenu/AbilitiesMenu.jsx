@@ -92,7 +92,7 @@ export default function AbilitiesMenu({ hero, hasSelectedEnemy, onUse, onClose }
   const mp = hero.mp_current ?? 0;
 
   return (
-    <div className="abilities-overlay" onClick={onClose}>
+    <div className="modal-overlay abilities-overlay" onClick={onClose}>
       <div className="abilities-modal" onClick={(e) => e.stopPropagation()}>
         <div className="abilities-header">
           <span className="abilities-title">✨ Habilidades de {hero.name}</span>

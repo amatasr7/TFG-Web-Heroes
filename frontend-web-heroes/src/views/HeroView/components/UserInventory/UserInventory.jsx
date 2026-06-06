@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ItemIcon from "../../../BattleView/components/ItemIcon";
+import ItemIcon from "../../../../components/ItemIcon";
 
 const SLOTS = 12;
 const EQUIPABLE_SLUGS = ["weapon", "armor"];

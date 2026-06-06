@@ -1,6 +1,3 @@
-/* Importamos la fuente retro */
-@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
-
 /* --- Contenedor general de la tienda --- */
 .tienda-wrapper {
   padding: 24px;
@@ -8,9 +5,9 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color: #e2e8f0;
+  color: var(--text);
   min-height: 100vh;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 20px;
   letter-spacing: 0.8px;
 }
@@ -40,9 +37,9 @@
 .tienda-panel-inventarios,
 .tienda-panel-texto,
 .tienda-bloque-dinero {
-  background: rgba(15, 15, 30, 0.85);
-  backdrop-filter: blur(4px);
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  background: var(--bg-panel);
+  backdrop-filter: var(--backdrop);
+  box-shadow: var(--shadow);
   border-radius: 4px;
   transition:
     transform 0.2s ease,
@@ -59,8 +56,8 @@
 
 /* --- Panel del Vendedor con Marca de Agua --- */
 .tienda-panel-vendedor {
-  position: relative; /* Esencial para fijar el SVG de fondo */
-  overflow: hidden; /* Corta el SVG si sobresale de los límites del contenedor */
+  position: relative;
+  overflow: hidden;
   width: 33.33%;
   padding: 16px;
   display: flex;
@@ -94,11 +91,11 @@
 
 /* --- Marco del Retrato (Pixel Art) --- */
 .tienda-marco-retrato {
-  position: relative; /* Añadido para que el z-index funcione */
-  z-index: 1; /* Forza a que el retrato flote por encima de la marca de agua */
+  position: relative;
+  z-index: 1;
   background-color: #0f0f1e;
-  border: 4px solid #fbbf24; /* Dorado RPG */
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--gold);
+  box-shadow: var(--shadow-sm);
   padding: 8px;
   border-radius: 4px;
   display: flex;
@@ -123,7 +120,7 @@
 }
 
 .tienda-inventario-titulo {
-  color: #fbbf24;
+  color: var(--gold);
   text-align: center;
   margin-top: 0;
   margin-bottom: 8px;
@@ -133,7 +130,7 @@
 
 .tienda-inventario-cuadricula {
   background: rgba(15, 15, 30, 0.9);
-  border: 2px solid #475569;
+  border: var(--border);
   border-radius: 4px;
   padding: 8px;
   display: grid;
@@ -145,7 +142,7 @@
 
 .tienda-slot {
   aspect-ratio: 1 / 1;
-  background: #1e293b;
+  background: var(--bg-dark);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   display: flex;
@@ -165,7 +162,7 @@
 }
 
 .tienda-slot-seleccionado {
-  border: 2px solid #fbbf24;
+  border: 2px solid var(--gold);
   box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
   background: rgba(251, 191, 36, 0.1);
 }
@@ -175,7 +172,7 @@
   bottom: 2px;
   right: 3px;
   font-size: 11px;
-  color: #fbbf24;
+  color: var(--gold);
   line-height: 1;
   text-shadow: 1px 1px 0 #000;
 }
@@ -200,13 +197,13 @@
 }
 
 .tienda-texto-titulo {
-  color: #fbbf24;
+  color: var(--gold);
   font-size: 24px;
   margin-bottom: 4px;
 }
 
 .tienda-texto-sub {
-  color: #94a3b8;
+  color: var(--text-muted);
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -227,7 +224,7 @@
 }
 
 .tienda-dinero-etiqueta {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 32px;
 }
 
@@ -239,7 +236,7 @@
 
 .tienda-dinero-cantidad {
   font-size: 32px;
-  color: #fbbf24;
+  color: var(--gold);
   text-shadow: 2px 2px 0px #000000;
 }
 
@@ -264,12 +261,12 @@
   justify-content: center;
   font: inherit;
   font-size: 22px;
-  border: 2px solid #94a3b8;
+  border: 2px solid var(--text-muted);
   border-radius: 4px;
   background: rgba(30, 41, 59, 0.8);
-  color: #e2e8f0;
+  color: var(--text);
   cursor: pointer;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-sm);
   transition:
     transform 0.1s ease,
     box-shadow 0.1s ease;
@@ -282,21 +279,21 @@
 
 /* Botón Primary */
 .tienda-btn-comprar {
-  border-color: #fbbf24;
-  background: #fbbf24;
+  border-color: var(--gold);
+  background: var(--gold);
   color: #0f0f1e;
   font-weight: 800;
 }
 
 .tienda-btn-comprar:hover {
-  background: #f59e0b;
+  background: var(--gold-hover);
 }
 
 /* Botón Secundario / Cancelar */
 .tienda-btn-vender {
-  border-color: #94a3b8;
+  border-color: var(--text-muted);
   background: rgba(30, 41, 59, 0.8);
-  color: #e2e8f0;
+  color: var(--text);
 }
 
 .tienda-btn-vender:hover {

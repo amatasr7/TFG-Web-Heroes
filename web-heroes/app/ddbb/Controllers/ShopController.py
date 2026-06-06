@@ -7,15 +7,19 @@ from app.crud.user_items import create_user_item, get_user_item, list_user_items
 from app.crud.users import get_user
 
 
+def _build_shop_response(db: Session, user) -> dict:
+    return {
+        "user": user,
+        "user_items": list_user_items(db, user.id),
+        "shop_items": list_shop_items(db),
+    }
+
+
 def get_inventory(db: Session, user_id: int) -> dict:
     user = get_user(db, user_id)
     if user is None:
         raise ValueError("Usuario no encontrado.")
-    return {
-        "user": user,
-        "user_items": list_user_items(db, user_id),
-        "shop_items": list_shop_items(db),
-    }
+    return _build_shop_response(db, user)
 
 
 def buy_item(db: Session, user_id: int, item_id: int, quantity: int) -> dict:
@@ -47,12 +51,7 @@ def buy_item(db: Session, user_id: int, item_id: int, quantity: int) -> dict:
 
     db.commit()
     db.refresh(user)
-
-    return {
-        "user": user,
-        "user_items": list_user_items(db, user_id),
-        "shop_items": list_shop_items(db),
-    }
+    return _build_shop_response(db, user)
 
 
 def sell_item(db: Session, user_id: int, item_id: int, quantity: int) -> dict:
@@ -79,12 +78,7 @@ def sell_item(db: Session, user_id: int, item_id: int, quantity: int) -> dict:
 
     db.commit()
     db.refresh(user)
-
-    return {
-        "user": user,
-        "user_items": list_user_items(db, user_id),
-        "shop_items": list_shop_items(db),
-    }
+    return _build_shop_response(db, user)
 
 
 def use_item_on_hero(db: Session, user_id: int, item_id: int, hero_id: int) -> dict:

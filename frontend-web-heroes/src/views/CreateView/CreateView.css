@@ -1,12 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
-
 .create-wrapper {
   padding: 24px;
   background-image: url("./create-background.jpg");
   background-size: cover;
-  color: #e2e8f0;
+  color: var(--text);
   min-height: 100vh;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 20px;
   letter-spacing: 0.8px;
   box-sizing: border-box;
@@ -37,28 +35,28 @@
 
 .create-titulo {
   font-size: 38px;
-  color: #fbbf24;
+  color: var(--gold);
   margin: 0;
   text-shadow: 3px 3px 0 #000;
   letter-spacing: 2px;
 }
 
 .create-contratos {
-  background: rgba(15, 15, 30, 0.85);
-  border: 2px solid #fbbf24;
+  background: var(--bg-panel);
+  border: 2px solid var(--gold);
   border-radius: 4px;
   padding: 8px 16px;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 20px;
-  color: #fbbf24;
+  color: var(--gold);
   box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
 }
 
 .create-contratos-vacio {
-  border-color: #ef4444;
-  color: #ef4444;
+  border-color: var(--color-error);
+  color: var(--color-error);
 }
 
 .create-contratos-icono {
@@ -68,7 +66,7 @@
 /* ── Aviso sin contrato ── */
 .create-aviso-sin-contrato {
   background: rgba(239, 68, 68, 0.1);
-  border: 2px solid #ef4444;
+  border: 2px solid var(--color-error);
   border-radius: 4px;
   padding: 16px 20px;
   display: flex;
@@ -96,17 +94,17 @@
 
 /* ── Bloques JRPG ── */
 .create-bloque {
-  background: rgba(15, 15, 30, 0.85);
-  backdrop-filter: blur(4px);
+  background: var(--bg-panel);
+  backdrop-filter: var(--backdrop);
   border-radius: 4px;
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow);
   padding: 20px;
   box-sizing: border-box;
 }
 
 .create-bloque-titulo {
   font-size: 24px;
-  color: #fbbf24;
+  color: var(--gold);
   margin: 0 0 16px;
   text-shadow: 2px 2px 0 #000;
   border-bottom: 2px solid #374151;
@@ -117,11 +115,11 @@
 .create-input-nombre {
   width: 100%;
   box-sizing: border-box;
-  background: #1e293b;
-  border: 2px solid #475569;
+  background: var(--bg-dark);
+  border: var(--border);
   border-radius: 4px;
   color: #f8fafc;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 26px;
   padding: 10px 14px;
   outline: none;
@@ -129,11 +127,11 @@
 }
 
 .create-input-nombre:focus {
-  border-color: #fbbf24;
+  border-color: var(--gold);
 }
 
 .create-input-nombre::placeholder {
-  color: #475569;
+  color: var(--border-color);
 }
 
 .create-input-nombre:disabled {
@@ -153,24 +151,24 @@
   flex-direction: row;
   align-items: center;
   gap: 14px;
-  background: #1e293b;
-  border: 2px solid #475569;
+  background: var(--bg-dark);
+  border: var(--border);
   border-radius: 4px;
   padding: 10px 14px;
   cursor: pointer;
   text-align: left;
-  color: #e2e8f0;
-  font-family: "VT323", monospace;
+  color: var(--text);
+  font-family: var(--font-retro);
   transition: border-color 0.15s, background 0.15s;
 }
 
 .create-clase-card:hover:not(:disabled) {
-  border-color: var(--clase-color, #fbbf24);
+  border-color: var(--clase-color, var(--gold));
   background: #1e2d3a;
 }
 
 .create-clase-card.create-clase-activa {
-  border-color: var(--clase-color, #fbbf24);
+  border-color: var(--clase-color, var(--gold));
   background: rgba(30, 30, 70, 0.9);
   box-shadow: inset 0 0 8px rgba(251, 191, 36, 0.15);
 }
@@ -190,7 +188,7 @@
 
 .create-clase-nombre {
   font-size: 24px;
-  color: var(--clase-color, #fbbf24);
+  color: var(--clase-color, var(--gold));
   font-weight: bold;
   display: block;
   text-shadow: 1px 1px 0 #000;
@@ -200,7 +198,7 @@
 
 .create-clase-desc {
   font-size: 16px;
-  color: #94a3b8;
+  color: var(--text-muted);
   flex: 1;
 }
 
@@ -215,12 +213,12 @@
 
 .stat-hp  { color: #f87171; }
 .stat-mp  { color: #60a5fa; }
-.stat-atk { color: #fbbf24; }
+.stat-atk { color: var(--gold); }
 .stat-def { color: #34d399; }
 
 /* ── Botones ── */
 .create-btn {
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 22px;
   border-radius: 4px;
   cursor: pointer;
@@ -241,9 +239,9 @@
 }
 
 .create-btn-primario {
-  background: #1e293b;
-  color: #fbbf24;
-  border-color: #fbbf24;
+  background: var(--bg-dark);
+  color: var(--gold);
+  border-color: var(--gold);
 }
 
 .create-btn-primario:hover:not(:disabled) {
@@ -252,14 +250,14 @@
 }
 
 .create-btn-secundario {
-  background: #1e293b;
-  color: #94a3b8;
-  border-color: #475569;
+  background: var(--bg-dark);
+  color: var(--text-muted);
+  border-color: var(--border-color);
 }
 
 .create-btn-secundario:hover:not(:disabled) {
   background: #334155;
-  border-color: #64748b;
+  border-color: var(--text-subtle);
 }
 
 .create-btn-grande {
@@ -287,7 +285,7 @@
   width: 160px;
   height: 160px;
   background: #111827;
-  border: 2px solid #fbbf24;
+  border: 2px solid var(--gold);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -316,7 +314,7 @@
 
 .create-preview-clase {
   font-size: 18px;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 /* ── Grid de sprites ── */
@@ -329,7 +327,7 @@
 .create-sprite-slot {
   aspect-ratio: 1;
   background: rgba(0, 0, 0, 0.4);
-  border: 2px solid #475569;
+  border: var(--border);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -340,12 +338,12 @@
 }
 
 .create-sprite-slot:hover:not(:disabled) {
-  border-color: #64748b;
+  border-color: var(--text-subtle);
   background: rgba(255,255,255,0.05);
 }
 
 .create-sprite-slot.create-sprite-activo {
-  border-color: #fbbf24;
+  border-color: var(--gold);
   background: rgba(251, 191, 36, 0.1);
   box-shadow: inset 0 0 6px rgba(251, 191, 36, 0.25);
 }
@@ -367,7 +365,7 @@
   max-width: 420px;
   margin: 60px auto;
   background: rgba(15, 15, 30, 0.9);
-  border: 2px solid #fbbf24;
+  border: 2px solid var(--gold);
   border-radius: 6px;
   padding: 40px 32px;
   display: flex;
@@ -384,20 +382,20 @@
 }
 
 @keyframes pulse-exito {
-  from { text-shadow: 0 0 10px #fbbf24; }
-  to   { text-shadow: 0 0 30px #fbbf24, 0 0 60px #f59e0b; }
+  from { text-shadow: 0 0 10px var(--gold); }
+  to   { text-shadow: 0 0 30px var(--gold), 0 0 60px var(--gold-hover); }
 }
 
 .create-exito-titulo {
   font-size: 40px;
-  color: #fbbf24;
+  color: var(--gold);
   margin: 0;
   text-shadow: 2px 2px 0 #000;
 }
 
 .create-exito-sub {
   font-size: 20px;
-  color: #94a3b8;
+  color: var(--text-muted);
   margin: 0;
 }
 

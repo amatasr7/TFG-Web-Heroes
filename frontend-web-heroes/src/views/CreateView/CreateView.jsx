@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "./CreateView.css";
-
-const API = "http://localhost:8000/api";
+import { API } from "../../utils/api";
 
 const CLASES_JUGABLES = [
   {

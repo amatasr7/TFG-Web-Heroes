@@ -1,10 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
 /* Fixed overlay so the battle fills the full viewport without causing page scroll.
    This means the app header is hidden during battle (intentional immersion),
    and after the battle the page returns to its exact pre-battle scroll position. */
 .root {
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   background-image: url("./components/backgrounds/combat-background.jpg");
   background-size: cover;
   position: fixed;
@@ -14,7 +12,6 @@
   justify-content: center;
   align-items: center;
 }
-
 
 .battle-view-container {
   display: grid;
@@ -55,16 +52,16 @@
 .view-stats,
 .view-actions,
 .view-inventory-slot {
-  background: rgba(15, 15, 30, 0.85);
-  backdrop-filter: blur(4px);
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+  background: var(--bg-panel);
+  backdrop-filter: var(--backdrop);
+  box-shadow: var(--shadow);
   border-radius: 4px;
   padding: 16px;
   box-sizing: border-box;
   overflow: hidden;
   min-height: 0;
   min-width: 0;
-  border: 2px solid #475569;
+  border: var(--border);
 }
 
 /* ── Header ── */
@@ -75,10 +72,10 @@
   padding: 0 8px;
   font-size: 1.1rem;
   font-weight: bold;
-  color: #fbbf24;
+  color: var(--gold);
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
 }
 
 /* ── Placeholder cuando el inventario está cerrado ── */
@@ -94,14 +91,14 @@
 }
 
 .battle-title {
-  color: #fbbf24;
+  color: var(--gold);
   font-size: 1.3rem;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .turn-indicator {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 1rem;
   flex: 1;
   text-align: center;
@@ -111,7 +108,7 @@
   background: #3b0d0d;
   border: 2px solid #991b1b;
   color: #fca5a5;
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 1.1rem;
   padding: 4px 14px;
   cursor: pointer;
@@ -122,14 +119,14 @@
 
 .flee-btn:hover {
   background: #7f1d1d;
-  border-color: #ef4444;
+  border-color: var(--color-error);
   color: #fff;
 }
 
 /* ── Loading / error state ── */
 .battle-loading {
-  color: #fbbf24;
-  font-family: "VT323", monospace;
+  color: var(--gold);
+  font-family: var(--font-retro);
   font-size: 2rem;
   text-align: center;
   display: flex;
@@ -138,7 +135,7 @@
   gap: 16px;
 }
 
-/* ── Battle-over overlay ── */
+/* ── Battle-over overlay (position: absolute, no usa .modal-overlay) ── */
 .battle-over-overlay {
   position: absolute;
   inset: 0;
@@ -152,7 +149,7 @@
 
 .battle-over-modal {
   background: rgba(10, 10, 20, 0.97);
-  border: 3px solid #475569;
+  border: 3px solid var(--border-color);
   border-radius: 6px;
   padding: 40px 56px;
   text-align: center;
@@ -164,7 +161,7 @@
 }
 
 .battle-over-modal.victory {
-  border-color: #fbbf24;
+  border-color: var(--gold);
   box-shadow: 0 0 40px rgba(251, 191, 36, 0.25);
 }
 
@@ -174,30 +171,25 @@
 }
 
 .battle-over-title {
-  font-family: "VT323", monospace;
+  font-family: var(--font-retro);
   font-size: 3.5rem;
   margin: 0;
   letter-spacing: 4px;
 }
 
-.victory .battle-over-title {
-  color: #fbbf24;
-}
-
-.defeat .battle-over-title {
-  color: #ef4444;
-}
+.victory .battle-over-title { color: var(--gold); }
+.defeat  .battle-over-title { color: var(--color-error); }
 
 .battle-over-xp {
-  color: #86efac;
-  font-family: "VT323", monospace;
+  color: var(--color-success);
+  font-family: var(--font-retro);
   font-size: 1.6rem;
   margin: 0;
 }
 
 .battle-over-sub {
-  color: #94a3b8;
-  font-family: "VT323", monospace;
+  color: var(--text-muted);
+  font-family: var(--font-retro);
   font-size: 1.3rem;
   margin: 0;
 }
@@ -210,8 +202,8 @@
 }
 
 .battle-over-gold {
-  color: #fbbf24;
-  font-family: "VT323", monospace;
+  color: var(--gold);
+  font-family: var(--font-retro);
   font-size: 1.6rem;
   margin: 0;
 }
@@ -225,8 +217,8 @@
 }
 
 .battle-over-items-label {
-  color: #94a3b8;
-  font-family: "VT323", monospace;
+  color: var(--text-muted);
+  font-family: var(--font-retro);
   font-size: 1.2rem;
   margin: 0;
 }
@@ -246,8 +238,8 @@
 }
 
 .battle-over-item-name {
-  color: #e2e8f0;
-  font-family: "VT323", monospace;
+  color: var(--text);
+  font-family: var(--font-retro);
   font-size: 1rem;
   max-width: 64px;
   text-align: center;
@@ -260,10 +252,10 @@
 }
 
 .battle-over-btn {
-  background: #1e293b;
-  border: 2px solid #475569;
-  color: #e2e8f0;
-  font-family: "VT323", monospace;
+  background: var(--bg-dark);
+  border: var(--border);
+  color: var(--text);
+  font-family: var(--font-retro);
   font-size: 1.4rem;
   padding: 8px 28px;
   cursor: pointer;
@@ -274,23 +266,6 @@
 
 .battle-over-btn:hover {
   background: #334155;
-  border-color: #fbbf24;
-  color: #fbbf24;
+  border-color: var(--gold);
+  color: var(--gold);
 }
-
-/* ── Overlay de inventario (alternativa modal) ──────────────────
-   Si prefieres el inventario como overlay pantalla completa
-   descomenta estas reglas y elimina .view-inventory-slot del grid.
-──────────────────────────────────────────────────────────────── */
-/*
-.view-inventory-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.92);
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 6px;
-}
-*/

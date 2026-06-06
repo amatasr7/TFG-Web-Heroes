@@ -10,12 +10,12 @@
 }
 
 .turn-order h3 {
-  color: #fbbf24;
-  font-family: "VT323", monospace;
+  color: var(--gold);
+  font-family: var(--font-retro);
   font-size: 1.2rem;
   margin: 0 0 6px 0;
   padding-bottom: 6px;
-  border-bottom: 1px solid #475569;
+  border-bottom: 1px solid var(--border-color);
   letter-spacing: 1px;
   text-transform: uppercase;
   flex-shrink: 0;
@@ -43,17 +43,12 @@
   flex-shrink: 0;
 }
 
-.turn-card.hero {
-  border-left: 3px solid #3b82f6;
-}
-
-.turn-card.enemy {
-  border-left: 3px solid #ef4444;
-}
+.turn-card.hero  { border-left: 3px solid var(--color-mp); }
+.turn-card.enemy { border-left: 3px solid var(--color-error); }
 
 .turn-card.current {
   background: #1e2d45;
-  border-color: #fbbf24;
+  border-color: var(--gold);
   box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
 }
 
@@ -63,8 +58,8 @@
 }
 
 .turn-number {
-  color: #64748b;
-  font-family: "VT323", monospace;
+  color: var(--text-subtle);
+  font-family: var(--font-retro);
   font-size: 0.9rem;
   min-width: 16px;
   text-align: right;
@@ -80,8 +75,8 @@
 }
 
 .turn-name {
-  color: #cbd5e1;
-  font-family: "VT323", monospace;
+  color: var(--text-dim);
+  font-family: var(--font-retro);
   font-size: 1rem;
   flex: 1;
   overflow: hidden;
@@ -90,11 +85,11 @@
 }
 
 .turn-card.current .turn-name {
-  color: #fbbf24;
+  color: var(--gold);
 }
 
 .turn-dead-mark {
-  color: #ef4444;
+  color: var(--color-error);
   font-size: 0.9rem;
   flex-shrink: 0;
 }

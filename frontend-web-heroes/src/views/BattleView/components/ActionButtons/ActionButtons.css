@@ -14,11 +14,11 @@
   background: #1a2035;
   border: 2px solid #334155;
   border-radius: 4px;
-  font-family: "VT323", monospace;
-  color: #cbd5e1;
+  font-family: var(--font-retro);
+  color: var(--text-dim);
   cursor: pointer;
   transition: background 0.1s, border-color 0.1s, color 0.1s;
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,7 +41,7 @@
 
 .btn-hint {
   font-size: 0.7rem;
-  color: #f59e0b;
+  color: var(--gold-hover);
   letter-spacing: 0;
   line-height: 1;
 }
@@ -49,8 +49,8 @@
 /* ── Active states ── */
 .action-btn:not(.disabled):hover {
   background: #263045;
-  border-color: #fbbf24;
-  color: #fbbf24;
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .action-btn:not(.disabled):active {
@@ -64,7 +64,7 @@
 }
 
 .attack-btn:not(.disabled):hover {
-  border-color: #ef4444;
+  border-color: var(--color-error);
   color: #fca5a5;
   background: #1f1010;
 }
@@ -76,7 +76,7 @@
 
 @keyframes pulse-target {
   from { border-color: #d97706; }
-  to   { border-color: #fbbf24; }
+  to   { border-color: var(--gold); }
 }
 
 /* ── Defend button specific ── */
@@ -85,7 +85,7 @@
 }
 
 .defend-btn:not(.disabled):hover {
-  border-color: #3b82f6;
+  border-color: var(--color-mp);
   color: #93c5fd;
   background: #0f1a2e;
 }
@@ -102,6 +102,6 @@
 .action-btn.disabled {
   opacity: 0.35;
   cursor: not-allowed;
-  border-color: #1e293b;
+  border-color: var(--bg-dark);
   box-shadow: none;
 }
