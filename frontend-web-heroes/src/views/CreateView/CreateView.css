@@ -360,6 +360,70 @@
   object-fit: contain;
 }
 
+/* ── Responsive ── */
+@media (max-height: 800px) {
+  .create-wrapper {
+    padding: 16px;
+    font-size: 17px;
+  }
+
+  .create-titulo {
+    font-size: 28px;
+  }
+
+  .create-bloque {
+    padding: 14px;
+  }
+
+  .create-bloque-titulo {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .create-clase-card {
+    padding: 7px 10px;
+    gap: 10px;
+  }
+
+  .create-clase-sprite {
+    width: 40px;
+    height: 40px;
+  }
+
+  .create-clase-nombre {
+    font-size: 18px;
+  }
+
+  .create-clase-desc {
+    font-size: 13px;
+  }
+
+  .create-clase-stats {
+    font-size: 13px;
+  }
+
+  .create-input-nombre {
+    font-size: 20px;
+    padding: 7px 10px;
+  }
+
+  .create-btn-grande {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  .create-preview-retrato {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .create-layout {
+    flex-direction: column;
+  }
+}
+
 /* ── Pantalla de éxito ── */
 .create-exito-panel {
   max-width: 420px;

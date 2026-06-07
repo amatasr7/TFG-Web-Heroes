@@ -59,7 +59,7 @@ export default function App() {
         />
       )}
 
-      <main className="content" style={{ flexGrow: 1 }}>
+      <main className="content" style={{ flexGrow: 1, overflowY: "auto" }}>
         {renderView()}
       </main>
     </div>
