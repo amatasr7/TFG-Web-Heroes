@@ -24,13 +24,13 @@ const CLASES_JUGABLES = [
 ];
 
 const SPRITES_DISPONIBLES = [
-  { url: "/sprites/Guerrero.png",  label: "Guerrero" },
+  { url: "/sprites/Guerrero.png", label: "Guerrero" },
   { url: "/sprites/Guerrero2.png", label: "Guerrero II" },
-  { url: "/sprites/Barbaro.png",   label: "Bárbaro" },
-  { url: "/sprites/Maga.png",      label: "Maga" },
-  { url: "/sprites/Chaman.png",    label: "Chamán" },
-  { url: "/sprites/Arquero.png",   label: "Arquero" },
-  { url: "/sprites/Arquero2.png",  label: "Arquero II" },
+  { url: "/sprites/Barbaro.png", label: "Bárbaro" },
+  { url: "/sprites/Maga.png", label: "Maga" },
+  { url: "/sprites/Chaman.png", label: "Chamán" },
+  { url: "/sprites/Arquero.png", label: "Arquero" },
+  { url: "/sprites/Arquero2.png", label: "Arquero II" },
   { url: "/sprites/Campesina.png", label: "Campesina" },
   { url: "/sprites/Pelirrojo.png", label: "Pelirrojo" },
 ];
@@ -42,7 +42,9 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
 
   const [nombre, setNombre] = useState("");
   const [claseSeleccionada, setClaseSeleccionada] = useState(null);
-  const [spriteSeleccionado, setSpriteSeleccionado] = useState(SPRITES_DISPONIBLES[0].url);
+  const [spriteSeleccionado, setSpriteSeleccionado] = useState(
+    SPRITES_DISPONIBLES[0].url,
+  );
 
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -68,7 +70,7 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
         if (inventarioRes.ok) {
           const inv = await inventarioRes.json();
           const contratoEntry = (inv.user_items || []).find(
-            (ui) => ui.item?.name === "Contrato de heroe"
+            (ui) => ui.item?.name === "Contrato de heroe",
           );
           setContratos(contratoEntry?.quantity ?? 0);
           setContratoItemId(contratoEntry?.item?.id ?? null);
@@ -92,9 +94,18 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
   };
 
   const handleCrear = async () => {
-    if (!nombre.trim()) { setError("El nombre no puede estar vacío."); return; }
-    if (!claseSeleccionada) { setError("Debes seleccionar una clase."); return; }
-    if (contratos < 1) { setError("Necesitas un Contrato de héroe para crear un héroe."); return; }
+    if (!nombre.trim()) {
+      setError("El nombre no puede estar vacío.");
+      return;
+    }
+    if (!claseSeleccionada) {
+      setError("Debes seleccionar una clase.");
+      return;
+    }
+    if (contratos < 1) {
+      setError("Necesitas un Contrato de héroe para crear un héroe.");
+      return;
+    }
 
     setIsCreating(true);
     setError(null);
@@ -144,12 +155,20 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
         <div className="create-exito-panel">
           <div className="create-exito-icono">⚔</div>
           <h2 className="create-exito-titulo">¡Héroe reclutado!</h2>
-          <p className="create-exito-sub">Tu nuevo compañero ha sido añadido a tu lista de héroes.</p>
+          <p className="create-exito-sub">
+            Tu nuevo compañero ha sido añadido a tu lista de héroes.
+          </p>
           <div className="create-exito-botones">
-            <button className="create-btn create-btn-primario" onClick={() => onNavigate("heroes")}>
+            <button
+              className="create-btn create-btn-primario"
+              onClick={() => onNavigate("heroes")}
+            >
               Ver héroes
             </button>
-            <button className="create-btn create-btn-secundario" onClick={() => setExito(false)}>
+            <button
+              className="create-btn create-btn-secundario"
+              onClick={() => setExito(false)}
+            >
               Crear otro
             </button>
           </div>
@@ -160,7 +179,7 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
 
   const clasesParaMostrar = CLASES_JUGABLES.map((cLocal) => {
     const cBackend = clases.find(
-      (c) => c.name.toLowerCase() === cLocal.name.toLowerCase()
+      (c) => c.name.toLowerCase() === cLocal.name.toLowerCase(),
     );
     return { ...cLocal, id: cBackend?.id, ...(cBackend ?? {}) };
   });
@@ -168,12 +187,12 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
   return (
     <div className="create-wrapper">
       <div className="create-container">
-
         {/* ── CABECERA ── */}
         <div className="create-cabecera">
           <h2 className="create-titulo">Reclutamiento de héroes</h2>
-          <div className={`create-contratos ${contratos === 0 ? "create-contratos-vacio" : ""}`}>
-            <span className="create-contratos-icono">📜</span>
+          <div
+            className={`create-contratos ${contratos === 0 ? "create-contratos-vacio" : ""}`}
+          >
             <span>
               {contratos > 0
                 ? `Contratos disponibles: ${contratos}`
@@ -184,18 +203,22 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
 
         {contratos === 0 && (
           <div className="create-aviso-sin-contrato">
-            <p>Necesitas al menos un <strong>Contrato de héroe</strong> para reclutar un nuevo miembro.</p>
-            <button className="create-btn create-btn-secundario" onClick={() => onNavigate("shop")}>
+            <p>
+              Necesitas al menos un <strong>Contrato de héroe</strong> para
+              reclutar un nuevo miembro.
+            </p>
+            <button
+              className="create-btn create-btn-secundario"
+              onClick={() => onNavigate("shop")}
+            >
               Ir a la tienda
             </button>
           </div>
         )}
 
         <div className="create-layout">
-
           {/* ── COLUMNA IZQUIERDA: Formulario ── */}
           <div className="create-columna">
-
             {/* Nombre */}
             <div className="create-bloque">
               <h3 className="create-bloque-titulo">Nombre del héroe</h3>
@@ -233,8 +256,12 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
                       <div className="create-clase-stats">
                         <span className="stat-hp">HP {clase.base_hp_max}</span>
                         <span className="stat-mp">MP {clase.base_mp_max}</span>
-                        <span className="stat-atk">ATK {clase.base_attack}</span>
-                        <span className="stat-def">DEF {clase.base_defense}</span>
+                        <span className="stat-atk">
+                          ATK {clase.base_attack}
+                        </span>
+                        <span className="stat-def">
+                          DEF {clase.base_defense}
+                        </span>
                       </div>
                     )}
                   </button>
@@ -248,7 +275,12 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
             <button
               className="create-btn create-btn-primario create-btn-grande"
               onClick={handleCrear}
-              disabled={contratos === 0 || isCreating || !nombre.trim() || !claseSeleccionada}
+              disabled={
+                contratos === 0 ||
+                isCreating ||
+                !nombre.trim() ||
+                !claseSeleccionada
+              }
             >
               {isCreating ? "Reclutando..." : "⚔ Reclutar héroe"}
             </button>
@@ -256,7 +288,6 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
 
           {/* ── COLUMNA DERECHA: Preview + Sprites ── */}
           <div className="create-columna">
-
             {/* Preview del personaje */}
             <div className="create-bloque create-preview-bloque">
               <h3 className="create-bloque-titulo">Vista previa</h3>
@@ -289,12 +320,15 @@ export default function CreateView({ user, onUserUpdate, onNavigate }) {
                     disabled={contratos === 0}
                     title={s.label}
                   >
-                    <img src={s.url} alt={s.label} className="create-sprite-img" />
+                    <img
+                      src={s.url}
+                      alt={s.label}
+                      className="create-sprite-img"
+                    />
                   </button>
                 ))}
               </div>
             </div>
-
           </div>
         </div>
       </div>
